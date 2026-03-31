@@ -9,7 +9,12 @@ import {
   ADDRESS_STREET,
   ADDRESS_CITY,
   PRIMARY_CITY,
-  COLORS,
+  COLOR_PRIMARY,
+  COLOR_PRIMARY_DARK,
+  COLOR_SECONDARY,
+  COLOR_SECONDARY_DARK,
+  COLOR_ACCENT,
+  COLOR_ACCENT_2,
   SEO_DEFAULT_TITLE,
   SEO_DEFAULT_DESC,
   OG_IMAGE_DEFAULT,
@@ -155,7 +160,7 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
     <link rel="manifest"                                   href="/site.webmanifest" />
 
     <!-- ── Theme color ────────────────────────────────────────────────────────────────────── -->
-    <meta name="theme-color" content={COLORS.navy} />
+    <meta name="theme-color" content={COLOR_SECONDARY} />
 
     <!-- ── Google Search Console verification ─────────────────────────────────────────────────────────────────────── -->
     {import.meta.env.PUBLIC_GSC_VERIFICATION && (
@@ -187,6 +192,25 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
     <!-- Fonts configured in astro.config.mjs fonts[] array -->
     <Font cssVariable="--font-display" preload />
     <Font cssVariable="--font-body" preload />
+
+    <!-- ── Brand CSS vars — injected from site.ts at build time ─────────── -->
+    <style define:vars={{
+      brandPrimary:       COLOR_PRIMARY,
+      brandPrimaryDark:   COLOR_PRIMARY_DARK,
+      brandSecondary:     COLOR_SECONDARY,
+      brandSecondaryDark: COLOR_SECONDARY_DARK,
+      brandAccent:        COLOR_ACCENT,
+      brandAccent2:       COLOR_ACCENT_2,
+    }}>
+      :root {
+        --brand-primary:        var(--brandPrimary);
+        --brand-primary-dark:   var(--brandPrimaryDark);
+        --brand-secondary:      var(--brandSecondary);
+        --brand-secondary-dark: var(--brandSecondaryDark);
+        --brand-accent:         var(--brandAccent);
+        --brand-accent-2:       var(--brandAccent2);
+      }
+    </style>
 
     <!-- ── Schema.org JSON-LD ──────────────────────────────────────────── -->
     {allSchemas.map((s) => (
