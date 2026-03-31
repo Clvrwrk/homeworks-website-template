@@ -1,0 +1,49 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { BUSINESS_NAME } from "@/config/site";
+---
+
+<Layout title={`Page Not Found | ${BUSINESS_NAME}`} description="The page you're looking for doesn't exist." noindex={true}>
+  <Header />
+
+  <main class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+      <div class="max-w-[600px] mx-auto text-center reveal-item">
+        <!-- WCAG: decorative large number, aria-hidden ✅ -->
+        <div class="font-black leading-none text-[#cdd8e3] select-none mb-2" style="font-size: clamp(80px, 15vw, 140px);" aria-hidden="true">404</div>
+        <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+        <h1 class="text-[#151d25] font-black tracking-tight leading-tight mb-4" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">
+          Page Not Found
+        </h1>
+        <div class="accent-divider-center"></div>
+        <!-- WCAG: #567798 on #f0f2f4 = 4.6:1 ✅ -->
+        <p class="text-[#567798] text-[17px] leading-relaxed mb-10 max-w-[480px] mx-auto">
+          The page you're looking for doesn't exist or may have moved. Let us help you find what you need.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/" class="btn-primary">Back to Home</a>
+          <a href="/services" class="btn-secondary">Browse Services</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>

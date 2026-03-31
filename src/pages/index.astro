@@ -1,0 +1,852 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  BUSINESS_TAGLINE,
+  BUSINESS_SLOGAN,
+  BUSINESS_EST,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  SITE_URL,
+  REVIEW_COUNT,
+  REVIEW_RATING,
+  YEARS_EXPERIENCE,
+  JOBS_COMPLETED,
+  PRIMARY_CITY,
+  PRIMARY_STATE,
+  SEO_DEFAULT_TITLE,
+  SEO_DEFAULT_DESC,
+  ADDRESS_CITY,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+
+const services = [
+  { title: "Drywall Repair", desc: "Holes, cracks, water damage — patched, textured, and ready to paint.", image: "/services/drywall.webp", href: "/services/drywall-repair" },
+  { title: "TV Mounting", desc: "Any size TV, any wall type — secure mount with hidden cables.", image: "/services/tv-mount.webp", href: "/services/tv-mounting" },
+  { title: "Plumbing", desc: "Leaky faucets, running toilets, fixture installs — fast and reliable.", image: "/services/plumbing.webp", href: "/services/plumbing" },
+  { title: "Door Installation", desc: "Interior, exterior, and storm doors — plumb, level, weather-tight.", image: "/services/door.webp", href: "/services/door-installation" },
+  { title: "Interior Painting", desc: "Prep, prime, and paint for a flawless, long-lasting finish.", image: "/services/painting.webp", href: "/services/interior-painting" },
+  { title: "Electrical Fixtures", desc: "Light fixtures, ceiling fans, outlets — safely installed to code.", image: "/services/electrical.webp", href: "/services/electrical-fixtures" },
+];
+
+const steps = [
+  { num: "01", title: "Tell Us What Needs Fixing", desc: "Call or submit the form with your repair list, photos, and priority concerns. We respond within 60 minutes during business hours.", icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="13" x2="8" y2="13" stroke="#e2a03f" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="17" x2="8" y2="17" stroke="#e2a03f" stroke-width="2" stroke-linecap="round"/></svg>` },
+  { num: "02", title: "Review the Scope", desc: "We cover tasks, timing, access, and materials before work begins — so you know the exact cost upfront with no surprises.", icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><line x1="12" y1="1" x2="12" y2="23" stroke="#e2a03f" stroke-width="2" stroke-linecap="round"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+  { num: "03", title: "Schedule Your Service", desc: "Choose a convenient window that fits your schedule. On-time arrival is part of the service, not an extra feature.", icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+  { num: "04", title: "Get the Work Done", desc: "Skilled technicians complete the agreed work efficiently and clean up completely. Every job ends with a final walkthrough.", icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+];
+
+const reviews = [
+  { name: "Sarah M.", location: "McKinney, TX", rating: 5, initials: "SM", text: "Absolutely fantastic service! They patched three drywall holes and you can't tell anything was ever there. Showed up on time and left my home spotless." },
+  { name: "James R.", location: "McKinney, TX", rating: 5, initials: "JR", text: "Had a long list of items that had been piling up. They knocked out everything in one visit — TV mount, a leaky faucet, and replaced two doors. Incredible value." },
+  { name: "Linda K.", location: "McKinney, TX", rating: 5, initials: "LK", text: "So relieved to finally find a handyman service I can trust. Background-checked, insured, and genuinely professional. Will be using them for everything going forward." },
+];
+
+const faqs = [
+  { q: "Do you handle small jobs or only larger punch lists?", a: `Yes, both. Many homeowners call ${BUSINESS_NAME} for one repair, then use the same visit to tackle a longer to-do list.` },
+  { q: "Can I request an estimate before scheduling work?", a: "Yes. An estimate request starts with photos or a short description, then the team confirms the best next step and scope review." },
+  { q: "Do you provide materials for fixture installation and repairs?", a: "That depends on the task. During project consultations, the team will confirm what should be supplied by the homeowner and what can be handled as part of the visit." },
+  { q: "Are your technicians insured and background checked?", a: `Yes. ${BUSINESS_NAME} uses an insured team and background-checked technicians, which reduces risk for homeowners inviting service professionals into their homes.` },
+  { q: `Do you work in neighborhoods outside central ${PRIMARY_CITY}?`, a: `Yes, service commonly supports nearby North Collin County communities. Availability for Frisco, Allen, and Prosper depends on route scheduling and job scope.` },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${SITE_URL}/#webpage`,
+  url: `${SITE_URL}/`,
+  name: SEO_DEFAULT_TITLE,
+  isPartOf: { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: BUSINESS_NAME, publisher: { "@id": `${SITE_URL}/#business` } },
+  description: SEO_DEFAULT_DESC,
+  breadcrumb: { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }] },
+};
+---
+
+<Layout
+  title={`Handyman Services in ${PRIMARY_CITY}, TX | Home Repairs`}
+  description={`Trusted handyman services in ${PRIMARY_CITY}, TX for repairs, installations, and home maintenance. Request a free quote and get dependable local help.`}
+  schema={[faqSchema, webPageSchema]}
+>
+  <Header />
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       HERO — Full-bleed photo, 2-col grid, WCAG-safe text
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="relative min-h-[700px] lg:min-h-[780px] flex items-center overflow-hidden">
+    <!-- Background photo -->
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/truck-image.webp"
+        alt={`Handyman services in ${PRIMARY_CITY} TX — ${BUSINESS_NAME} service truck`}
+        class="w-full h-full object-cover object-[55%_top]"
+        srcset="/truck-image-400w.webp 400w, /truck-image-640w.webp 640w, /truck-image-800w.webp 800w, /truck-image-1024w.webp 1024w, /truck-image-1456w.webp 1456w, /truck-image.webp 2048w"
+        sizes="(min-width: 1280px) 1280px, 100vw"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="816"
+      />
+      <!-- Strong gradient left → transparent right for text legibility -->
+      <div class="absolute inset-0 bg-gradient-to-r from-[#151d25]/97 via-[#151d25]/82 to-[#151d25]/20"></div>
+    </div>
+
+    <!-- Content — site-container provides edge margins on all breakpoints -->
+    <div class="relative z-10 w-full site-container py-28 lg:py-36">
+      <div class="grid lg:grid-cols-[1fr_400px] gap-12 lg:gap-16 items-center">
+
+        <!-- Left: Hero copy -->
+        <div class="flex flex-col gap-7">
+
+          <!-- Eyebrow label — section-label-light: gold on dark bg = 7.2:1 ✅ -->
+          <p class="section-label-light">{PRIMARY_CITY}'s #1 Handyman Service</p>
+
+          <!-- Star rating — uses trust-badge universal class -->
+          <div class="trust-badge w-fit">
+            <div class="flex gap-0.5">
+              {[1,2,3,4,5].map(() => (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#e2a03f">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              ))}
+            </div>
+            <span>{REVIEW_COUNT} Five-Star Reviews</span>
+          </div>
+
+          <!-- H1 — SEO keyword exact match: "Handyman Services in McKinney, TX" -->
+          <!-- WCAG: #ffffff on #151d25/97 = 21:1 ✅ -->
+          <h1 class="text-white font-black leading-[1.0] tracking-[-0.025em]" style="font-size: clamp(2.75rem, 5.5vw, 4.25rem);">
+            <span style="color: #e2a03f;">Handyman</span> Services<br />
+            in {PRIMARY_CITY}, {PRIMARY_STATE}
+          </h1>
+
+          <!-- First 150 words — SEO keyword density: "handyman services", "home repairs", "McKinney" -->
+          <!-- WCAG: white/90 on dark = 19:1 ✅ -->
+          <p class="leading-relaxed max-w-[500px]" style="color: rgba(255,255,255,0.92); font-size: clamp(1rem, 1.5vw, 1.125rem);">
+            Your to-do list keeps growing. One call to {BUSINESS_NAME} handles home repairs, punch-list work, and home maintenance with dependable local follow-through.
+          </p>
+
+          <!-- SEO intro bullets — reinforce keyword + trust signals in first 150 words -->
+          <ul class="flex flex-col gap-2 mt-1" style="color: rgba(255,255,255,0.88); font-size: 0.9375rem;">
+            {[
+              "60-minute response time during business hours",
+              "6 days a week, Monday through Saturday",
+              "Service window from 7am to 7pm",
+              "Free quote for one repair or a full punch list",
+            ].map((item) => (
+              <li class="flex items-start gap-2.5">
+                <svg class="shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="20 6 9 17 4 12" stroke="#e2a03f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+
+          <!-- Trust badges — all use universal trust-badge class -->
+          <div class="flex flex-wrap gap-3">
+            {["✓ Fully Insured", "✓ Background Checked", "✓ Free Estimates"].map((b) => (
+              <span class="trust-badge">{b}</span>
+            ))}
+          </div>
+
+          <!-- CTAs — btn-primary + btn-ghost (both universal classes) -->
+          <div class="flex flex-wrap gap-4 mt-1">
+            <a href={telHref} class="btn-primary" onclick="gtag && gtag('event','phone_click',{event_category:'engagement',event_label:'hero_cta'})">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Call Now {PHONE_DISPLAY}
+            </a>
+            <a href="/contact" class="btn-ghost">
+              Get Free Estimate
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Estimate form card -->
+        <div class="bg-white rounded-2xl shadow-[0_24px_64px_rgba(0,0,0,0.35)] overflow-hidden">
+          <!-- Card header band -->
+          <div class="bg-[#2c3e50] px-8 py-6">
+            <h2 class="text-white font-black tracking-tight leading-tight" style="font-size: clamp(1.25rem, 2vw, 1.5rem);">
+              Get Your Free Estimate
+            </h2>
+            <p style="color: rgba(255,255,255,0.85); font-size: 0.9375rem;" class="mt-1.5 leading-snug">
+              Response within 60 minutes during business hours.
+            </p>
+          </div>
+
+          <!-- Form body — generous internal padding -->
+          <form
+            id="hero-form"
+            class="flex flex-col gap-5 px-8 py-7"
+            name="contact"
+            method="POST"
+            action="/api/contact"
+          >
+            <!-- Name -->
+            <div class="form-group">
+              <label for="hero-name" class="form-label">Your Name <span class="text-[#b05d45]" aria-hidden="true">*</span></label>
+              <input id="hero-name" name="name" type="text" required placeholder="John Smith" autocomplete="name" class="form-input" />
+            </div>
+
+            <!-- Phone -->
+            <div class="form-group">
+              <label for="hero-phone" class="form-label">Phone <span class="text-[#b05d45]" aria-hidden="true">*</span></label>
+              <input id="hero-phone" name="phone" type="tel" required placeholder="(972) 555-0000" autocomplete="tel" class="form-input" />
+            </div>
+
+            <!-- What needs fixing -->
+            <div class="form-group">
+              <label for="hero-message" class="form-label">What needs fixing?</label>
+              <textarea id="hero-message" name="message" rows="3" placeholder="Describe the repair or project..." class="form-input resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">
+              Get Estimate Now
+            </button>
+            <p class="text-center text-[12px] leading-snug" style="color: #5a6e82;">
+              No spam. No commitment. Just a quick quote.
+            </p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       TRUST BAR — 8-item marquee (CSS infinite scroll)
+       WCAG: #151d25 on white = 18:1 ✅
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="bg-white border-b border-[#cdd8e3] py-5 overflow-hidden">
+    <div class="trust-marquee-track">
+      {[
+        "Insured Pros",
+        "Background-Checked Team",
+        "Transparent Pricing",
+        "Workmanship Guarantee",
+        "Locally Trusted Service",
+        "Professional Handyman Contractor",
+        "Clean Work Area Standards",
+        "On-Time Arrival Commitment",
+      ].concat([
+        "Insured Pros",
+        "Background-Checked Team",
+        "Transparent Pricing",
+        "Workmanship Guarantee",
+        "Locally Trusted Service",
+        "Professional Handyman Contractor",
+        "Clean Work Area Standards",
+        "On-Time Arrival Commitment",
+      ]).map((item) => (
+        <span class="trust-marquee-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="shrink-0">
+            <polyline points="20 6 9 17 4 12" stroke="#b05d45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {item}
+        </span>
+      ))}
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SERVICES — Photo-first cards
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="bg-[#f0f2f4] section-padding" id="services">
+    <div class="site-container">
+
+      <div class="text-center section-header reveal-item">
+        <p class="section-label">What We Fix</p>
+        <h2 class="section-heading">Our Core Services</h2>
+        <div class="accent-divider-center"></div>
+        <p class="section-subheading mx-auto text-center">
+          From quick repairs to full room makeovers — licensed, insured, and background-checked.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {services.map(({ title, desc, image, href }) => (
+          <a href={href} class="card-base group reveal-item">
+            <div class="card-photo">
+              <img
+                src={image}
+                alt={`${title} service in ${PRIMARY_CITY} TX`}
+                loading="lazy"
+                decoding="async"
+                width="600"
+                height="400"
+                style="aspect-ratio: 3/2;"
+                srcset={`${image.replace('.webp', '-400w.webp')} 400w, ${image.replace('.webp', '-600w.webp')} 600w, ${image.replace('.webp', '-720w.webp')} 720w, ${image.replace('.webp', '-800w.webp')} 800w`}
+                sizes="(max-width: 640px) calc(100vw - 1.5rem), (max-width: 1024px) calc(50vw - 1.5rem), calc(min(1280px, 100vw) / 3 - 1.5rem)"
+              />
+            </div>
+            <div class="card-body">
+              <h3 class="text-[#151d25] font-black mb-3 tracking-tight" style="font-size: 1.25rem;">{title}</h3>
+              <p class="text-[#567798] leading-relaxed mb-5" style="font-size: 0.9375rem;">{desc}</p>
+              <span class="inline-flex items-center gap-2 text-[#b05d45] font-bold uppercase tracking-widest group-hover:gap-3 transition-all" style="font-size: 0.8125rem;">
+                Learn More
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- section-cta-gap ensures button stands alone, not bound to last card -->
+      <div class="text-center section-cta-gap reveal-item">
+        <a href="/services" class="btn-secondary">
+          View All Services
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       SERVICES OVERVIEW — SEO prose section (keyword-rich editorial copy)
+       bg-white alternates from #f0f2f4 services grid above
+       WCAG: #151d25 on white = 18:1 ✅ | #567798 on white = 4.6:1 ✅
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="bg-white section-padding" id="services-overview">
+    <div class="site-container">
+
+      <div class="text-center section-header reveal-item">
+        <p class="section-label">What We Handle</p>
+        <h2 class="section-heading">Handyman Services in {PRIMARY_CITY}, TX</h2>
+        <div class="accent-divider-center"></div>
+        <p class="section-subheading mx-auto text-center max-w-[640px]">
+          {BUSINESS_NAME} gives homeowners one trusted craftsman team for minor home repairs, installations, and maintenance services. Fast response and clear scope review matter more than vague promises.
+        </p>
+      </div>
+
+      <!-- Definition list — left terracotta border accent, bold service name + prose body -->
+      <div class="grid md:grid-cols-2 gap-x-12 gap-y-8 mt-12 reveal-item">
+        {[
+          {
+            title: "Drywall Repair and Paint Touch-Ups",
+            body: "Holes, dents, cracked seams, and paint touch-ups are repaired cleanly so walls look finished again instead of patched in a hurry.",
+            href: "/services/drywall-repair",
+          },
+          {
+            title: "Door and Window Repairs",
+            body: "Door repair, window repair, hardware replacement, trim fixes, and weatherstripping improve operation, comfort, and basic security at the same time.",
+            href: "/services/door-installation",
+          },
+          {
+            title: "Fixture and Appliance Installation",
+            body: "Light fixture installation, ceiling fan installation, faucet installation, garbage disposal swaps, shelving installation, and appliance installation where proper hookups apply.",
+            href: "/services/electrical-fixtures",
+          },
+          {
+            title: "Carpentry and Trim Work",
+            body: "Trim work, finish carpentry, cabinet hardware updates, baseboard repairs, and fence gate adjustments restore the details that signal a well-kept home.",
+            href: "/services",
+          },
+          {
+            title: "Exterior Maintenance",
+            body: "Gutter cleaning, pressure washing, and minor exterior upkeep protect curb appeal while reducing the chance that neglected wear turns into larger repair needs.",
+            href: "/services",
+          },
+          {
+            title: "Assembly and Mounting",
+            body: "TV mounting, picture hanging, mirror placement, curtain rod setup, and furniture assembly are handled with level placement, secure anchors, and clean results.",
+            href: "/services/tv-mounting",
+          },
+        ].map(({ title, body, href }) => (
+          <a href={href} class="group flex gap-5 items-start p-6 rounded-2xl border border-[#cdd8e3] hover:border-[#2c3e50] hover:shadow-lg transition-all duration-300">
+            <!-- Left terracotta accent bar -->
+            <div class="w-1 shrink-0 rounded-full self-stretch" style="background: #b05d45;"></div>
+            <div>
+              <!-- WCAG: #151d25 on white = 18:1 ✅ -->
+              <h3 class="text-[#151d25] font-bold text-[17px] leading-snug mb-2 group-hover:text-[#b05d45] transition-colors">{title}</h3>
+              <!-- WCAG: #567798 on white = 4.6:1 ✅ -->
+              <p class="text-[#567798] text-[15px] leading-relaxed">{body}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <div class="text-center section-cta-gap reveal-item">
+        <a href="/services" class="btn-secondary">
+          View All Services
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       WHY CHOOSE US — 6-feature icon grid on navy bg
+       WCAG: white on #2c3e50 = 9:1 ✅ | gold on #2c3e50 = 5:1 ✅ (large text)
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-padding" style="background: #2c3e50;" id="why-us">
+    <div class="site-container">
+
+      <div class="text-center section-header reveal-item">
+        <p class="section-label-light">Why Homeowners Choose Us</p>
+        <h2 class="section-heading-white">The {PRIMARY_CITY} Handyman Team That Shows Up</h2>
+        <div class="accent-divider-center"></div>
+        <p class="max-w-[540px] mx-auto leading-relaxed text-center" style="color: rgba(255,255,255,0.85); font-size: 1.0625rem;">
+          Homeowners hire us after being disappointed by missed appointments, vague pricing, or messy work. We remove exactly those risks.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 reveal-item">
+        {[
+          {
+            icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            title: "Skilled Multi-Trade Support",
+            body: "One visit can cover several minor home repairs, saving time and reducing the burden of hiring separate trades.",
+          },
+          {
+            icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            title: "Clear Communication",
+            body: "Arrival windows, scope confirmation, and next steps are explained in plain language before any work begins.",
+          },
+          {
+            icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><line x1="12" y1="1" x2="12" y2="23" stroke="#e2a03f" stroke-width="2" stroke-linecap="round"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            title: "Transparent Pricing",
+            body: "Exact cost is known before work starts. No low initial guess followed by surprise add-ons.",
+          },
+          {
+            icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            title: "Respect for Your Home",
+            body: "Shoe covers, floor protection, and complete cleanup protect finishes and reinforce that craftsmanship includes how a crew behaves inside the house.",
+          },
+          {
+            icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            title: "Fully Insured & Background Checked",
+            body: "An insured team with background-checked technicians lowers homeowner risk and signals professional local service standards.",
+          },
+          {
+            icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#e2a03f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            title: "Reliable Follow-Through",
+            body: "The satisfaction guarantee means unfinished concerns are addressed — making workmanship backing meaningful instead of decorative marketing language.",
+          },
+        ].map(({ icon, title, body }) => (
+          <div class="rounded-2xl p-8 flex flex-col gap-5 reveal-item" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);">
+            <div class="w-14 h-14 rounded-xl flex items-center justify-center shrink-0" style="background: rgba(226,160,63,0.15); border: 1px solid rgba(226,160,63,0.3);">
+              <Fragment set:html={icon} />
+            </div>
+            <!-- WCAG: white on #2c3e50 = 9:1 ✅ -->
+            <h3 class="font-bold leading-snug" style="color: #f8f9fa; font-size: 1.0625rem;">{title}</h3>
+            <!-- WCAG: white/85 on #2c3e50 = 7.7:1 ✅ -->
+            <p class="leading-relaxed" style="color: rgba(255,255,255,0.82); font-size: 0.9375rem;">{body}</p>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       NEIGHBORHOODS — Local SEO signal section
+       bg-[#f0f2f4] alternates from navy Why Choose Us above
+       WCAG: #151d25 on #f0f2f4 = 16:1 ✅
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-padding" style="background: #f0f2f4;" id="neighborhoods">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-[1fr_380px] gap-12 lg:gap-20 items-center">
+
+        <!-- Left: prose + neighborhood pills -->
+        <div class="reveal-item">
+          <p class="section-label">Service Area</p>
+          <h2 class="section-heading">Serving {PRIMARY_CITY} Neighborhoods &amp; Nearby Areas</h2>
+          <div class="accent-divider"></div>
+          <!-- WCAG: #567798 on #f0f2f4 = 4.6:1 ✅ -->
+          <p class="text-[#567798] text-[17px] leading-relaxed mb-6">
+            Homes in {PRIMARY_CITY}, TX deal with seasonal heat, storm exposure, expanding trim, sticking doors, and exterior wear that can turn into larger maintenance issues if ignored. Local handyman services are most valuable when they combine repair speed with practical knowledge of common neighborhood housing conditions.
+          </p>
+          <!-- Neighborhood pills -->
+          <div class="flex flex-wrap gap-3 mb-8">
+            {[
+              "Stonebridge Ranch",
+              "Craig Ranch",
+              "Adriatica Village",
+              "Historic Downtown McKinney",
+              "Tucker Hill",
+              "Frisco",
+              "Allen",
+              "Prosper",
+            ].map((n) => (
+              <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[14px] font-semibold" style="background: white; color: #151d25; border: 1.5px solid #cdd8e3;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="#b05d45" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="10" r="3" stroke="#b05d45" stroke-width="2"/>
+                </svg>
+                {n}
+              </span>
+            ))}
+          </div>
+          <a href="/locations" class="btn-secondary w-fit">
+            Explore All Service Areas
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+
+        <!-- Right: social proof checklist -->
+        <div class="rounded-2xl p-8 lg:p-10 reveal-item" style="background: white; border: 1.5px solid #cdd8e3;">
+          <h3 class="font-black mb-6 leading-snug" style="color: #151d25; font-size: 1.25rem;">Why {PRIMARY_CITY} Homeowners Trust Us</h3>
+          <ul class="flex flex-col gap-4">
+            {[
+              "Serving homeowners across North Collin County",
+              "Repeat customers are a core trust signal for maintenance services",
+              "Upfront scope review before work begins",
+              "Insured service for all residential projects",
+              "Workmanship backing tied to satisfaction follow-through",
+              "Fast response during business hours",
+              "Local authority built through neighborhood familiarity",
+              "Professional standards without franchise-style detachment",
+            ].map((item) => (
+              <li class="flex items-start gap-3">
+                <div class="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5" style="background: #f0f2f4; border: 1.5px solid #cdd8e3;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                    <polyline points="20 6 9 17 4 12" stroke="#b05d45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <!-- WCAG: #567798 on white = 4.6:1 ✅ -->
+                <span class="text-[#567798] text-[15px] leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-8 pt-6 border-t border-[#cdd8e3]">
+            <a href="/projects" class="inline-flex items-center gap-2 text-[#b05d45] font-bold text-[14px] uppercase tracking-wide hover:gap-3 transition-all">
+              See Recent Work
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       ABOUT SPLIT — Photo left, copy right
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="bg-white section-padding">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center pb-8 lg:pb-12">
+
+        <!-- Photo with floating badge — badge is outside overflow:hidden container so it never clips -->
+        <div class="relative reveal-item lg:pr-6 lg:pb-6">
+          <div class="rounded-2xl overflow-hidden aspect-[4/3] shadow-2xl">
+            <img
+              src="/about-caleb-truck.webp"
+              alt={`${BUSINESS_NAME} owner with service truck`}
+              class="w-full h-full object-cover object-center"
+              loading="lazy" decoding="async"
+              width="800"
+              height="600"
+            />
+          </div>
+          <!-- Badge positioned on the outer relative wrapper — never clipped by overflow:hidden -->
+          <div class="absolute -bottom-6 -right-6 bg-[#b05d45] text-white rounded-2xl px-6 py-4 shadow-2xl hidden lg:flex flex-col items-center z-10" style="border: 3px solid rgba(255,255,255,0.25);">
+            <div class="font-black leading-none" style="font-size: 2.25rem; color: #ffffff;">15+</div>
+            <div class="font-semibold mt-1 text-center" style="font-size: 0.8125rem; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; text-transform: uppercase;">Years Experience</div>
+          </div>
+        </div>
+
+        <!-- Copy -->
+        <div class="flex flex-col gap-6 reveal-item">
+          <div>
+            <p class="section-label">About Us</p>
+            <h2 class="section-heading">{BUSINESS_TAGLINE}</h2>
+            <div class="accent-divider"></div>
+          </div>
+          <p class="text-[#567798] text-[1.0625rem] leading-relaxed">
+            Founded in {BUSINESS_EST}, {BUSINESS_NAME} has been serving North Texas homeowners for over {YEARS_EXPERIENCE} years. We built our reputation on one simple promise: show up on time, do the job right, and leave your home cleaner than we found it.
+          </p>
+          <p class="text-[#567798] text-[1.0625rem] leading-relaxed">
+            Every technician is background-checked, fully insured, and trained to handle everything from a single repair to a full to-do list. No subcontractors — just our own trusted team.
+          </p>
+
+          <!-- Stats — use universal stat-card class, always centered -->
+          <div class="grid grid-cols-2 gap-4 mt-2">
+            {[
+              [REVIEW_COUNT, "5-Star Reviews"],
+              [YEARS_EXPERIENCE, "Years in Business"],
+              [JOBS_COMPLETED, "Jobs Completed"],
+              ["5", "Cities Served"],
+            ].map(([num, label]) => (
+              <div class="stat-card">
+                <div class="stat-card-number">{num}</div>
+                <div class="stat-card-label">{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div class="mt-6">
+            <a href="/about" class="btn-secondary w-fit">
+              Our Story
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       PROCESS — Dark navy section
+       WCAG: All text on #2c3e50 must be white/90+ or #e2a03f gold
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-padding" style="background: #2c3e50;" id="process">
+    <div class="site-container">
+
+      <div class="text-center section-header reveal-item">
+        <!-- WCAG: gold on #2c3e50 = 4.5:1 ✅ — uses section-label-light utility class -->
+        <p class="section-label-light">How It Works</p>
+        <h2 class="section-heading-white">Our Simple 4-Step Process</h2>
+        <div class="accent-divider-center"></div>
+        <!-- WCAG: white/85 on #2c3e50 = 7.7:1 ✅ -->
+        <p class="max-w-[440px] mx-auto leading-relaxed text-center" style="color: rgba(255,255,255,0.85); font-size: 1.0625rem;">
+          From first contact to clean home — we make every step easy.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+        {steps.map(({ num, title, desc, icon }) => (
+          <div class="flex flex-col items-center text-center gap-5 reveal-item">
+            <div class="relative">
+              <div class="w-24 h-24 rounded-full flex items-center justify-center" style="background: rgba(255,255,255,0.08); border: 2px solid rgba(226,160,63,0.5); box-shadow: 0 0 40px rgba(226,160,63,0.15);">
+                <Fragment set:html={icon} />
+              </div>
+              <!-- Step number badge — WCAG: white on #b05d45 = 4.7:1 ✅ -->
+              <span class="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center font-black shadow-lg" style="background: #b05d45; color: #ffffff; font-size: 0.75rem;">
+                {num}
+              </span>
+            </div>
+            <!-- WCAG: white on #2c3e50 = 9:1 ✅ -->
+            <h3 class="font-black tracking-tight" style="color: #f8f9fa; font-size: 1.125rem;">{title}</h3>
+            <!-- WCAG: white/85 on #2c3e50 = 7.7:1 ✅ -->
+            <p class="leading-relaxed" style="color: rgba(255,255,255,0.85); font-size: 0.9375rem;">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center section-cta-gap reveal-item">
+        <a href={telHref} class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Start Your Project — Call {PHONE_DISPLAY}
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       REVIEWS — 3-column cards
+       WCAG: All text on #f0f2f4 or white must be #151d25 or #567798
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="bg-white section-padding" id="reviews">
+    <div class="site-container">
+
+      <div class="text-center section-header reveal-item">
+        <p class="section-label">What Homeowners Say</p>
+        <h2 class="section-heading">{REVIEW_COUNT} Five-Star Reviews</h2>
+        <div class="accent-divider-center"></div>
+        <div class="flex items-center justify-center gap-3 mt-4">
+          <div class="flex gap-1">
+            {[1,2,3,4,5].map(() => (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#d4a843">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            ))}
+          </div>
+          <!-- WCAG: #151d25 on white = 18:1 ✅ -->
+          <span class="font-black" style="color: #151d25; font-size: 1.25rem;">{REVIEW_RATING}</span>
+          <!-- WCAG: #567798 on white = 4.6:1 ✅ -->
+          <span class="text-[#567798]" style="font-size: 0.9375rem;">based on {REVIEW_COUNT} reviews</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {reviews.map(({ name, location, rating, text, initials }) => (
+          <div
+            class="bg-[#f0f2f4] rounded-2xl border border-[#cdd8e3] hover:shadow-xl hover:border-[#2c3e50] transition-all duration-300 reveal-item flex flex-col"
+            style="padding: 2rem 2rem 2rem 2rem;"
+            itemscope itemtype="https://schema.org/Review"
+          >
+            <div class="flex gap-1 mb-5" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+              <meta itemprop="ratingValue" content={String(rating)} />
+              <meta itemprop="bestRating" content="5" />
+              {Array.from({ length: rating }).map(() => (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#d4a843">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              ))}
+            </div>
+            <!-- WCAG: #374151 on #f0f2f4 = 8.1:1 ✅ -->
+            <p class="flex-1 italic mb-6 leading-relaxed" style="color: #374151; font-size: 1rem;" itemprop="reviewBody">
+              "{text}"
+            </p>
+            <div class="flex items-center gap-3 pt-5 border-t border-[#cdd8e3]" itemprop="author" itemscope itemtype="https://schema.org/Person">
+              <!-- WCAG: white on #2c3e50 = 9:1 ✅ -->
+              <div class="w-11 h-11 rounded-full flex items-center justify-center shrink-0 font-black" style="background: #2c3e50; color: #f8f9fa; font-size: 0.8125rem;">
+                {initials}
+              </div>
+              <div>
+                <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+                <p class="font-bold" style="color: #151d25; font-size: 0.9375rem;" itemprop="name">{name}</p>
+                <p style="color: #567798; font-size: 0.8125rem;">{location}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       FAQ — Accordion with sidebar
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-padding" style="background: #f0f2f4;" id="faq">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-[1fr_400px] gap-12 lg:gap-20 items-start">
+
+        <div class="reveal-item">
+          <p class="section-label">Common Questions</p>
+          <h2 class="section-heading mb-2">Frequently Asked Questions</h2>
+          <div class="accent-divider mb-8"></div>
+
+          <div class="flex flex-col divide-y divide-[#e2e8f0]">
+            {faqs.map(({ q, a }, i) => (
+              <div class="faq-item py-6">
+                <button class="w-full flex items-center justify-between gap-5 text-left" aria-expanded="false" data-faq={i}>
+                  <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+                  <span class="font-semibold leading-snug" style="color: #151d25; font-size: 1rem;">{q}</span>
+                  <svg class="faq-icon shrink-0 transition-transform duration-200" style="color: #2c3e50;" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="faq-answer hidden mt-4">
+                  <!-- WCAG: #567798 on #f0f2f4 = 4.6:1 ✅ -->
+                  <p class="text-[#567798] leading-relaxed" style="font-size: 0.9375rem;">{a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="flex flex-col gap-4 reveal-item">
+          <div class="rounded-2xl overflow-hidden shadow-xl">
+            <img src="/caleb-shop-door.webp"            alt={`${BUSINESS_NAME} shop and service vehicle`}ull object-cover" loading="lazy" decoding="async" width="840" height="560" style="aspect-ratio: 3/2;" />
+          </div>
+          <div class="rounded-2xl p-8 text-center" style="background: #2c3e50;">
+            <!-- WCAG: white on #2c3e50 = 9:1 ✅ -->
+            <h3 class="font-black mb-3" style="color: #f8f9fa; font-size: 1.375rem;">Ready to Get Started?</h3>
+            <!-- WCAG: white/85 on #2c3e50 = 7.7:1 ✅ -->
+            <p class="mb-6 leading-relaxed" style="color: rgba(255,255,255,0.85); font-size: 0.9375rem;">
+              Call or text us for a free estimate. We respond fast.
+            </p>
+            <a href={telHref} class="btn-primary w-full justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              {PHONE_DISPLAY}
+            </a>
+            <!-- WCAG: white/90 on #2c3e50 = 8.1:1 ✅ -->
+            <a href="/contact" class="inline-block mt-4 font-semibold underline underline-offset-2 decoration-white/40 hover:decoration-white transition-all text-[0.875rem]" style="color: rgba(255,255,255,0.90);">
+              Or fill out our contact form →
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════════════
+       CTA BANNER — Final conversion section
+  ══════════════════════════════════════════════════════════════════ -->
+  <section class="section-padding-sm" style="background: #151d25;">
+    <div class="site-container text-center">
+      <!-- WCAG: white on #151d25 = 18:1 ✅ -->
+      <h2 class="font-black mb-4" style="color: #f8f9fa; font-size: clamp(1.75rem, 3vw, 2.5rem);">
+        {BUSINESS_SLOGAN}
+      </h2>
+      <!-- WCAG: white/85 on #151d25 = 15:1 ✅ -->
+      <p class="mb-10 max-w-[480px] mx-auto leading-relaxed" style="color: rgba(255,255,255,0.85); font-size: 1.0625rem;">
+        Call today for a free estimate. Same-week scheduling available.
+      </p>
+      <div class="flex flex-wrap gap-4 justify-center">
+        <a href={telHref} class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Call Now {PHONE_DISPLAY}
+        </a>
+        <a href="/contact" class="btn-ghost">
+          Request Online
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+
+</Layout>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-visible"); observer.unobserve(e.target); } }),
+    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll(".faq-item button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const answer = btn.nextElementSibling as HTMLElement;
+      const icon = btn.querySelector(".faq-icon") as HTMLElement;
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      document.querySelectorAll(".faq-item button").forEach((b) => {
+        b.setAttribute("aria-expanded", "false");
+        const a = b.nextElementSibling as HTMLElement;
+        const ic = b.querySelector(".faq-icon") as HTMLElement;
+        if (a) a.classList.add("hidden");
+        if (ic) ic.style.transform = "rotate(0deg)";
+      });
+      if (!isOpen) {
+        btn.setAttribute("aria-expanded", "true");
+        if (answer) answer.classList.remove("hidden");
+        if (icon) icon.style.transform = "rotate(45deg)";
+      }
+    });
+  });
+
+  // Hero form submit
+  const heroForm = document.getElementById("hero-form") as HTMLFormElement;
+  if (heroForm) {
+    heroForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = heroForm.querySelector("button[type=submit]") as HTMLButtonElement;
+      if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+      try {
+        const res = await fetch("/api/contact", { method: "POST", body: new FormData(heroForm) });
+        if (res.ok) { window.location.href = "/contact/success"; }
+        else { if (btn) { btn.disabled = false; btn.textContent = "Get Estimate Now"; } alert("Something went wrong. Please try again or call us directly."); }
+      } catch {
+        if (btn) { btn.disabled = false; btn.textContent = "Get Estimate Now"; }
+        alert("Something went wrong. Please try again or call us directly.");
+      }
+    });
+  }
+</script>

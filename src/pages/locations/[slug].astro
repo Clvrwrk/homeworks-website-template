@@ -1,0 +1,505 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  PRIMARY_CITY,
+  SITE_URL,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+
+const allLocations = [
+  {
+    slug: "mckinney-tx",
+    title: "Residential Handyman Services in McKinney, TX - Handyman Services and Handyman Care",
+    city: "McKinney",
+    state: "TX",
+    zips: ["75069", "75070", "75071", "75072"],
+    neighborhoods: ["Stonebridge Ranch", "Craig Ranch", "Adriatica Village", "Eldorado", "Tucker Hill", "Fossil Creek"],
+    description: "Your to-do list won\u2019t fix itself, but our trusted craftsmen ensure those tasks are tackled with precision and care. Serving busy homeowners in McKinney, TX, and the surrounding DFW suburbs, we guarantee transparent pricing and a fast response.",
+    cityContext: "McKinney is our home base, and we\u2019ve been serving its homeowners since 2008. Whether you\u2019re in a newer build in Tucker Hill or an established home in Eldorado, we know the construction styles, the common repair needs, and the neighborhoods. Our fastest response times are here \u2014 often same-day.",
+    metaDesc: "Discover expert residential handyman services in McKinney, TX. Our skilled technicians offer transparent pricing, timely responses, and guaranteed satisfaction. From minor repairs to comprehensive home care, we respect your space with thorough cleanups and floor protection. Fully insured and background checked, our team promises on-time arrivals and a hassle-free experience. Let us handle your to-do list, ensuring quality and professionalism every step of the way. Contact us for a reliable solution to your home maintenance needs and enjoy peace of mind with our trusted craftsmanship.",
+    faqs: [
+      { q: "What areas do you serve?", a: "We proudly serve McKinney, TX, and the surrounding DFW suburbs, offering expert handyman services with a focus on local expertise." },
+      { q: "Are your technicians insured and background-checked?", a: "Yes, every technician is fully insured and has undergone thorough background checks to ensure your peace of mind." },
+      { q: "How do you ensure transparent pricing?", a: "We provide upfront pricing estimates based on our extensive experience to avoid any unexpected charges, ensuring transparency from start to finish." },
+      { q: "What types of handyman services do you offer?", a: "We handle a variety of tasks, including minor repairs, deck installations, outlet installations, and window replacements, all performed with precision and care." },
+      { q: "What sets McKinney Fix-It Pros apart from other handyman services?", a: "Our commitment to punctuality, professionalism, and respect for your home sets us apart. You can trust us to leave your space spotless after every job." },
+    ],
+    seoContent: {
+      overview: "Handyman Services in McKinney, TX, offer expert solutions to manage your growing home maintenance tasks with professionalism and care. Our services cover everything from minor repairs to more complex projects like deck installation and window replacement, with a clear emphasis on transparency in pricing and quality craftsmanship. Employing fully insured and background-checked technicians, we ensure on-time arrivals, respect for your home, and a spotless cleanup.",
+      highlights: [
+        "Expert handyman services in McKinney offer transparency and timely response, respecting your home with thorough cleanups.",
+        "Local expertise ensures quick, tailored solutions for McKinney homeowners, focusing on professionalism and punctuality.",
+        "Commitment to transparency with upfront pricing fosters trust, avoiding unexpected charges in all handyman projects.",
+        "Reliable services simplify home maintenance, addressing tasks promptly to prevent minor issues from escalating.",
+        "Prioritizing safety and quality, our team handles repairs and projects with precision for homeowners\u2019 peace of mind.",
+      ],
+      contractorSection: {
+        heading: "Understanding Residential Handyman Services in McKinney",
+        body: "If you\u2019ve got a growing list of home projects that require attention, our handyman services in McKinney are here to help. Whether it\u2019s general repairs or specialized tasks like outlet installation, we\u2019ve got the experience needed to get the work done. From door services to deck installations, you\u2019ll find our expertise invaluable. We pride ourselves on transparency and respect for your home, ensuring a seamless experience from start to finish. With us, you\u2019re choosing a trusted craftsman who values punctuality and professionalism.",
+        tableRows: [
+          { criteria: "Plumbing", description: "Comprehensive repair and installation services for residential plumbing systems.", benefit: "Licensed professionals, quick response time", outcome: "Improved water efficiency and reduced inconvenience" },
+          { criteria: "Electrical", description: "Safe and efficient electrical service solutions for homes.", benefit: "Code compliance, skilled technicians", outcome: "Increased safety and energy savings" },
+          { criteria: "Carpentry", description: "Custom woodwork and repair for various structures.", benefit: "Precision craftsmanship, tailored designs", outcome: "Enhanced home aesthetics and functionality" },
+          { criteria: "Painting", description: "Interior and exterior painting with long-lasting finishes.", benefit: "High-quality materials, attention to detail", outcome: "Refreshed look and protection for walls" },
+        ],
+      },
+      comprehensiveSection: {
+        heading: "Why Choose a Handyman Near Me in McKinney?",
+        body: "Choosing a handyman near you in McKinney delivers optimal results for your home projects. Having local expertise at your fingertips means quick response times and tailored solutions that suit the unique needs of your area. Our trusted craftspersons excel in providing transparent and reliable handyman services that cater to homeowners who value professionalism and punctuality. Whether you have a list of tasks or a significant home project, our expertise ensures every need is met efficiently without surprise fees.",
+      },
+      transparencySection: {
+        heading: "Ensuring Quality and Transparency in Every Task",
+        body: "As a small business owner dedicated to homeowners in McKinney, TX, and its surrounding suburbs, we understand the importance of quality handyman services and the trust placed in us. Transparency in pricing and guaranteeing complete satisfaction are at the core of our offerings. From repairs to broader projects, we aim to make every service experience seamless. Our approach focuses on clear communication and timely execution, ensuring you know the exact cost before work begins.",
+        tableRows: [
+          { service: "Local Expertise", features: "Deep understanding of McKinney\u2019s unique environmental factors", assurance: "Quick response, prompt attention to issues", commitment: "Consistent delivery with proven track record" },
+          { service: "Quick Response", features: "Rapid arrival time owing to proximity", assurance: "Flexible scheduling for urgent requests", commitment: "Efficient completion with local resources" },
+          { service: "Transparency", features: "Clear communication of costs and services", assurance: "Honest assessment of repair needs", commitment: "Transparent progress updates throughout" },
+          { service: "Professionalism", features: "Skilled and certified professionals", assurance: "Attention to detail and quality workmanship", commitment: "Commitment to client satisfaction and respect" },
+        ],
+      },
+      expertiseSection: {
+        heading: "Experience Hassle-Free Home Care with Reliable Handyman Work",
+        body: "Looking for a trusted craftsman in McKinney to handle your home projects? Our reliable handyman services simplify routine maintenance, saving you time and stress. With transparent pricing and a commitment to quality, you\u2019ll experience hassle-free home care. We prioritize punctuality and professionalism, ensuring your growing to-do list is tackled efficiently. Our expert team covers everything from minor repairs to larger projects, providing the confidence you need in home care. With us, your home is always in capable hands.",
+      },
+    },
+  },
+  {
+    slug: "allen-tx",
+    city: "Allen",
+    state: "TX",
+    zips: ["75013", "75002"],
+    neighborhoods: ["Twin Creeks", "Watters Crossing", "Montgomery Farm", "Bethany Lakes", "Villages of Allen"],
+    description: "Just south of McKinney, we serve Allen homeowners with the same fast, reliable service. From Twin Creeks to Watters Crossing, we're your neighbor.",
+    cityContext: "Allen's established neighborhoods like Twin Creeks and Montgomery Farm are filled with homes that are 15–25 years old — exactly the age when drywall, plumbing fixtures, and trim work start needing attention. We're familiar with the Allen housing stock and can typically schedule within 2–3 business days.",
+    metaDesc: "Handyman services in Allen, TX — serving Twin Creeks, Watters Crossing & Montgomery Farm. Drywall, plumbing, TV mounting & more. Licensed & insured. Free estimates.",
+  },
+  {
+    slug: "frisco-tx",
+    city: "Frisco",
+    state: "TX",
+    zips: ["75033", "75034", "75035"],
+    neighborhoods: ["Starwood", "Plantation Resort", "Newman Village", "Hunters Creek", "Phillips Creek Ranch"],
+    description: `Frisco homeowners trust ${BUSINESS_NAME} for quality repairs done right. We serve all Frisco communities with prompt, professional service.`,
+    cityContext: "Frisco's rapid growth means a wide mix of home ages and styles — from luxury builds in Starwood to family homes in Phillips Creek Ranch. We handle everything from warranty-period touch-ups to full room refreshes, and we're accustomed to working in Frisco's high-expectation communities.",
+    metaDesc: "Handyman services in Frisco, TX — Starwood, Phillips Creek Ranch & surrounding communities. Drywall, painting, plumbing & more. Licensed & insured. Free estimates.",
+  },
+  {
+    slug: "prosper-tx",
+    city: "Prosper",
+    state: "TX",
+    zips: ["75078"],
+    neighborhoods: ["Windsong Ranch", "Star Trail", "Whitley Place", "Gentle Creek", "Preserve at Doe Creek"],
+    description: "Serving Prosper's fast-growing communities. Whether you're in Windsong Ranch or Star Trail, we bring McKinney-quality service to your door.",
+    cityContext: "Prosper is one of the fastest-growing cities in the country, and many of its homes in Windsong Ranch and Star Trail are newly built — but even new construction needs punch-list repairs, touch-up painting, and fixture upgrades. We serve Prosper homeowners who want quality work done without the big-contractor runaround.",
+    metaDesc: "Handyman services in Prosper, TX — Windsong Ranch, Star Trail & Whitley Place. Drywall repair, carpentry, plumbing & more. Licensed & insured. Free estimates.",
+  },
+  {
+    slug: "celina-tx",
+    city: "Celina",
+    state: "TX",
+    zips: ["75009"],
+    neighborhoods: ["Light Farms", "Cross Creek", "Mustang Lakes", "Cambridge Crossing", "Bluewood"],
+    description: "Celina is one of the fastest-growing cities in Texas, and we're growing with it. We serve Celina homeowners with reliable, same-week service.",
+    cityContext: "Celina's booming master-planned communities like Light Farms and Mustang Lakes are attracting thousands of new homeowners every year. We're proud to be one of the few handyman services actively expanding into Celina — offering the same same-week scheduling and transparent pricing that McKinney homeowners have trusted for over 15 years.",
+    metaDesc: "Handyman services in Celina, TX — Light Farms, Mustang Lakes & Cross Creek. Drywall, painting, plumbing & more for Celina's fast-growing communities. Free estimates.",
+  },
+  {
+    slug: "anna-tx",
+    city: "Anna",
+    state: "TX",
+    zips: ["75409", "75454"],
+    neighborhoods: ["Sherley Farms", "Slayter Creek", "Ferguson Farms", "Avery Pointe", "Hurricane Creek"],
+    description: "Serving Anna and Van Alstyne with the same quality and professionalism as our McKinney operations. Fast response times to the 75409 area.",
+    cityContext: "Anna is a small but rapidly growing community where quality handyman services are hard to find. We bring the same professionalism and reliability to Anna that we're known for in McKinney — background-checked technicians, upfront pricing, and a clean worksite every time. We serve Sherley Farms, Slayter Creek, and all Anna neighborhoods.",
+    metaDesc: "Handyman services in Anna, TX — Sherley Farms, Slayter Creek & Avery Pointe. Drywall, plumbing, TV mounting & more. Same-week service. Free estimates.",
+  },
+  {
+    slug: "plano-tx",
+    city: "Plano",
+    state: "TX",
+    zips: ["75023", "75024", "75025", "75074", "75075"],
+    neighborhoods: ["Legacy West", "Willow Bend", "Kings Ridge", "Haggard Park", "Russell Creek"],
+    description: "Serving Plano homeowners with fast, reliable repairs. From Legacy West to Russell Creek, we bring McKinney-quality service south to Plano.",
+    cityContext: "Plano is a mature city with a wide range of home ages — from 1970s ranch-styles to newer Legacy West townhomes. Older Plano homes often need drywall repairs, fixture upgrades, and door adjustments that have been put off for years. We bring fresh eyes and skilled hands to every job, regardless of the home's age or style.",
+    metaDesc: "Handyman services in Plano, TX — Legacy West, Willow Bend & Russell Creek. Drywall, plumbing, electrical fixtures & more. Licensed & insured. Free estimates.",
+  },
+  {
+    slug: "fairview-tx",
+    city: "Fairview",
+    state: "TX",
+    zips: ["75069"],
+    neighborhoods: ["Stacy Ridge", "Heritage Ranch", "Timbercreek", "Summerfield", "The Reserve at Fairview"],
+    description: "Just minutes from our McKinney home base, Fairview homeowners get same-day availability and the fastest response times of any area we serve.",
+    cityContext: "Fairview is one of our closest service areas — just minutes from our McKinney shop. That proximity means Fairview homeowners often get same-day or next-morning availability. Heritage Ranch and The Reserve at Fairview are established communities with high-quality homes that deserve equally high-quality repair work.",
+    metaDesc: "Handyman services in Fairview, TX — Heritage Ranch, Timbercreek & The Reserve at Fairview. Same-day availability from our McKinney base. Free estimates.",
+  },
+  {
+    slug: "melissa-tx",
+    city: "Melissa",
+    state: "TX",
+    zips: ["75454"],
+    neighborhoods: ["Liberty", "North Creek", "Timber Creek Crossing", "Milrany Ranch", "Magnolia Hill"],
+    description: "Melissa is one of North Texas's fastest growing communities and we're proud to serve it. Same week availability, same McKinney-quality work.",
+    cityContext: "Melissa's newer communities like Liberty and Milrany Ranch are filled with homeowners who moved from larger cities and expect professional-grade service. We deliver exactly that — licensed, insured, background-checked technicians who show up on time, price transparently, and leave your home spotless.",
+    metaDesc: "Handyman services in Melissa, TX — Liberty, North Creek & Milrany Ranch. Drywall, plumbing, painting & more for Melissa's growing neighborhoods. Free estimates.",
+  },
+];
+
+const { slug } = Astro.params;
+const loc = allLocations.find((l) => l.slug === slug);
+if (!loc) return Astro.redirect("/404");
+
+const services = [
+  { name: "Drywall Repair",      href: "/services/drywall-repair" },
+  { name: "TV Mounting",         href: "/services/tv-mounting" },
+  { name: "Plumbing",            href: "/services/plumbing" },
+  { name: "Door Installation",   href: "/services/door-installation" },
+  { name: "Interior Painting",   href: "/services/interior-painting" },
+  { name: "Electrical Fixtures", href: "/services/electrical-fixtures" },
+  { name: "Furniture Assembly",  href: "/services/furniture-assembly" },
+  { name: "Carpentry & Trim",    href: "/services/carpentry" },
+];
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Locations", "item": `${SITE_URL}/locations` },
+    { "@type": "ListItem", "position": 3, "name": loc.city, "item": `${SITE_URL}/locations/${loc.slug}` }
+  ]
+};
+
+const serviceSchema = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": `Handyman Services in ${loc.city}`,
+  "provider": { "@id": `${SITE_URL}/#business` },
+  "areaServed": { "@type": "City", "name": loc.city, "addressRegion": loc.state },
+  "description": loc.description
+};
+
+const pageSchemas: object[] = [breadcrumbSchema, serviceSchema];
+
+if (loc.faqs && loc.faqs.length > 0) {
+  pageSchemas.push({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": loc.faqs.map((f: { q: string; a: string }) => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": { "@type": "Answer", "text": f.a }
+    }))
+  });
+}
+
+if (loc.seoContent) {
+  pageSchemas.push({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": loc.title || `Handyman Services in ${loc.city}, ${loc.state}`,
+    "datePublished": "2026-03-26",
+    "dateModified": "2026-03-26",
+    "author": { "@type": "Organization", "name": BUSINESS_NAME, "url": SITE_URL },
+    "publisher": { "@type": "Organization", "name": BUSINESS_NAME, "url": SITE_URL },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `${SITE_URL}/locations/${loc.slug}` },
+    "about": { "@type": "Service", "name": `Handyman Services in ${loc.city}` },
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".hero-speakable", ".overview-speakable"]
+    }
+  });
+}
+---
+
+<Layout
+  title={loc.title || `Handyman Services in ${loc.city}, ${loc.state} | ${BUSINESS_NAME}`}
+  description={loc.metaDesc}
+  ogImage="/truck-image.webp"
+  schema={pageSchemas}
+>
+  <Header />
+
+  <!-- ── Page Hero ──────────────────────────────────────────────────────── -->
+  <section class="relative min-h-[420px] lg:min-h-[500px] flex items-end overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/truck-image.webp"
+        alt={`${BUSINESS_NAME} serving ${loc.city}, TX`}
+        class="w-full h-full object-cover object-[55%_top]"
+        srcset="/truck-image-400w.webp 400w, /truck-image-640w.webp 640w, /truck-image-800w.webp 800w, /truck-image-1024w.webp 1024w, /truck-image-1456w.webp 1456w, /truck-image.webp 2048w"
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="500"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#151d25]/98 via-[#151d25]/70 to-[#151d25]/30"></div>
+    </div>
+    <div class="relative z-10 w-full site-container pb-16 lg:pb-20 pt-32">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-[13px] text-white/70 mb-5">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span>/</span>
+        <a href="/locations" class="hover:text-white transition-colors">Locations</a>
+        <span>/</span>
+        <span class="text-white/90">{loc.city}, {loc.state}</span>
+      </div>
+
+      <!-- City badge — NO zip codes -->
+      <div class="mb-5">
+        <span class="bg-[#b05d45] text-white text-[12px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest">
+          {loc.city}, {loc.state}
+        </span>
+      </div>
+
+      <div class="hero-speakable">
+        <h1 class="text-white font-black tracking-tight leading-[1.05] mb-5 max-w-[680px]" style="font-size: clamp(2.25rem, 4vw, 3.5rem);">
+          {loc.title ? loc.title : <>Handyman Services<br/>in {loc.city}, TX</>}
+        </h1>
+        <p class="text-white/90 text-[18px] max-w-[580px] leading-relaxed mb-8">
+          {loc.description}
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-4">
+        <a href={telHref} class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Get a Free Estimate
+        </a>
+        <a href="/contact" class="btn-ghost">Request Online</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Services in This Area ─────────────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+      <div class="text-center section-header">
+        <p class="section-label">Available in {loc.city}</p>
+        <h2 class="section-heading">Services We Offer</h2>
+        <div class="accent-divider-center"></div>
+        <p class="text-[#567798] text-[17px] mt-2 max-w-[460px] mx-auto leading-relaxed">
+          Every service available in {PRIMARY_CITY} is available in {loc.city}.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        {services.map(({ name, href }) => (
+          <a
+            href={href}
+            class="bg-white rounded-xl p-5 border border-[#cdd8e3] hover:border-[#2c3e50] hover:shadow-md transition-all flex items-center gap-3 group"
+          >
+            <div class="w-3 h-3 rounded-full bg-[#b05d45] shrink-0 group-hover:scale-125 transition-transform"></div>
+            <span class="text-[#151d25] text-[15px] font-semibold">{name}</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="/services" class="inline-flex items-center gap-2 text-[#2c3e50] hover:text-[#b05d45] font-bold text-[14px] transition-colors uppercase tracking-widest">
+          View all services
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── City Context + Neighborhoods ───────────────────────────────────── -->
+  <section class="bg-white section-padding">
+    <div class="site-container">
+
+      <!-- City-specific context paragraph — unique per location for SEO -->
+      {loc.cityContext && (
+        <div class="max-w-[760px] mx-auto mb-12 text-center reveal-item">
+          <p class="section-label">Why {loc.city} Homeowners Choose Us</p>
+          <p class="text-[#567798] text-[17px] leading-relaxed">{loc.cityContext}</p>
+        </div>
+      )}
+
+      <div class="text-center section-header">
+        <p class="section-label">Local Coverage</p>
+        <h2 class="section-heading">Neighborhoods We Serve in {loc.city}</h2>
+        <div class="accent-divider-center"></div>
+        <p class="text-[#567798] text-[17px] mt-2 max-w-[480px] mx-auto leading-relaxed">
+          We work throughout {loc.city} — including these popular communities:
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3 justify-center max-w-[800px] mx-auto">
+        {loc.neighborhoods.map((n) => (
+          <span class="px-5 py-2.5 bg-[#f0f2f4] border border-[#cdd8e3] hover:border-[#2c3e50] text-[#567798] text-[15px] font-medium rounded-full transition-colors cursor-default">
+            {n}
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SEO Content Block (only when seoContent is present) ─────────────── -->
+  {loc.seoContent && (
+    <section class="bg-white section-padding">
+      <div class="site-container max-w-[900px] mx-auto">
+
+        {/* Overview + Highlights */}
+        <div class="overview-speakable grid lg:grid-cols-2 gap-10 mb-16 items-start">
+          <div>
+            <p class="section-label">Overview</p>
+            <p class="text-[#567798] text-[17px] leading-relaxed">{loc.seoContent.overview}</p>
+          </div>
+          <div class="bg-[#f0f2f4] rounded-2xl p-8 border border-[#cdd8e3]">
+            <p class="text-[#151d25] font-bold text-[14px] uppercase tracking-widest mb-5">Key Highlights</p>
+            <ul class="space-y-3">
+              {loc.seoContent.highlights.map((h: string) => (
+                <li class="flex items-start gap-3 text-[#567798] text-[15px] leading-relaxed">
+                  <svg class="shrink-0 mt-0.5" width="16" height="16" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#b05d45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Contractor Section + Table */}
+        {loc.seoContent.contractorSection && (
+          <div class="mb-16">
+            <h2 class="text-[#151d25] font-black text-[26px] lg:text-[32px] tracking-tight mb-5">{loc.seoContent.contractorSection.heading}</h2>
+            <p class="text-[#567798] text-[17px] leading-relaxed mb-8">{loc.seoContent.contractorSection.body}</p>
+            {loc.seoContent.contractorSection.tableRows && (
+              <div class="overflow-x-auto rounded-xl border border-[#cdd8e3]">
+                <table class="w-full text-[14px]">
+                  <thead>
+                    <tr class="bg-[#151d25] text-white">
+                      <th class="px-5 py-3.5 text-left font-bold">Service Type</th>
+                      <th class="px-5 py-3.5 text-left font-bold">Description</th>
+                      <th class="px-5 py-3.5 text-left font-bold">Key Features</th>
+                      <th class="px-5 py-3.5 text-left font-bold">Customer Benefit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loc.seoContent.contractorSection.tableRows.map((row: any, i: number) => (
+                      <tr class={i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}>
+                        <td class="px-5 py-3.5 font-semibold text-[#151d25]">{row.criteria}</td>
+                        <td class="px-5 py-3.5 text-[#567798]">{row.description}</td>
+                        <td class="px-5 py-3.5 text-[#567798]">{row.benefit}</td>
+                        <td class="px-5 py-3.5 text-[#567798]">{row.outcome}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Comprehensive Section */}
+        {loc.seoContent.comprehensiveSection && (
+          <div class="mb-16">
+            <h2 class="text-[#151d25] font-black text-[26px] lg:text-[32px] tracking-tight mb-5">{loc.seoContent.comprehensiveSection.heading}</h2>
+            <p class="text-[#567798] text-[17px] leading-relaxed">{loc.seoContent.comprehensiveSection.body}</p>
+          </div>
+        )}
+
+        {/* Transparency Section + Table */}
+        {loc.seoContent.transparencySection && (
+          <div class="mb-16">
+            <h2 class="text-[#151d25] font-black text-[26px] lg:text-[32px] tracking-tight mb-5">{loc.seoContent.transparencySection.heading}</h2>
+            <p class="text-[#567798] text-[17px] leading-relaxed mb-8">{loc.seoContent.transparencySection.body}</p>
+            {loc.seoContent.transparencySection.tableRows && (
+              <div class="overflow-x-auto rounded-xl border border-[#cdd8e3]">
+                <table class="w-full text-[14px]">
+                  <thead>
+                    <tr class="bg-[#151d25] text-white">
+                      <th class="px-5 py-3.5 text-left font-bold">Service</th>
+                      <th class="px-5 py-3.5 text-left font-bold">Features</th>
+                      <th class="px-5 py-3.5 text-left font-bold">Assurance</th>
+                      <th class="px-5 py-3.5 text-left font-bold">Commitment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loc.seoContent.transparencySection.tableRows.map((row: any, i: number) => (
+                      <tr class={i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}>
+                        <td class="px-5 py-3.5 font-semibold text-[#151d25]">{row.service}</td>
+                        <td class="px-5 py-3.5 text-[#567798]">{row.features}</td>
+                        <td class="px-5 py-3.5 text-[#567798]">{row.assurance}</td>
+                        <td class="px-5 py-3.5 text-[#567798]">{row.commitment}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Expertise Section */}
+        {loc.seoContent.expertiseSection && (
+          <div class="mb-8">
+            <h2 class="text-[#151d25] font-black text-[26px] lg:text-[32px] tracking-tight mb-5">{loc.seoContent.expertiseSection.heading}</h2>
+            <p class="text-[#567798] text-[17px] leading-relaxed">{loc.seoContent.expertiseSection.body}</p>
+          </div>
+        )}
+
+      </div>
+    </section>
+  )}
+
+  <!-- ── FAQ Section (only when faqs are present) ───────────────────────── -->
+  {loc.faqs && loc.faqs.length > 0 && (
+    <section class="bg-[#f0f2f4] section-padding">
+      <div class="site-container max-w-[760px] mx-auto">
+        <div class="text-center section-header">
+          <p class="section-label">Common Questions</p>
+          <h2 class="section-heading">Frequently Asked Questions</h2>
+          <div class="accent-divider-center"></div>
+        </div>
+        <div class="space-y-4 mt-10">
+          {loc.faqs.map((faq: { q: string; a: string }) => (
+            <div class="bg-white rounded-xl border border-[#cdd8e3] p-6">
+              <h3 class="text-[#151d25] font-bold text-[17px] mb-3">{faq.q}</h3>
+              <p class="text-[#567798] text-[16px] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ── Trust + CTA ────────────────────────────────────────────────────── -->
+  <section class="bg-[#2c3e50] section-padding-sm">
+    <div class="site-container">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-10 text-center lg:text-left">
+        <div>
+          <h2 class="text-white text-[28px] lg:text-[34px] font-black tracking-tight mb-5">
+            Your {loc.city} Handyman Pros
+          </h2>
+          <div class="flex flex-wrap gap-5 justify-center lg:justify-start">
+            {["Fully Insured", "Background Checked", "Free Estimates", "Same-Week Service"].map((b) => (
+              <div class="flex items-center gap-2 text-[14px] text-white/90">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="20 6 9 17 4 12" stroke="#e2a03f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="font-semibold">{b}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <a href={telHref} class="btn-primary shrink-0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Call Now {PHONE_DISPLAY}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

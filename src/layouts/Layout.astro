@@ -1,0 +1,222 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+import {
+  BUSINESS_NAME,
+  SITE_URL,
+  PHONE_RAW,
+  EMAIL,
+  ADDRESS_STREET,
+  ADDRESS_CITY,
+  PRIMARY_CITY,
+  COLORS,
+  SEO_DEFAULT_TITLE,
+  SEO_DEFAULT_DESC,
+  OG_IMAGE_DEFAULT,
+  SCHEMA_TYPE,
+  SCHEMA_PRICE_RANGE,
+  REVIEW_RATING,
+  REVIEW_COUNT,
+  FACEBOOK_URL,
+  INSTAGRAM_URL,
+  NEXTDOOR_URL,
+} from "../config/site";
+
+interface Props {
+  title?:          string;
+  description?:    string;
+  ogImage?:        string;
+  /** Pass page-specific JSON-LD schema objects to inject in <head> */
+  schema?:         object | object[];
+  /** Noindex pages (e.g. success, 404) */
+  noindex?:        boolean;
+}
+
+const {
+  title       = SEO_DEFAULT_TITLE,
+  description = SEO_DEFAULT_DESC,
+  ogImage     = OG_IMAGE_DEFAULT,
+  schema,
+  noindex = false,
+} = Astro.props;
+
+const siteUrl    = SITE_URL;
+const canonical  = new URL(Astro.url.pathname, siteUrl).toString();
+const ogImageAbs = ogImage.startsWith("http") ? ogImage : `${siteUrl}${ogImage}`;
+
+// ── Global LocalBusiness schema (injected on every page) ──────────────────
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": ["LocalBusiness", SCHEMA_TYPE],
+  "@id": `${siteUrl}/#business`,
+  "name": BUSINESS_NAME,
+  "description": `Top-rated handyman services in ${PRIMARY_CITY}. Drywall repair, TV mounting, plumbing, door installation, interior painting, electrical fixtures, and more.`,
+  "url": siteUrl,
+  "telephone": `+1${PHONE_RAW}`,
+  "email": EMAIL,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": ADDRESS_STREET,
+    "addressLocality": PRIMARY_CITY,
+    "addressRegion": "TX",
+    "postalCode": "75069",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 33.1972,
+    "longitude": -96.6397
+  },
+  "areaServed": [
+    { "@type": "City", "name": "McKinney", "sameAs": "https://en.wikipedia.org/wiki/McKinney,_Texas" },
+    { "@type": "City", "name": "Allen" },
+    { "@type": "City", "name": "Frisco" },
+    { "@type": "City", "name": "Prosper" },
+    { "@type": "City", "name": "Celina" },
+    { "@type": "City", "name": "Anna" },
+    { "@type": "City", "name": "Plano" },
+    { "@type": "City", "name": "Fairview" },
+    { "@type": "City", "name": "Melissa" }
+  ],
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+      "opens": "07:00",
+      "closes": "19:00"
+    }
+  ],
+  "priceRange": SCHEMA_PRICE_RANGE,
+  "currenciesAccepted": "USD",
+  "paymentAccepted": "Cash, Credit Card, Check, Venmo, Zelle",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": REVIEW_RATING,
+    "reviewCount": REVIEW_COUNT.replace(/\D/g, ""),
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "image": ogImageAbs,
+  "logo": {
+    "@type": "ImageObject",
+    "url": `${siteUrl}/logo-horizontal-dark.webp`,
+    "width": 350,
+    "height": 154
+  },
+  "sameAs": [
+    FACEBOOK_URL,
+    INSTAGRAM_URL,
+    NEXTDOOR_URL,
+  ].filter(Boolean)
+};
+
+// Merge page-specific schema with the global business schema
+const allSchemas = [
+  localBusinessSchema,
+  ...(schema ? (Array.isArray(schema) ? schema : [schema]) : []),
+];
+
+// ── GA4 Measurement ID — set via env var ──────────────────────────────────
+const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+
+    <!-- ── Open Graph ──────────────────────────────────────────────────── -->
+    <meta property="og:title"        content={title} />
+    <meta property="og:description"  content={description} />
+    <meta property="og:image"        content={ogImageAbs} />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:type"         content="website" />
+    <meta property="og:url"          content={canonical} />
+    <meta property="og:site_name"    content={BUSINESS_NAME} />
+    <meta property="og:locale"       content="en_US" />
+
+    <!-- ── Twitter / X Card ────────────────────────────────────────────── -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImageAbs} />
+
+    <!-- ── Favicon ─────────────────────────────────────────────────────────────────────── -->
+    <link rel="icon"             type="image/x-icon"  href="/favicon.ico" />
+    <link rel="icon"             type="image/png"     href="/favicon-32.png" sizes="32x32" />
+    <link rel="icon"             type="image/png"     href="/favicon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon"                      href="/apple-touch-icon.png" />
+    <link rel="manifest"                                   href="/site.webmanifest" />
+
+    <!-- ── Theme color ────────────────────────────────────────────────────────────────────── -->
+    <meta name="theme-color" content={COLORS.navy} />
+
+    <!-- ── Google Search Console verification ─────────────────────────────────────────────────────────────────────── -->
+    {import.meta.env.PUBLIC_GSC_VERIFICATION && (
+      <meta name="google-site-verification" content={import.meta.env.PUBLIC_GSC_VERIFICATION} />
+    )}
+
+    <!-- ── Page title ──────────────────────────────────────────────────── -->
+    <title>{title}</title>
+
+    <!-- ── LCP Hero Image Preload — tells browser to fetch before CSS renders ── -->
+    <!-- Only the homepage uses truck-image; other pages override via their own
+         fetchpriority="high" + loading="eager" on the hero <img> tag. -->
+    {Astro.url.pathname === "/" && (
+      <link
+        rel="preload"
+        as="image"
+        href="/truck-image-800w.webp"
+        imagesrcset="/truck-image-400w.webp 400w, /truck-image-640w.webp 640w, /truck-image-800w.webp 800w, /truck-image-1024w.webp 1024w, /truck-image-1456w.webp 1456w, /truck-image.webp 2048w"
+        imagesizes="100vw"
+        fetchpriority="high"
+      />
+    )}
+
+    <!-- ── Preconnect + dns-prefetch for GA4 ──────────────────────────────── -->
+    {ga4Id && <link rel="preconnect" href="https://www.googletagmanager.com" />}
+    {ga4Id && <link rel="dns-prefetch" href="https://www.google-analytics.com" />}
+
+    <!-- ── Astro Font API — self-hosted, preloaded, no Google Fonts requests ── -->
+    <!-- Fonts configured in astro.config.mjs fonts[] array -->
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-body" preload />
+
+    <!-- ── Schema.org JSON-LD ──────────────────────────────────────────── -->
+    {allSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+
+    <!-- ── Google Analytics 4 (GA4) — deferred until after first paint ──────
+         Loading gtag.js with defer (not async) ensures it runs after the DOM
+         is parsed and the first paint is complete, eliminating the forced
+         reflow that async gtag.js causes during initial page load.
+    ── -->
+    {ga4Id && (
+      <>
+        <script defer src={`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`}></script>
+        <script define:vars={{ ga4Id }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          // Queue the initial config — gtag.js will process it once loaded
+          gtag('js', new Date());
+          gtag('config', ga4Id, {
+            page_path: window.location.pathname,
+            send_page_view: true,
+          });
+        </script>
+      </>
+    )}
+  </head>
+  <body class="bg-[#f8f9fa] text-[#151d25] antialiased">
+    <slot />
+  </body>
+</html>
+
+<!-- Global reset is handled by src/styles/global.css via @import tailwindcss -->

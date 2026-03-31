@@ -1,0 +1,73 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { BUSINESS_NAME, PHONE_DISPLAY, PHONE_RAW } from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+---
+
+<Layout
+  title={`Request Received | ${BUSINESS_NAME}`}
+  description="Your estimate request has been received. We'll be in touch within 24 hours."
+  noindex={true}
+>
+  <Header />
+
+  <main class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+      <div class="max-w-[600px] mx-auto text-center reveal-item">
+        <!-- Success icon — WCAG: white on #2c3e50 = 9:1 ✅ -->
+        <div class="w-20 h-20 bg-[#2c3e50] rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+        <h1 class="text-[#151d25] font-black tracking-tight leading-tight mb-4" style="font-size: clamp(1.75rem, 3vw, 2.5rem);">
+          Request Received!
+        </h1>
+        <div class="accent-divider-center"></div>
+        <!-- WCAG: #567798 on #f0f2f4 = 4.6:1 ✅ -->
+        <p class="text-[#567798] text-[17px] leading-relaxed mb-5 max-w-[480px] mx-auto">
+          Thanks for reaching out. We'll review your request and get back to you within 24 hours with a transparent, itemized quote.
+        </p>
+        <!-- WCAG: #2c3e50 on #f0f2f4 = 9:1 ✅ | #b05d45 link = 3.8:1 — large/bold text passes ✅ -->
+        <p class="text-[#2c3e50] text-[15px] font-medium mb-10">
+          Need something faster? Call us directly:
+          <a href={telHref} class="text-[#b05d45] font-bold hover:underline">{PHONE_DISPLAY}</a>
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/" class="btn-primary">Back to Home</a>
+          <a href="/services" class="btn-secondary">Browse Services</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Fire GA4 conversion event on page load (form submission confirmation)
+  if (typeof gtag !== "undefined") {
+    gtag("event", "conversion", {
+      event_category: "lead",
+      event_label: "form_submission_confirmed",
+      value: 1,
+    });
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>

@@ -1,0 +1,375 @@
+---
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  EMAIL,
+  ADDRESS_STREET,
+  ADDRESS_CITY,
+  ADDRESS_STATE,
+  ADDRESS_ZIP,
+  REVIEW_COUNT,
+} from "../config/site";
+
+const services = [
+  { label: "Drywall Repair",      href: "/services/drywall-repair" },
+  { label: "TV Mounting",         href: "/services/tv-mounting" },
+  { label: "Plumbing",            href: "/services/plumbing" },
+  { label: "Door Installation",   href: "/services/door-installation" },
+  { label: "Interior Painting",   href: "/services/interior-painting" },
+  { label: "Electrical Fixtures", href: "/services/electrical-fixtures" },
+  { label: "Carpentry & Trim",    href: "/services/carpentry" },
+  { label: "Furniture Assembly",  href: "/services/furniture-assembly" },
+];
+
+const quickLinks = [
+  { label: "Services",    href: "/services" },
+  { label: "Locations",   href: "/locations" },
+  { label: "Projects",    href: "/projects" },
+  { label: "About Us",    href: "/about" },
+  { label: "Contact Us",  href: "/contact" },
+  { label: "Our Process", href: "/process" },
+];
+
+const serviceAreas = [
+  { city: "McKinney",  slug: "mckinney-tx" },
+  { city: "Allen",     slug: "allen-tx" },
+  { city: "Frisco",    slug: "frisco-tx" },
+  { city: "Prosper",   slug: "prosper-tx" },
+  { city: "Celina",    slug: "celina-tx" },
+  { city: "Plano",     slug: "plano-tx" },
+  { city: "Fairview",  slug: "fairview-tx" },
+  { city: "Melissa",   slug: "melissa-tx" },
+  { city: "Anna",      slug: "anna-tx" },
+];
+
+const trustBadges = [
+  { icon: "shield",  label: "Fully Insured & Licensed" },
+  { icon: "star",    label: `${REVIEW_COUNT} Five-Star Reviews` },
+  { icon: "check",   label: "Background Checked" },
+  { icon: "tag",     label: "Free Estimates" },
+  { icon: "clock",   label: "Same-Week Availability" },
+];
+
+const year     = new Date().getFullYear();
+const telHref  = `tel:${PHONE_RAW}`;
+const smsHref  = `sms:${PHONE_RAW}`;
+const mailHref = `mailto:${EMAIL}`;
+---
+
+<!-- ── Desktop / Tablet Footer — hidden on mobile (replaced by sticky nav) ── -->
+<footer class="hidden sm:block bg-[#151d25] text-[#9bb1c8]">
+
+  <!-- ── Main 4-column grid ──────────────────────────────────────────────── -->
+  <div class="site-container py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+    <!-- Col 1: Brand — logo + NAP -->
+    <div class="flex flex-col gap-5">
+      <a href="/" aria-label={`${BUSINESS_NAME} — Home`}>
+        <picture>
+          <source
+            type="image/webp"
+            srcset="/logo-ghl-dark.webp 175w, /logo-ghl-dark-350w.webp 350w"
+            sizes="175px"
+          />
+          <img
+            src="/logo-ghl-dark.webp"
+            alt={`${BUSINESS_NAME} — Handyman & Repairs`}
+            width="175"
+            height="77"
+            class="h-[52px] w-auto"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+      </a>
+      <address class="not-italic flex flex-col gap-2.5 text-[14px]">
+        <a
+          href={telHref}
+          class="flex items-center gap-2.5 text-[#9bb1c8] hover:text-white transition-colors"
+          onclick="gtag && gtag('event', 'phone_click', {event_category: 'engagement', event_label: 'footer'})"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {PHONE_DISPLAY}
+        </a>
+        <a href={mailHref} class="flex items-center gap-2.5 text-[#9bb1c8] hover:text-white transition-colors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {EMAIL}
+        </a>
+        <div class="flex items-start gap-2.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="mt-0.5 shrink-0">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <span>{ADDRESS_STREET}<br/>{ADDRESS_CITY}, {ADDRESS_STATE} {ADDRESS_ZIP}</span>
+        </div>
+      </address>
+    </div>
+
+    <!-- Col 2: Services — 2-column sub-grid -->
+    <div>
+      <h3 class="text-white font-semibold text-[13px] uppercase tracking-[0.08em] mb-5">Our Services</h3>
+      <ul class="grid grid-cols-2 gap-x-4 gap-y-2.5">
+        {services.map(({ label, href }) => (
+          <li>
+            <a href={href} class="text-[14px] text-[#8ba4be] hover:text-white transition-colors leading-snug block">
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- Col 3: Quick Links -->
+    <div>
+      <h3 class="text-white font-semibold text-[13px] uppercase tracking-[0.08em] mb-5">Quick Links</h3>
+      <ul class="flex flex-col gap-2.5">
+        {quickLinks.map(({ label, href }) => (
+          <li>
+            <a href={href} class="text-[14px] text-[#8ba4be] hover:text-white transition-colors">
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- Col 4: Service Areas -->
+    <div>
+      <h3 class="text-white font-semibold text-[13px] uppercase tracking-[0.08em] mb-5">Cities We Serve</h3>
+      <div class="flex flex-wrap gap-2">
+        {serviceAreas.map(({ city, slug }) => (
+          <a href={`/locations/${slug}`} class="pill-chip-dark">
+            {city}, TX
+          </a>
+        ))}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Trust Badge Row — full-width box between grid and bottom bar ──── -->
+  <div class="border-t border-[#2c3e50]">
+    <div class="site-container py-5">
+      <div class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+        {trustBadges.map(({ icon, label }) => (
+          <div class="flex items-center gap-2 text-[13px] text-[#8ba4be]">
+            {icon === "shield" && (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )}
+            {icon === "star" && (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#e2a03f" aria-hidden="true">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            )}
+            {icon === "check" && (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" stroke="#e2a03f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )}
+            {icon === "tag" && (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <line x1="7" y1="7" x2="7.01" y2="7" stroke="#e2a03f" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            )}
+            {icon === "clock" && (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="#e2a03f" stroke-width="2"/>
+                <polyline points="12 6 12 12 16 14" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )}
+            <span>{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Bottom bar — copyright + legal links ──────────────────────────── -->
+  <div class="border-t border-[#2c3e50]">
+    <div class="site-container py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-[13px] text-[#567798]">
+        &copy; {year} {BUSINESS_NAME}. All rights reserved.
+      </p>
+      <div class="flex items-center gap-5">
+        <a href="/privacy-policy" class="text-[13px] text-[#567798] hover:text-[#9bb1c8] transition-colors">Privacy Policy</a>
+        <a href="/terms-of-service" class="text-[13px] text-[#567798] hover:text-[#9bb1c8] transition-colors">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+
+</footer>
+
+<!-- ── Sticky Mobile Bottom Nav — visible only on phones (< sm = 640px) ── -->
+<!-- Replaces the footer entirely on mobile. Provides 5 high-intent actions. -->
+<nav
+  class="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#151d25] border-t border-[#2c3e50] safe-area-bottom"
+  aria-label="Mobile quick actions"
+>
+  <div class="grid grid-cols-5 h-[64px]">
+
+    <!-- Home -->
+    <a
+      href="/"
+      class="mobile-nav-item"
+      aria-label="Home"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Home</span>
+    </a>
+
+    <!-- Email -->
+    <a
+      href={mailHref}
+      class="mobile-nav-item"
+      aria-label="Email us"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Email</span>
+    </a>
+
+    <!-- Quote — center CTA, elevated pill -->
+    <a
+      href="/#estimate"
+      class="mobile-nav-item mobile-nav-cta"
+      aria-label="Get a free quote"
+    >
+      <div class="mobile-nav-cta-pill">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <polyline points="10 9 9 9 8 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span>Quote</span>
+    </a>
+
+    <!-- Call -->
+    <a
+      href={telHref}
+      class="mobile-nav-item"
+      aria-label="Call us"
+      onclick="gtag && gtag('event', 'phone_click', {event_category: 'engagement', event_label: 'mobile_nav'})"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Call</span>
+    </a>
+
+    <!-- SMS -->
+    <a
+      href={smsHref}
+      class="mobile-nav-item"
+      aria-label="Text us"
+    >
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>SMS</span>
+    </a>
+
+  </div>
+</nav>
+
+<!-- Spacer so page content isn't hidden behind the sticky nav on mobile -->
+<div class="sm:hidden h-[64px]" aria-hidden="true"></div>
+
+<style>
+  /* ── Mobile nav item — base state ──────────────────────────────────────── */
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #6b8aa8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    padding: 8px 4px 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-nav-item:hover,
+  .mobile-nav-item:active {
+    color: #f8f9fa;
+  }
+  /* Active page highlight — set via JS */
+  .mobile-nav-item.is-active {
+    color: #e2a03f;
+  }
+
+  /* ── Center CTA pill — elevated terracotta button ──────────────────────── */
+  .mobile-nav-cta {
+    position: relative;
+    color: #9bb1c8;
+    padding-top: 0;
+    justify-content: flex-end;
+    padding-bottom: 6px;
+  }
+  .mobile-nav-cta-pill {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 52px;
+    height: 52px;
+    background: #b05d45;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(176, 93, 69, 0.55);
+    border: 3px solid #151d25;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .mobile-nav-cta:hover .mobile-nav-cta-pill,
+  .mobile-nav-cta:active .mobile-nav-cta-pill {
+    background: #8d4a37;
+    transform: translateX(-50%) scale(1.06);
+  }
+  .mobile-nav-cta span {
+    position: relative;
+    z-index: 1;
+    color: #9bb1c8;
+    margin-top: 2px;
+  }
+
+  /* ── iOS safe area padding ─────────────────────────────────────────────── */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+</style>
+
+<script>
+  // Highlight the active nav item based on current pathname
+  (function () {
+    const path = window.location.pathname;
+    document.querySelectorAll<HTMLAnchorElement>(".mobile-nav-item").forEach((link) => {
+      const href = link.getAttribute("href") ?? "";
+      // Exact match for home, prefix match for other pages
+      const isActive = href === "/" ? path === "/" : (href.startsWith("/") && path.startsWith(href));
+      if (isActive) link.classList.add("is-active");
+    });
+  })();
+</script>

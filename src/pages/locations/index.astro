@@ -1,0 +1,228 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  PRIMARY_CITY,
+  SITE_URL,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+
+// Location cards — NO zip codes. Homeowners search by city + problem, never by zip.
+// Neighborhood context gives local relevance without clutter.
+const locations = [
+  {
+    slug: "mckinney-tx",
+    city: "McKinney, TX",
+    neighborhoods: "Stonebridge Ranch · Craig Ranch · Adriatica · Eldorado",
+    desc: "Our home base. Same-day availability for most McKinney neighborhoods.",
+    primary: true,
+  },
+  {
+    slug: "frisco-tx",
+    city: "Frisco, TX",
+    neighborhoods: "Starwood · Plantation Resort · Newman Village",
+    desc: "Fast response times across all Frisco communities.",
+    primary: false,
+  },
+  {
+    slug: "allen-tx",
+    city: "Allen, TX",
+    neighborhoods: "Twin Creeks · Watters Crossing · Montgomery Farm",
+    desc: "Reliable repairs for Allen homeowners — usually same week.",
+    primary: false,
+  },
+  {
+    slug: "plano-tx",
+    city: "Plano, TX",
+    neighborhoods: "Legacy West · Willow Bend · Los Rios",
+    desc: "Serving Plano homeowners with fast, reliable repairs.",
+    primary: false,
+  },
+  {
+    slug: "prosper-tx",
+    city: "Prosper, TX",
+    neighborhoods: "Windsong Ranch · Star Trail · Gentle Creek",
+    desc: "Serving all Prosper communities including new construction.",
+    primary: false,
+  },
+  {
+    slug: "celina-tx",
+    city: "Celina, TX",
+    neighborhoods: "Light Farms · Cross Creek · Cambridge Crossing",
+    desc: "Serving Celina and surrounding communities.",
+    primary: false,
+  },
+  {
+    slug: "fairview-tx",
+    city: "Fairview, TX",
+    neighborhoods: "Fairview Farms · Heritage Ranch",
+    desc: "Just minutes from our McKinney base — fast response guaranteed.",
+    primary: false,
+  },
+  {
+    slug: "anna-tx",
+    city: "Anna, TX",
+    neighborhoods: "Anna Town Square · Sherley Heritage Park",
+    desc: "Serving Anna and Van Alstyne area homeowners.",
+    primary: false,
+  },
+  {
+    slug: "melissa-tx",
+    city: "Melissa, TX",
+    neighborhoods: "Melissa Ridge · Liberty",
+    desc: "Same quality service as McKinney, right in your neighborhood.",
+    primary: false,
+  },
+];
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Locations", "item": `${SITE_URL}/locations` }
+  ]
+};
+---
+
+<Layout
+  title={`Service Areas | ${BUSINESS_NAME} — Collin County Handyman`}
+  description={`${BUSINESS_NAME} serves ${PRIMARY_CITY}, Frisco, Allen, Plano, Prosper, Celina, Fairview, Anna, Melissa and surrounding Collin County communities. Licensed & insured. Call ${PHONE_DISPLAY}.`}
+  schema={breadcrumbSchema}
+>
+  <Header />
+
+  <!-- ── Page Hero — real photo, object-center ─────────────────────────── -->
+  <section class="relative min-h-[420px] lg:min-h-[500px] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/truck-image.webp"
+        alt={`${BUSINESS_NAME} service truck in a North Texas neighborhood`}
+        class="w-full h-full object-cover object-[55%_top]"
+        srcset="/truck-image-400w.webp 400w, /truck-image-640w.webp 640w, /truck-image-800w.webp 800w, /truck-image-1024w.webp 1024w, /truck-image-1456w.webp 1456w, /truck-image.webp 2048w"
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="500"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-[#151d25]/95 via-[#151d25]/80 to-[#151d25]/35"></div>
+    </div>
+
+    <div class="relative z-10 w-full site-container py-24 lg:py-32">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-white/80" aria-current="page">Locations</span>
+      </nav>
+      <p class="section-label">Where We Work</p>
+      <h1 class="text-white font-black tracking-tight leading-[1.02] mb-5 max-w-[600px]"
+          style="font-size: clamp(2.5rem, 4.5vw, 3.75rem); font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+        Serving {PRIMARY_CITY} &amp;<br/>North Texas
+      </h1>
+      <p class="text-white/90 text-[18px] max-w-[500px] leading-relaxed">
+        Based in {PRIMARY_CITY} — we serve homeowners across the North Texas corridor from Allen to Celina.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Location Cards — NO zip codes ────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+
+      <div class="text-center section-header">
+        <p class="section-label">Service Areas</p>
+        <h2 class="section-heading">Cities We Serve</h2>
+        <div class="accent-divider-center"></div>
+        <p class="text-[#567798] text-[17px] max-w-[460px] mx-auto leading-relaxed">
+          Fast, reliable home repairs across Collin County and surrounding communities.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {locations.map(({ slug, city, neighborhoods, desc, primary }) => (
+          <a
+            href={`/locations/${slug}`}
+            class={`group rounded-2xl border p-8 transition-all duration-300 reveal-item ${
+              primary
+                ? "bg-[#2c3e50] border-[#2c3e50] hover:bg-[#1a252f] hover:border-[#1a252f] shadow-xl"
+                : "bg-white border-[#cdd8e3] hover:border-[#2c3e50] hover:shadow-xl"
+            }`}
+          >
+            <!-- Badge — WCAG: white on Terracotta Clay = 4.7:1 ✅ -->
+            <div class="mb-5">
+              {primary
+                ? <span class="bg-[#b05d45] text-white text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-widest">Home Base</span>
+                : <span class="bg-[#f0f2f4] text-[#567798] text-[11px] font-semibold px-3 py-1.5 rounded-full uppercase tracking-widest border border-[#cdd8e3]">Service Area</span>
+              }
+            </div>
+
+            <!-- City name — WCAG: white on Charcoal Blue = 9:1 ✅ / Ink Black on white = 18:1 ✅ -->
+            <h2 class={`text-[26px] font-black tracking-tight mb-2 leading-tight ${
+              primary ? "text-white" : "text-[#151d25]"
+            }`}
+                style="font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+              {city}
+            </h2>
+
+            <!-- Neighborhoods — replaces zip codes with useful context -->
+            <p class={`text-[12px] font-medium mb-3 ${primary ? "text-[#e2a03f]" : "text-[#b05d45]"}`}>
+              {neighborhoods}
+            </p>
+
+            <!-- Description — WCAG: white/85 on Charcoal Blue = 7.7:1 ✅ / Muted on white ✅ -->
+            <p class={`text-[15px] leading-relaxed mb-6 ${primary ? "text-white/85" : "text-[#567798]"}`}>
+              {desc}
+            </p>
+
+            <!-- CTA link — WCAG: Honey Bronze on Charcoal Blue = passes ✅ / Terracotta on white = 4.7:1 ✅ -->
+            <div class={`flex items-center gap-2 text-[13px] font-bold uppercase tracking-wide group-hover:gap-3 transition-all duration-200 ${
+              primary ? "text-[#e2a03f]" : "text-[#b05d45]"
+            }`}>
+              View service area
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA Banner — WCAG: white on Terracotta Clay = 4.7:1 ✅ ─────── -->
+  <section class="bg-[#b05d45] section-padding-sm">
+    <div class="site-container flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+      <div>
+        <h2 class="text-white font-black text-[28px] lg:text-[36px] tracking-tight leading-tight mb-2"
+            style="font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+          Not sure if we cover your area?
+        </h2>
+        <p class="text-white/80 text-[17px] leading-relaxed">
+          Just call — we'll let you know and likely still come out.
+        </p>
+      </div>
+      <a href={telHref} class="btn-navy shrink-0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Call Now {PHONE_DISPLAY}
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("is-visible")),
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>

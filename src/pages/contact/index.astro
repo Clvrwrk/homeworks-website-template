@@ -1,0 +1,277 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  EMAIL,
+  SITE_URL,
+  PRIMARY_CITY,
+  RESPONSE_TIME,
+  BUSINESS_HOURS,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+const mailHref = `mailto:${EMAIL}`;
+
+const error = Astro.url.searchParams.get("error");
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Contact Us", "item": `${SITE_URL}/contact` }
+  ]
+};
+
+const contactPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": `Contact ${BUSINESS_NAME}`,
+  "url": `${SITE_URL}/contact`,
+  "mainEntity": { "@id": `${SITE_URL}/#business` }
+};
+---
+
+<Layout
+  title={`Contact Us | ${BUSINESS_NAME} — Free Estimate in ${PRIMARY_CITY}`}
+  description={`Get a free estimate from ${BUSINESS_NAME}. Call ${PHONE_DISPLAY} or fill out our contact form. We respond within ${RESPONSE_TIME} for all home repair and handyman services.`}
+  schema={[breadcrumbSchema, contactPageSchema]}
+>
+  <Header />
+
+  <!-- ── Page Hero ──────────────────────────────────────────────────────── -->
+  <section class="relative min-h-[420px] lg:min-h-[500px] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/truck-image.webp"
+        alt={`${BUSINESS_NAME} branded service truck parked outside a home`}
+        class="w-full h-full object-cover object-[55%_top]"
+        srcset="/truck-image-400w.webp 400w, /truck-image-640w.webp 640w, /truck-image-800w.webp 800w, /truck-image-1024w.webp 1024w, /truck-image-1456w.webp 1456w, /truck-image.webp 2048w"
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="500"
+      />
+      <!-- Left-heavy gradient: text readable left, photo visible right -->
+      <div class="absolute inset-0 bg-gradient-to-r from-[#151d25]/95 via-[#151d25]/80 to-[#151d25]/35"></div>
+    </div>
+    <div class="relative z-10 w-full site-container py-24 lg:py-32">
+      <!-- Breadcrumb — WCAG: white/60 on dark overlay passes ✅ -->
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-white/80" aria-current="page">Contact Us</span>
+      </nav>
+      <p class="section-label">Get In Touch</p>
+      <h1 class="text-white font-black tracking-tight leading-[1.02] mb-5 max-w-[600px]"
+          style="font-size: clamp(2.5rem, 4.5vw, 3.75rem); font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+        Request a Free Estimate
+      </h1>
+      <p class="text-white/90 text-[18px] leading-relaxed max-w-[480px]">
+        We typically respond within 24 hours. Call us directly for same-day service.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Contact Section ───────────────────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-[1fr_500px] gap-12 lg:gap-16 items-start">
+
+        <!-- Left: Contact Info -->
+        <div>
+          <p class="section-label">Contact Information</p>
+          <h2 class="section-heading mb-2">How Can We Help?</h2>
+          <div class="accent-divider"></div>
+          <p class="text-[#567798] text-[17px] leading-relaxed mb-10">
+            Whether it's a single repair or a whole list of projects, {BUSINESS_NAME} is ready to help. Fill out the form and we'll reach out to schedule your free estimate — usually within a few hours.
+          </p>
+
+          <!-- Contact items — WCAG: Ink Black on white = 18:1 ✅ -->
+          <div class="flex flex-col gap-5 mb-10">
+            <a href={telHref}
+               class="flex items-center gap-5 group bg-white rounded-2xl p-5 border border-[#cdd8e3] hover:border-[#2c3e50] hover:shadow-md transition-all duration-200">
+              <div class="w-14 h-14 bg-[#2c3e50] rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#b05d45] transition-colors shadow-sm">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-[12px] text-[#567798] uppercase tracking-widest font-semibold mb-1">Call or Text</div>
+                <div class="text-[#151d25] text-[20px] font-bold group-hover:text-[#b05d45] transition-colors">{PHONE_DISPLAY}</div>
+              </div>
+            </a>
+
+            <a href={mailHref}
+               class="flex items-center gap-5 group bg-white rounded-2xl p-5 border border-[#cdd8e3] hover:border-[#2c3e50] hover:shadow-md transition-all duration-200">
+              <div class="w-14 h-14 bg-[#2c3e50] rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-[#b05d45] transition-colors shadow-sm">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="22,6 12,13 2,6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-[12px] text-[#567798] uppercase tracking-widest font-semibold mb-1">Email</div>
+                <div class="text-[#151d25] text-[16px] font-bold group-hover:text-[#b05d45] transition-colors break-all">{EMAIL}</div>
+              </div>
+            </a>
+
+            <div class="flex items-center gap-5 bg-white rounded-2xl p-5 border border-[#cdd8e3]">
+              <div class="w-14 h-14 bg-[#2c3e50] rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="10" r="3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-[12px] text-[#567798] uppercase tracking-widest font-semibold mb-1">Service Area</div>
+                <div class="text-[#151d25] text-[17px] font-bold">{PRIMARY_CITY}, Allen, Frisco, Prosper, Celina</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-5 bg-white rounded-2xl p-5 border border-[#cdd8e3]">
+              <div class="w-14 h-14 bg-[#2c3e50] rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                  <polyline points="12 6 12 12 16 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="text-[12px] text-[#567798] uppercase tracking-widest font-semibold mb-1">Hours</div>
+                <div class="text-[#151d25] text-[17px] font-bold">{BUSINESS_HOURS}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trust badges — WCAG: Ink Black on white = 18:1 ✅ -->
+          <div class="bg-white rounded-2xl border border-[#cdd8e3] p-8 shadow-sm">
+            <p class="text-[#151d25] text-[15px] font-bold mb-5">Why homeowners choose us:</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                "Fully Licensed & Insured",
+                "Background Checked",
+                "100+ 5-Star Reviews",
+                "Free Estimates",
+                "Same-Week Availability",
+                "Satisfaction Guaranteed",
+              ].map((item) => (
+                <div class="flex items-center gap-3 text-[15px] text-[#151d25]">
+                  <div class="w-6 h-6 rounded-full bg-[#b05d45]/10 flex items-center justify-center shrink-0">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12" stroke="#b05d45" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <span class="font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Form Card — WCAG: all text/bg pairs verified ✅ -->
+        <div class="bg-white rounded-2xl border border-[#cdd8e3] shadow-xl overflow-hidden sticky top-6">
+          <!-- Card header bar -->
+          <div class="bg-[#2c3e50] px-8 py-6">
+            <h2 class="text-white font-black text-[22px] tracking-tight mb-1"
+                style="font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+              Get Your Free Estimate
+            </h2>
+            <p class="text-white/85 text-[14px]">We respond within 24 hours during business hours.</p>
+          </div>
+
+          <div class="p-8 lg:p-10">
+            {error === "phone_required" && (
+              <div role="alert" class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-5 py-4 text-[14px] mb-6 flex items-start gap-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="shrink-0 mt-0.5" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Please include your phone number so we can reach you.
+              </div>
+            )}
+
+            <form method="POST" action="/api/contact" class="flex flex-col gap-5" novalidate>
+              <!-- Name row -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="firstName" class="form-label">First Name</label>
+                  <input type="text" id="firstName" name="firstName"
+                         placeholder="John" class="form-input"
+                         autocomplete="given-name" />
+                </div>
+                <div>
+                  <label for="lastName" class="form-label">Last Name</label>
+                  <input type="text" id="lastName" name="lastName"
+                         placeholder="Smith" class="form-input"
+                         autocomplete="family-name" />
+                </div>
+              </div>
+
+              <!-- Phone — required, prominent -->
+              <div>
+                <label for="phone" class="form-label">
+                  Phone Number
+                  <span class="text-[#b05d45] ml-0.5" aria-label="required">*</span>
+                </label>
+                <input type="tel" id="phone" name="phone" required
+                       placeholder="(972) 555-0000" class="form-input"
+                       autocomplete="tel" />
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email"
+                       placeholder="john@example.com" class="form-input"
+                       autocomplete="email" />
+              </div>
+
+              <!-- Timeline only — removed zip code (homeowners search by problem, not postal code) -->
+              <div>
+                <label for="timeline" class="form-label">When do you need this done?</label>
+                <select id="timeline" name="timeline" class="form-input bg-white">
+                  <option value="">Select a timeline...</option>
+                  <option value="asap">As soon as possible</option>
+                  <option value="this-week">This week</option>
+                  <option value="this-month">This month</option>
+                  <option value="flexible">I'm flexible</option>
+                </select>
+              </div>
+
+              <!-- Project description -->
+              <div>
+                <label for="message" class="form-label">What needs fixing?</label>
+                <textarea
+                  id="message" name="message" rows="4"
+                  placeholder="Describe what you need done — e.g., 'Drywall hole in living room, about 6 inches' or 'Mount 65\" TV above fireplace'"
+                  class="form-input resize-none"
+                ></textarea>
+              </div>
+
+              <!-- Submit — prominent, full-width, with micro-animation -->
+              <button type="submit" class="btn-submit">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M22 2L11 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M22 2L15 22 11 13 2 9l20-7z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Request Free Estimate
+              </button>
+              <p class="text-center text-[13px] text-[#567798]">
+                No spam. No commitment. Just a quick quote.
+              </p>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,128 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  EMAIL,
+  ADDRESS_STREET,
+  ADDRESS_CITY,
+  ADDRESS_STATE,
+  ADDRESS_ZIP,
+  PRIMARY_CITY,
+  PRIMARY_STATE,
+  SITE_URL,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+const mailHref = `mailto:${EMAIL}`;
+
+const lastUpdated = "March 1, 2025";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": `${SITE_URL}/privacy-policy` }
+  ]
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": `Privacy Policy | ${BUSINESS_NAME}`,
+  "url": `${SITE_URL}/privacy-policy`,
+  "description": `Privacy policy for ${BUSINESS_NAME}. Learn how we collect, use, and protect your personal information when you request handyman services in ${PRIMARY_CITY}, ${PRIMARY_STATE}.`
+};
+---
+
+<Layout
+  title={`Privacy Policy | ${BUSINESS_NAME}`}
+  description={`Privacy policy for ${BUSINESS_NAME}. Learn how we collect, use, and protect your personal information when you request handyman services in ${PRIMARY_CITY}, ${PRIMARY_STATE}.`}
+  schema={[breadcrumbSchema, webPageSchema]}
+>
+  <Header />
+
+  <section class="bg-[#1b2a46] py-20 lg:py-24">
+    <div class="site-container">
+      <div class="flex items-center gap-2 text-[13px] text-white/70 mb-6">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span>/</span>
+        <span class="text-white/90">Privacy Policy</span>
+      </div>
+      <p class="section-label">Legal</p>
+      <h1 class="text-white font-black tracking-tight leading-[1.05] mb-3" style="font-size: clamp(2rem, 3.5vw, 3rem);">Privacy Policy</h1>
+      <p class="text-white/80 text-[14px]">Last updated: {lastUpdated}</p>
+    </div>
+  </section>
+
+  <section class="bg-white section-padding">
+    <div class="site-container">
+      <div class="max-w-[800px] mx-auto">
+      <div class="prose prose-slate max-w-none text-[15px] leading-[1.8] text-[#475569]">
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">1. Information We Collect</h2>
+        <p>When you use our website or contact us, we may collect the following types of information:</p>
+        <ul class="list-disc pl-6 flex flex-col gap-2 my-4">
+          <li><strong>Contact information</strong> — name, phone number, email address, and zip code when you submit a quote request or contact form.</li>
+          <li><strong>Service details</strong> — information about the home repair services you're requesting, including descriptions you provide.</li>
+          <li><strong>Usage data</strong> — pages visited, time spent on pages, browser type, and IP address collected automatically through standard web analytics.</li>
+        </ul>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">2. How We Use Your Information</h2>
+        <p>We use the information we collect to:</p>
+        <ul class="list-disc pl-6 flex flex-col gap-2 my-4">
+          <li>Respond to your quote requests and inquiries</li>
+          <li>Schedule and manage home repair appointments</li>
+          <li>Send confirmations, reminders, and follow-up communications about your service</li>
+          <li>Improve our website and service offerings</li>
+          <li>Comply with legal obligations</li>
+        </ul>
+        <p>We do not sell your personal information to third parties.</p>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">3. How We Share Your Information</h2>
+        <p>We may share your information with:</p>
+        <ul class="list-disc pl-6 flex flex-col gap-2 my-4">
+          <li><strong>Service providers</strong> — third-party tools and platforms we use to operate our business (CRM, scheduling software, email services). These providers are contractually required to protect your information.</li>
+          <li><strong>Legal requirements</strong> — if required by law, court order, or to protect the rights, property, or safety of our business or others.</li>
+        </ul>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">4. Cookies and Tracking</h2>
+        <p>Our website uses cookies and similar technologies to improve your experience and understand how visitors use our site. You can disable cookies in your browser settings, but some features may not function properly if you do.</p>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">5. Data Retention</h2>
+        <p>We retain your personal information for as long as necessary to provide our services and comply with legal obligations. If you wish to have your data deleted, please contact us at the information below.</p>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">6. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul class="list-disc pl-6 flex flex-col gap-2 my-4">
+          <li>Access the personal information we hold about you</li>
+          <li>Request correction of inaccurate information</li>
+          <li>Request deletion of your information</li>
+          <li>Opt out of marketing communications at any time</li>
+        </ul>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">7. Security</h2>
+        <p>We use industry-standard security measures to protect your personal information. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">8. Changes to This Policy</h2>
+        <p>We may update this privacy policy from time to time. We'll post the updated version on this page with a revised date. Continued use of our website after changes constitutes acceptance of the updated policy.</p>
+
+        <h2 class="text-[#0f172a] text-[22px] font-bold mt-8 mb-4">9. Contact Us</h2>
+        <p>If you have questions about this privacy policy or how we handle your data, please contact us:</p>
+        <div class="bg-[#f8fafc] rounded-xl border border-[#e2e8f0] p-5 mt-4">
+          <p class="font-semibold text-[#0f172a]">{BUSINESS_NAME}</p>
+          <p>{ADDRESS_STREET}, {ADDRESS_CITY}, {ADDRESS_STATE} {ADDRESS_ZIP}</p>
+          <p><a href={telHref} class="text-[#c8622a] hover:underline">{PHONE_DISPLAY}</a></p>
+          <p><a href={mailHref} class="text-[#c8622a] hover:underline">{EMAIL}</a></p>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>

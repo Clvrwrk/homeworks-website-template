@@ -1,0 +1,495 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  PRIMARY_CITY,
+  PRIMARY_STATE,
+  REVIEW_COUNT,
+  SITE_URL,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+
+const serviceFilters = ["All Projects", "Drywall", "Painting", "Plumbing", "Electrical", "Carpentry", "Outdoor"];
+
+/* ── Project data ──────────────────────────────────────────────────────────
+   IMPORTANT: `neighborhood` must exactly match the area filter strings.
+   This is what the area filter matches against — NOT the city/ZIP string.
+   Bug fix: previous code matched city/ZIP ("McKinney, TX 75069") against
+   neighborhood names ("Stonebridge Ranch") — they never matched.
+   ────────────────────────────────────────────────────────────────────────── */
+const projects = [
+  {
+    slug: "stonebridge-ranch-drywall",
+    title: "Stonebridge Ranch Drywall Restoration",
+    category: "Drywall",
+    neighborhood: "Stonebridge Ranch",
+    location: "McKinney, TX 75069",
+    summary: "Water-damaged drywall in master bedroom — cut out, replaced, and textured to match.",
+    beforeLabel: "Water damage, sagging drywall",
+    afterLabel: "Seamless repair, ready to paint",
+    image: "/services/drywall.webp",
+  },
+  {
+    slug: "craig-ranch-living-room",
+    title: "Craig Ranch Living Room Refresh",
+    category: "Painting",
+    neighborhood: "Craig Ranch",
+    location: "McKinney, TX 75070",
+    summary: "Full living room repaint with new accent wall, fresh trim, and updated fixtures.",
+    beforeLabel: "Dated paint, scuffed walls",
+    afterLabel: "Clean, modern finish throughout",
+    image: "/services/painting.webp",
+  },
+  {
+    slug: "eldorado-bathroom-fixtures",
+    title: "Eldorado Master Bath Fixture Upgrade",
+    category: "Plumbing",
+    neighborhood: "Historic Downtown",
+    location: "McKinney, TX 75072",
+    summary: "All-new faucets, mirrors, light fixtures, and towel bars installed across master bath.",
+    beforeLabel: "Builder-grade fixtures",
+    afterLabel: "Upgraded, cohesive look",
+    image: "/services/plumbing.webp",
+  },
+  {
+    slug: "allen-tv-mounting",
+    title: "Allen Home Theater Setup",
+    category: "Electrical",
+    neighborhood: "Westridge",
+    location: "Allen, TX 75013",
+    summary: "85\" TV mounted on stone fireplace wall with full in-wall cable concealment.",
+    beforeLabel: "No TV mount, loose cables",
+    afterLabel: "Clean wall-mount, zero visible cables",
+    image: "/services/tv-mount.webp",
+  },
+  {
+    slug: "frisco-crown-molding",
+    title: "Frisco Crown Molding Installation",
+    category: "Carpentry",
+    neighborhood: "Stonebridge Ranch",
+    location: "Frisco, TX 75034",
+    summary: "Crown molding installed throughout main floor — kitchen, dining, living, and hallways.",
+    beforeLabel: "No crown, flat walls",
+    afterLabel: "Custom trim throughout",
+    image: "/services/door.webp",
+  },
+  {
+    slug: "prosper-deck-restoration",
+    title: "Prosper Backyard Deck Restoration",
+    category: "Outdoor",
+    neighborhood: "Craig Ranch",
+    location: "Prosper, TX 75078",
+    summary: "Pressure washed, repaired rotted boards, sanded, and stained a 400 sq ft cedar deck.",
+    beforeLabel: "Weathered, grey, damaged boards",
+    afterLabel: "Restored, stained, and protected",
+    image: "/services/painting.webp",
+  },
+];
+
+/* Derive area list from actual data — no more manual mismatch bugs */
+const areaFilters = Array.from(new Set(projects.map(p => p.neighborhood))).sort();
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Projects", "item": `${SITE_URL}/projects` }
+  ]
+};
+
+const collectionPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": `Projects & Case Studies | ${BUSINESS_NAME}`,
+  "url": `${SITE_URL}/projects`,
+  "description": `Browse real home repair projects by ${BUSINESS_NAME} — before and after photos of drywall, painting, plumbing, carpentry, and more in ${PRIMARY_CITY}, ${PRIMARY_STATE}.`
+};
+---
+
+<Layout
+  title={`Projects & Case Studies | ${BUSINESS_NAME}`}
+  description={`Browse real home repair projects by ${BUSINESS_NAME} — before and after photos of drywall, painting, plumbing, carpentry, and more in ${PRIMARY_CITY}, ${PRIMARY_STATE}.`}
+  schema={[breadcrumbSchema, collectionPageSchema]}
+>
+  <Header />
+
+  <!-- ── Photo Hero ─────────────────────────────────────────────────────── -->
+  <section class="relative min-h-[420px] lg:min-h-[500px] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/shop-door.webp"
+        alt={`${BUSINESS_NAME} completed home repair projects`}
+        class="w-full h-full object-cover object-[55%_top]"
+        srcset="/shop-door-400w.webp 400w, /shop-door-640w.webp 640w, /shop-door-800w.webp 800w, /shop-door-1024w.webp 1024w, /shop-door-1456w.webp 1456w, /shop-door.webp 2048w"
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="600"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-[#151d25]/95 via-[#151d25]/80 to-[#151d25]/40"></div>
+    </div>
+    <div class="relative z-10 w-full site-container py-20 lg:py-28">
+      <div class="flex items-center gap-2 text-[13px] text-white/70 mb-6">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span>/</span>
+        <span class="text-white/90">Projects</span>
+      </div>
+      <p class="section-label-light">Our Work</p>
+      <h1 class="text-white font-black tracking-tight leading-[1.05] mb-5 max-w-[640px]" style="font-size: clamp(2.25rem, 4vw, 3.5rem);">
+        Real Projects.<br/>Real Results.
+      </h1>
+      <p class="text-white/90 text-[17px] max-w-[500px] leading-relaxed">
+        Browse completed home repair projects across McKinney and surrounding communities.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Projects Grid ──────────────────────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+
+      <!-- Section header -->
+      <div class="text-center section-header reveal-item">
+        <p class="section-label">Case Studies</p>
+        <h2 class="section-heading">Recent Projects</h2>
+        <div class="accent-divider-center"></div>
+        <p class="text-[#567798] text-[17px] mt-2 max-w-[480px] mx-auto leading-relaxed">
+          Every project is a neighbor's home — we treat it that way.
+        </p>
+      </div>
+
+      <!-- ── Option C Filter UI ──────────────────────────────────────────── -->
+      <div class="mb-12 reveal-item" id="filter-ui">
+
+        <!-- Row 1: Type segmented control — always visible, primary interaction -->
+        <div
+          class="flex flex-wrap gap-2 justify-center mb-3"
+          id="service-filters"
+          role="group"
+          aria-label="Filter by project type"
+        >
+          {serviceFilters.map((f, i) => (
+            <button
+              class={`filter-btn pill-chip${i === 0 ? " active" : ""}`}
+              data-filter={f}
+              data-type="service"
+              aria-pressed={i === 0 ? "true" : "false"}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        <!-- Row 2: Area tag cloud — hidden by default, slides in when a type is chosen -->
+        <div
+          id="area-filter-row"
+          class="overflow-hidden transition-all duration-300 ease-out"
+          style="max-height:0;opacity:0;"
+          aria-hidden="true"
+        >
+          <div class="flex items-center justify-center gap-2 pt-3 pb-1 flex-wrap">
+            <span class="text-[#567798] text-[11px] font-bold uppercase tracking-widest mr-1 shrink-0 select-none">
+              Narrow by area:
+            </span>
+            {areaFilters.map((f) => (
+              <button
+                class="area-chip"
+                data-filter={f}
+                data-type="location"
+                aria-pressed="false"
+              >
+                {f}
+              </button>
+            ))}
+            <button
+              id="clear-area"
+              class="hidden text-[#b05d45] text-[12px] font-semibold underline underline-offset-2 ml-2 hover:text-[#8d4a37] transition-colors"
+              aria-label="Clear area filter"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Row 3: Live result summary + reset -->
+        <div class="flex items-center justify-center gap-3 mt-4 min-h-[28px]">
+          <p id="result-summary" class="text-[#567798] text-[13px] font-medium">
+            Showing <strong id="result-count" class="text-[#151d25]">{projects.length}</strong> of {projects.length} projects
+          </p>
+          <button
+            id="reset-filters"
+            class="hidden text-[#b05d45] text-[12px] font-semibold border border-[#e1b0a5] bg-[#f9eded] px-3 py-1 rounded-full hover:bg-[#f0d5cf] transition-colors"
+          >
+            Reset all
+          </button>
+        </div>
+
+      </div>
+      <!-- ── End Filter UI ──────────────────────────────────────────────── -->
+
+      <!-- Project cards grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
+        {projects.map(({ slug, title, category, neighborhood, location, summary, beforeLabel, afterLabel, image }) => (
+          <a
+            href={`/projects/${slug}`}
+            class="card-base group reveal-item"
+            data-category={category}
+            data-neighborhood={neighborhood}
+          >
+            <!-- Photo -->
+            <div class="card-photo relative">
+              <img
+                src={image}
+                alt={`${title} — ${BUSINESS_NAME}`}
+                loading="lazy" decoding="async"
+                width="600"
+                height="375"
+              />
+              <!-- Category badge -->
+              <span class="absolute top-4 left-4 pill-chip-dark text-[11px] uppercase tracking-wider shadow-lg">
+                {category}
+              </span>
+              <!-- Neighborhood badge -->
+              <span class="absolute top-4 right-4 bg-[#b05d45]/90 text-white text-[11px] font-semibold px-3 py-1.5 rounded-full backdrop-blur-sm shadow-lg">
+                {neighborhood}
+              </span>
+            </div>
+            <!-- Card body -->
+            <div class="card-body">
+              <div class="text-[12px] text-[#567798] font-medium mb-2 flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {location}
+              </div>
+              <h2 class="text-[#151d25] text-[19px] font-black tracking-tight mb-3">{title}</h2>
+              <p class="text-[#567798] text-[15px] leading-relaxed mb-5">{summary}</p>
+              <!-- Before/After pills -->
+              <div class="flex flex-col gap-2 mb-5">
+                <div class="flex items-center gap-2 text-[13px]">
+                  <span class="w-2 h-2 rounded-full bg-[#ef4444] shrink-0"></span>
+                  <span class="text-[#567798]"><strong class="text-[#151d25]">Before:</strong> {beforeLabel}</span>
+                </div>
+                <div class="flex items-center gap-2 text-[13px]">
+                  <span class="w-2 h-2 rounded-full bg-[#22c55e] shrink-0"></span>
+                  <span class="text-[#567798]"><strong class="text-[#151d25]">After:</strong> {afterLabel}</span>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-2 text-[#b05d45] text-[13px] font-bold uppercase tracking-widest group-hover:gap-3 transition-all">
+                View Project
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Empty state -->
+      <div id="no-results" class="hidden text-center py-16">
+        <div class="inline-flex flex-col items-center gap-4">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" class="text-[#cdd8e3]" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/>
+            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <p class="text-[#567798] text-[17px]">No projects match those filters.</p>
+          <button class="btn-secondary" id="reset-filters-empty">Reset all filters</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── CTA Banner ─────────────────────────────────────────────────────── -->
+  <section class="bg-[#b05d45] section-padding-sm">
+    <div class="site-container flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left reveal-item">
+      <div>
+        <h2 class="text-white font-black text-[28px] lg:text-[36px] tracking-tight leading-tight">
+          Ready to add your project to this list?
+        </h2>
+        <p class="text-white/80 text-[16px] mt-2">Free estimates. Same-week availability. {REVIEW_COUNT} 5-star reviews.</p>
+      </div>
+      <a href={telHref} class="btn-navy shrink-0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Call Now {PHONE_DISPLAY}
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<script>
+  // ── Scroll reveal ──────────────────────────────────────────────────────
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add("is-visible"); revealObserver.unobserve(e.target); }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => revealObserver.observe(el));
+
+  // ── State ──────────────────────────────────────────────────────────────
+  let activeService = "All Projects";
+  let activeArea    = "";   // empty = no area filter
+
+  const totalCount  = document.querySelectorAll<HTMLElement>("#projects-grid > a").length;
+  const areaRow     = document.getElementById("area-filter-row")!;
+  const clearAreaBtn = document.getElementById("clear-area")!;
+  const resultCount = document.getElementById("result-count")!;
+  const resetBtn    = document.getElementById("reset-filters")!;
+  const resetEmpty  = document.getElementById("reset-filters-empty");
+  const noResults   = document.getElementById("no-results")!;
+
+  // Cache natural height ONCE at load time — avoids forced reflow on every toggle
+  // Read scrollHeight before any style writes so the browser doesn't need to re-layout.
+  areaRow.style.maxHeight = "none"; // temporarily remove constraint
+  const areaRowNaturalHeight = areaRow.scrollHeight + 80; // single read, no write before it
+  areaRow.style.maxHeight = "0";    // restore collapsed state
+  areaRow.style.willChange = "max-height, opacity"; // hint compositor
+
+  // ── Show / hide area row with smooth height animation ──────────────────
+  function showAreaRow(show: boolean) {
+    if (show) {
+      areaRow.style.maxHeight = areaRowNaturalHeight + "px"; // use cached value — no reflow
+      areaRow.style.opacity   = "1";
+      areaRow.removeAttribute("aria-hidden");
+    } else {
+      areaRow.style.maxHeight = "0";
+      areaRow.style.opacity   = "0";
+      areaRow.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  // ── Apply both filters and update UI ──────────────────────────────────
+  function applyFilters() {
+    const cards = document.querySelectorAll<HTMLElement>("#projects-grid > a");
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const matchService = activeService === "All Projects" || card.dataset.category === activeService;
+      const matchArea    = activeArea    === ""              || card.dataset.neighborhood === activeArea;
+      const show = matchService && matchArea;
+      card.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+
+    resultCount.textContent = String(visible);
+    noResults.classList.toggle("hidden", visible > 0);
+
+    const isDefault = activeService === "All Projects" && activeArea === "";
+    resetBtn.classList.toggle("hidden", isDefault);
+  }
+
+  // ── Sync area chip visual states ───────────────────────────────────────
+  function syncAreaChips() {
+    document.querySelectorAll<HTMLButtonElement>(".area-chip").forEach((btn) => {
+      const active = btn.dataset.filter === activeArea;
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+    clearAreaBtn.classList.toggle("hidden", activeArea === "");
+  }
+
+  // ── Reset everything ───────────────────────────────────────────────────
+  function resetAll() {
+    activeService = "All Projects";
+    activeArea    = "";
+    document.querySelectorAll<HTMLButtonElement>("[data-type='service']").forEach((b) => {
+      const isAll = b.dataset.filter === "All Projects";
+      b.classList.toggle("active", isAll);
+      b.setAttribute("aria-pressed", String(isAll));
+    });
+    syncAreaChips();
+    showAreaRow(false);
+    applyFilters();
+  }
+
+  // ── Service pill clicks ────────────────────────────────────────────────
+  document.querySelectorAll<HTMLButtonElement>("[data-type='service']").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter ?? "";
+      activeService = filter;
+
+      document.querySelectorAll<HTMLButtonElement>("[data-type='service']").forEach((b) => {
+        const active = b.dataset.filter === filter;
+        b.classList.toggle("active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
+
+      const showArea = filter !== "All Projects";
+      showAreaRow(showArea);
+
+      // Switching back to "All Projects" also clears area
+      if (!showArea) { activeArea = ""; syncAreaChips(); }
+
+      applyFilters();
+    });
+  });
+
+  // ── Area chip clicks — toggle behaviour (click active chip to deselect) ─
+  document.querySelectorAll<HTMLButtonElement>(".area-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter ?? "";
+      activeArea = activeArea === filter ? "" : filter;
+      syncAreaChips();
+      applyFilters();
+    });
+  });
+
+  // ── Clear / reset buttons ──────────────────────────────────────────────
+  clearAreaBtn.addEventListener("click", () => { activeArea = ""; syncAreaChips(); applyFilters(); });
+  resetBtn.addEventListener("click", resetAll);
+  resetEmpty?.addEventListener("click", resetAll);
+</script>
+
+<style>
+  /* ── Area chip — terracotta toggle pill ──────────────────────────────── */
+  .area-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #fff;
+    border: 1.5px solid #cdd8e3;
+    color: #2c3e50;
+    font-family: var(--font-body), 'DM Sans', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    min-height: 36px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+  .area-chip:hover {
+    background: #f9eded;
+    border-color: #e1b0a5;
+    color: #8d4a37;
+    transform: translateY(-1px);
+  }
+  /* Active: filled terracotta + dismiss × indicator */
+  .area-chip.active {
+    background: #b05d45;
+    border-color: #b05d45;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .area-chip.active::after {
+    content: " ×";
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.75;
+  }
+</style>

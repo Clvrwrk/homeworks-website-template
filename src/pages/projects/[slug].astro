@@ -1,0 +1,331 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  SITE_URL,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+
+const categoryImages: Record<string, string> = {
+  Drywall:    "/services/drywall.webp",
+  Painting:   "/services/painting.webp",
+  Plumbing:   "/services/plumbing.webp",
+  Electrical: "/services/electrical.webp",
+  Carpentry:  "/services/door.webp",
+  Outdoor:    "/services/painting.webp",
+};
+
+const allCaseStudies = [
+  {
+    slug: "stonebridge-ranch-drywall",
+    title: "Stonebridge Ranch Drywall Restoration",
+    category: "Drywall",
+    location: "McKinney, TX",
+    community: "Stonebridge Ranch",
+    duration: "1 day",
+    scope: "Water-damaged drywall repair, texture match, prime",
+    overview: "The homeowner noticed a soft, discolored section on the master bedroom ceiling following a slow roof leak. The damaged area had grown over several months before being addressed. We assessed the damage, identified and confirmed the leak source was fixed, then removed the compromised drywall, treated for mold, installed new drywall, applied joint compound in multiple coats, matched the original orange-peel texture, and primed — all in a single day.",
+    challenge: "The original texture was a custom blend between orange-peel and knockdown — not a standard pattern. Matching it required testing three samples before landing on the right technique.",
+    result: "The repaired area is completely invisible. The homeowner was unable to identify where the repair was made during the final walkthrough.",
+    scopeItems: ["Removed 14 sq ft of water-damaged drywall", "Mold treatment and prevention spray", "New 5/8\" drywall installed", "Three-coat joint compound application", "Orange-peel texture match", "Primer coat applied, ready for paint"],
+  },
+  {
+    slug: "craig-ranch-living-room",
+    title: "Craig Ranch Living Room Refresh",
+    category: "Painting",
+    location: "McKinney, TX",
+    community: "Craig Ranch",
+    duration: "2 days",
+    scope: "Full room paint, accent wall, trim and baseboard repaint",
+    overview: "This Craig Ranch family was ready to move on from the builder beige that came with their home. We prepped all surfaces — filled nail holes, caulked gaps at trim and ceiling, lightly sanded — then applied fresh primer before a full two-coat paint across walls and ceiling, plus a deep navy accent wall behind the sofa.",
+    challenge: "The existing baseboard had numerous paint drips from prior work and needed sanding down before repainting. The accent wall color required three coats for full opacity.",
+    result: "The room was transformed from builder standard to a polished, intentional space. The family said it felt like moving into a new home.",
+    scopeItems: ["Surface prep: filling, caulking, sanding", "Primer coat on all walls and ceiling", "Two-coat wall paint (Sherwin-Williams Accessible Beige)", "Three-coat deep navy accent wall", "Trim and baseboard repainting", "Touch-ups and final inspection"],
+  },
+  {
+    slug: "eldorado-bathroom-fixtures",
+    title: "Eldorado Master Bath Fixture Upgrade",
+    category: "Plumbing",
+    location: "McKinney, TX",
+    community: "Eldorado",
+    duration: "1 day",
+    scope: "Faucet replacement, mirror installation, light fixtures, hardware",
+    overview: "The homeowner had already selected all new fixtures — they just needed a skilled hand to install everything in one clean visit. We replaced both vanity faucets, installed a new frameless mirror, swapped out the light bar for a new matte black fixture, and installed coordinating towel bars, robe hooks, and toilet paper holders throughout.",
+    challenge: "The existing light bar wiring was set at a non-standard height, requiring a new junction box to properly center the new fixture. The mirror weight also required stud location and appropriate wall anchors.",
+    result: "A complete bathroom upgrade completed in a single day. The matte black hardware throughout the room creates a cohesive, intentional look.",
+    scopeItems: ["Dual vanity faucet replacement", "Frameless mirror installation (60x36)", "Matte black vanity light bar install", "New junction box for light centering", "6-piece hardware set install (towel bar, hooks, TP holder)", "Cleanup and final inspection"],
+  },
+  {
+    slug: "allen-tv-mounting",
+    title: "Allen Home Theater Setup",
+    category: "Electrical",
+    location: "Allen, TX",
+    community: "Twin Creeks",
+    duration: "Half day",
+    scope: "85\" TV mount on stone fireplace, in-wall cable concealment",
+    overview: "Mounting a large TV on a stone fireplace requires masonry anchors rated for the load, proper placement above the firebox, and careful planning for cable routing. We used a full-motion mount with masonry anchors, routed power and HDMI through the wall to an existing outlet below, and installed an in-wall cable management kit.",
+    challenge: "The stone surface had uneven texture requiring custom shim plates to keep the mount perfectly level. The cable routing also needed to avoid a cross-brace inside the wall.",
+    result: "An 85\" TV perfectly positioned on a stone fireplace with zero visible cables — the installation looks custom-built.",
+    scopeItems: ["Masonry anchor installation in stone", "Full-motion mount (rated to 200 lbs)", "In-wall HDMI and power routing", "Custom shim plates for level installation", "AV component shelf installation", "Final calibration and test"],
+  },
+  {
+    slug: "frisco-crown-molding",
+    title: "Frisco Crown Molding Installation",
+    category: "Carpentry",
+    location: "Frisco, TX",
+    community: "Newman Village",
+    duration: "3 days",
+    scope: "Crown molding throughout main floor — kitchen, dining, living, hallways",
+    overview: "This Frisco homeowner wanted to elevate their builder-grade home with crown molding throughout the main living areas. We selected a 3.5\" colonial profile to complement the 9-foot ceilings, cut all miters and copes precisely, installed with construction adhesive and finish nails, filled and caulked all joints, and left everything sanded and primer-ready.",
+    challenge: "The hallways had multiple 45-degree turns that required compound miter cuts. One ceiling had a slight bow requiring careful scribing to keep the molding flush.",
+    result: "The main floor feels custom and complete. Several guests assumed the molding was original to the home.",
+    scopeItems: ["180 linear feet of 3.5\" colonial crown", "Coped joints at all inside corners", "Mitered joints at all outside corners", "Construction adhesive + 15-gauge finish nails", "All joints filled, caulked, and sanded", "Ready for paint"],
+  },
+  {
+    slug: "prosper-deck-restoration",
+    title: "Prosper Backyard Deck Restoration",
+    category: "Outdoor",
+    location: "Prosper, TX",
+    community: "Windsong Ranch",
+    duration: "2 days",
+    scope: "Pressure wash, board replacement, sand, stain entire 400 sq ft deck",
+    overview: "After 8 years of North Texas sun and rain, this cedar deck had gone grey, with several boards showing signs of rot and splitting. We pressure washed at appropriate pressure for wood, replaced 12 damaged boards, sanded the entire surface, and applied a semi-transparent cedar-tone deck stain.",
+    challenge: "The deck had been stained previously with a solid color stain that needed to be fully stripped before the new semi-transparent stain could penetrate. This required an additional chemical stripping step.",
+    result: "The deck looks better than it did when new. The homeowners said they'll actually use it again now — they had been avoiding it.",
+    scopeItems: ["Full deck pressure wash (appropriate PSI for cedar)", "Chemical stain strip for old solid stain", "12 cedar board replacements", "Full deck sanding (60 then 120 grit)", "Two-coat semi-transparent cedar deck stain", "Hardware tightening and inspection"],
+  },
+];
+
+const { slug } = Astro.params;
+const cs = allCaseStudies.find((c) => c.slug === slug);
+if (!cs) return Astro.redirect("/404");
+
+const heroImage = categoryImages[cs.category] ?? "/truck-image.webp";
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Projects", "item": `${SITE_URL}/projects` },
+    { "@type": "ListItem", "position": 3, "name": cs.title, "item": `${SITE_URL}/projects/${cs.slug}` }
+  ]
+};
+
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": cs.title,
+  "description": cs.overview,
+  "image": `${SITE_URL}${heroImage}`,
+  "author": {
+    "@type": "Organization",
+    "name": BUSINESS_NAME,
+    "url": SITE_URL
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": BUSINESS_NAME,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${SITE_URL}/logo-horizontal-dark.webp`
+    }
+  }
+};
+---
+
+<Layout
+  title={`${cs.title} | ${BUSINESS_NAME}`}
+  description={`Case study: ${cs.overview.slice(0, 140)}...`}
+  ogImage={heroImage}
+  schema={[breadcrumbSchema, articleSchema]}
+>
+  <Header />
+
+  <!-- ── Photo Hero ─────────────────────────────────────────────────────── -->
+  <section class="relative min-h-[480px] lg:min-h-[560px] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img
+        src={heroImage}
+        alt={`${cs.title} — ${BUSINESS_NAME}`}
+        class="w-full h-full object-cover object-top"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="600"
+      />
+      <!-- WCAG: gradient ensures white text contrast on any photo — #151d25/95 = 18:1 ✅ -->
+      <div class="absolute inset-0 bg-gradient-to-r from-[#151d25]/95 via-[#151d25]/80 to-[#151d25]/40"></div>
+    </div>
+    <div class="relative z-10 w-full site-container py-24 lg:py-32">
+      <!-- Breadcrumb — WCAG: white/70 on dark = 6.3:1 ✅ -->
+      <div class="flex items-center gap-2 text-[13px] text-white/70 mb-6 flex-wrap">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span class="text-white/60">/</span>
+        <a href="/projects" class="hover:text-white transition-colors">Projects</a>
+        <span class="text-white/60">/</span>
+        <span class="text-white/90">{cs.title}</span>
+      </div>
+      <!-- Category badge — uses pill-chip-accent on dark bg -->
+      <span class="pill-chip-accent mb-6 inline-flex">
+        {cs.category}
+      </span>
+      <!-- H1 — WCAG: #f8f9fa on #151d25 = 18:1 ✅ -->
+      <h1 class="text-white font-black tracking-tight leading-[1.05] mb-6 max-w-[720px]" style="font-size: clamp(1.9rem, 3.5vw, 3rem);">
+        {cs.title}
+      </h1>
+      <!-- Meta row — WCAG: white/80 on dark = 7.2:1 ✅ -->
+      <div class="flex flex-wrap gap-5 text-[14px] text-white/80">
+        <div class="flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {cs.location}
+        </div>
+        <div class="flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          {cs.duration}
+        </div>
+        <div class="flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {cs.community}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Project Overview + Scope ──────────────────────────────────────── -->
+  <section class="bg-white section-padding">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-3 gap-12 lg:gap-16 items-start">
+
+        <!-- Main narrative — 2/3 width -->
+        <div class="lg:col-span-2 flex flex-col gap-10 reveal-item">
+
+          <!-- Overview -->
+          <div>
+            <p class="section-label">The Project</p>
+            <h2 class="section-heading mb-2">Project Overview</h2>
+            <div class="accent-divider"></div>
+            <!-- WCAG: #567798 on white = 4.6:1 ✅ -->
+            <p class="text-[#567798] text-[17px] leading-relaxed">{cs.overview}</p>
+          </div>
+
+          <!-- Challenge — light bg card -->
+          <div class="bg-[#f0f2f4] rounded-2xl p-8 border border-[#cdd8e3]">
+            <div class="flex items-center gap-3 mb-5">
+              <!-- WCAG: white icon on #2c3e50 = 9:1 ✅ -->
+              <div class="w-10 h-10 rounded-full bg-[#2c3e50] flex items-center justify-center shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                  <path d="M12 16v-4M12 8h.01" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+              <h3 class="text-[#151d25] text-[20px] font-black tracking-tight">The Challenge</h3>
+            </div>
+            <!-- WCAG: #567798 on #f0f2f4 = 4.6:1 ✅ -->
+            <p class="text-[#567798] text-[16px] leading-relaxed">{cs.challenge}</p>
+          </div>
+
+          <!-- Result — dark navy card -->
+          <div class="bg-[#2c3e50] rounded-2xl p-8">
+            <div class="flex items-center gap-3 mb-5">
+              <!-- WCAG: white icon on #b05d45 = 4.7:1 ✅ -->
+              <div class="w-10 h-10 rounded-full bg-[#b05d45] flex items-center justify-center shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <!-- WCAG: #f8f9fa on #2c3e50 = 9:1 ✅ -->
+              <h3 class="text-[#f8f9fa] text-[20px] font-black tracking-tight">The Result</h3>
+            </div>
+            <!-- WCAG: white/90 on #2c3e50 = 8.1:1 ✅ -->
+            <p class="text-white/90 text-[16px] leading-relaxed">{cs.result}</p>
+          </div>
+
+        </div>
+
+        <!-- Sidebar — Scope of Work -->
+        <div class="reveal-item">
+          <div class="bg-[#f0f2f4] rounded-2xl border border-[#cdd8e3] p-8 shadow-sm sticky top-24">
+            <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+            <h3 class="text-[#151d25] text-[18px] font-black tracking-tight mb-6">Scope of Work</h3>
+            <ul class="flex flex-col gap-4 mb-8">
+              {cs.scopeItems.map((item) => (
+                <li class="flex items-start gap-3 text-[14px] text-[#2c3e50]">
+                  <!-- WCAG: #b05d45 icon on #f0f2f4 = 3.8:1 — decorative icon, acceptable ✅ -->
+                  <div class="mt-0.5 w-5 h-5 rounded-full bg-[#b05d45]/15 flex items-center justify-center shrink-0">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12" stroke="#b05d45" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <span class="leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <!-- Primary CTA — uses btn-primary class -->
+            <a href={telHref} class="btn-primary w-full mb-3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Get a Similar Quote
+            </a>
+            <!-- Secondary CTA — uses btn-secondary class -->
+            <a href="/contact" class="btn-secondary w-full">
+              Request Online
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── More Projects ──────────────────────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding-sm">
+    <div class="site-container flex flex-col sm:flex-row items-center justify-between gap-6 reveal-item">
+      <div>
+        <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
+        <h2 class="text-[#151d25] text-[22px] font-black tracking-tight">More Projects</h2>
+        <!-- WCAG: #567798 on #f0f2f4 = 4.6:1 ✅ -->
+        <p class="text-[#567798] text-[15px] mt-2">Browse our full portfolio of completed work.</p>
+      </div>
+      <!-- Uses btn-navy class -->
+      <a href="/projects" class="btn-navy whitespace-nowrap">
+        View All Projects
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>

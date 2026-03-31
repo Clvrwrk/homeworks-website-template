@@ -1,0 +1,233 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  PRIMARY_CITY,
+  PRIMARY_STATE,
+  SITE_URL,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+
+// Service cards — clean, problem-focused. NO tags, NO zip codes.
+const services = [
+  {
+    slug: "drywall-repair",
+    title: "Drywall Repair",
+    desc: "Holes, cracks, and water damage patched and textured to match your existing wall perfectly.",
+    image: "/services/drywall.webp",
+    cta: "Fix My Drywall",
+  },
+  {
+    slug: "tv-mounting",
+    title: "TV Mounting",
+    desc: "Clean, secure wall mounts with hidden cables — any size TV, any room.",
+    image: "/services/tv-mount.webp",
+    cta: "Mount My TV",
+  },
+  {
+    slug: "plumbing",
+    title: "Plumbing Repairs",
+    desc: "Leaky faucets, running toilets, and fixture installs handled fast and reliably.",
+    image: "/services/plumbing.webp",
+    cta: "Fix My Plumbing",
+  },
+  {
+    slug: "door-installation",
+    title: "Door Installation",
+    desc: "Interior, exterior, and storm doors installed level, plumb, and weather-tight.",
+    image: "/services/door.webp",
+    cta: "Install My Door",
+  },
+  {
+    slug: "interior-painting",
+    title: "Interior Painting",
+    desc: "Prep, prime, and paint for a flawless finish — rooms, trim, and accent walls.",
+    image: "/services/painting.webp",
+    cta: "Paint My Room",
+  },
+  {
+    slug: "electrical-fixtures",
+    title: "Electrical Fixtures",
+    desc: "Light fixtures, ceiling fans, and outlets safely installed to code.",
+    image: "/services/electrical.webp",
+    cta: "Install My Fixture",
+  },
+  {
+    slug: "furniture-assembly",
+    title: "Furniture Assembly",
+    desc: "IKEA, flat-pack, and ready-to-assemble furniture built correctly the first time.",
+    image: "/services/drywall.webp",
+    cta: "Assemble My Furniture",
+  },
+  {
+    slug: "carpentry",
+    title: "Carpentry & Trim",
+    desc: "Crown molding, baseboards, floating shelves, and custom woodwork installed cleanly.",
+    image: "/services/door.webp",
+    cta: "Add Trim Work",
+  },
+  {
+    slug: "pressure-washing",
+    title: "Pressure Washing",
+    desc: "Driveways, patios, siding, and fences cleaned and refreshed in a single visit.",
+    image: "/services/painting.webp",
+    cta: "Clean My Property",
+  },
+];
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Services", "item": `${SITE_URL}/services` }
+  ]
+};
+---
+
+<Layout
+  title={`Home Repair Services in ${PRIMARY_CITY}, ${PRIMARY_STATE} | ${BUSINESS_NAME}`}
+  description={`Professional handyman services in ${PRIMARY_CITY}, ${PRIMARY_STATE} — drywall, plumbing, TV mounting, painting, electrical, and more. Licensed & insured. Free estimates. ${PHONE_DISPLAY}.`}
+  schema={breadcrumbSchema}
+>
+  <Header />
+
+  <!-- ── Page Hero — real photo, left-heavy gradient ──────────────────── -->
+  <section class="relative min-h-[480px] lg:min-h-[560px] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img
+        src="/truck-image.webp"
+        alt={`${BUSINESS_NAME} service truck ready for a home repair job`}
+        class="w-full h-full object-cover object-[55%_top]"
+        srcset="/truck-image-400w.webp 400w, /truck-image-640w.webp 640w, /truck-image-800w.webp 800w, /truck-image-1024w.webp 1024w, /truck-image-1456w.webp 1456w, /truck-image.webp 2048w"
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        width="1456"
+        height="560"
+      />
+      <!-- Left-heavy gradient: text readable left, truck visible right -->
+      <div class="absolute inset-0 bg-gradient-to-r from-[#151d25]/95 via-[#151d25]/80 to-[#151d25]/30"></div>
+    </div>
+
+    <div class="relative z-10 w-full site-container py-24 lg:py-32">
+      <!-- Breadcrumb — WCAG: white/60 on dark overlay ✅ -->
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        <span aria-hidden="true">/</span>
+        <span class="text-white/80" aria-current="page">Services</span>
+      </nav>
+
+      <div class="max-w-[640px]">
+        <p class="section-label">What We Do</p>
+        <h1 class="text-white font-black tracking-tight leading-[1.02] mb-5"
+            style="font-size: clamp(2.5rem, 4.5vw, 3.75rem); font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+          Home Repair Services<br/>in {PRIMARY_CITY}, {PRIMARY_STATE}
+        </h1>
+        <p class="text-white/90 text-[18px] leading-relaxed mb-8 max-w-[500px]">
+          From small fixes to big projects — licensed, insured, and background-checked pros ready to tackle your to-do list.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <!-- Primary CTA — WCAG: white on Terracotta Clay = 4.7:1 ✅ -->
+          <a href={telHref} class="btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Call {PHONE_DISPLAY}
+          </a>
+          <!-- Ghost CTA — WCAG: white on dark overlay ✅ -->
+          <a href="/contact" class="btn-ghost">
+            Get Free Estimate
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Services Grid ─────────────────────────────────────────────────── -->
+  <!-- WCAG: Ink Black on Bright Snow = 18:1 ✅ -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+
+      <!-- Section intro -->
+      <div class="text-center section-header">
+        <p class="section-label">Our Services</p>
+        <h2 class="section-heading">Everything Your Home Needs</h2>
+        <div class="accent-divider-center"></div>
+        <p class="text-[#567798] text-[17px] max-w-[480px] mx-auto leading-relaxed">
+          One call handles it all. We tackle your entire to-do list in a single visit.
+        </p>
+      </div>
+
+      <!-- Photo-first cards — NO tags, NO zip codes, problem-focused CTAs -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {services.map(({ slug, title, desc, image, cta }) => (
+          <a href={`/services/${slug}`} class="card-base group reveal-item">
+            <!-- Photo — 4:3 ratio -->
+            <div class="card-photo">
+              <img
+                src={image}
+                alt={`${title} service in ${PRIMARY_CITY} TX`}
+                loading="lazy" decoding="async"
+                width="600"
+                height="450"
+              />
+            </div>
+            <!-- Card body — generous padding, clean content only -->
+            <div class="card-body">
+              <h3 class="text-[#151d25] text-[20px] font-bold mb-3 leading-snug tracking-tight"
+                  style="font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+                {title}
+              </h3>
+              <p class="text-[#567798] text-[15px] leading-relaxed mb-6">{desc}</p>
+              <!-- Problem-focused CTA — WCAG: Terracotta Clay on white = 4.7:1 ✅ -->
+              <span class="inline-flex items-center gap-1.5 text-[#b05d45] text-[13px] font-bold uppercase tracking-wide group-hover:gap-3 transition-all duration-200">
+                {cta}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA Banner — WCAG: white on Terracotta Clay = 4.7:1 ✅ ─────── -->
+  <section class="bg-[#b05d45] section-padding-sm">
+    <div class="site-container flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+      <div>
+        <h2 class="text-white font-black text-[28px] lg:text-[36px] tracking-tight leading-tight mb-2"
+            style="font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;">
+          Don't see what you need?
+        </h2>
+        <p class="text-white/80 text-[17px] leading-relaxed">
+          Call us — if it's a home repair, we can probably help.
+        </p>
+      </div>
+      <a href={telHref} class="btn-navy shrink-0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Call Now {PHONE_DISPLAY}
+      </a>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Scroll reveal for service cards
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("is-visible")),
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>

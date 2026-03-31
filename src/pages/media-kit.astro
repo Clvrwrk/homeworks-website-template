@@ -1,0 +1,284 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import {
+  BUSINESS_NAME,
+  PHONE_DISPLAY,
+  PHONE_RAW,
+  EMAIL,
+  SITE_URL,
+  PRIMARY_CITY,
+  PRIMARY_STATE,
+  REVIEW_COUNT,
+  JOBS_COMPLETED,
+  BUSINESS_EST,
+} from "@/config/site";
+
+const telHref = `tel:${PHONE_RAW}`;
+const mailHref = `mailto:${EMAIL}`;
+
+const brandColors = [
+  { name: "Ink Black",       hex: "#151d25", label: "Primary Dark / Text" },
+  { name: "Charcoal Blue",   hex: "#2c3e50", label: "Header / Dark Sections" },
+  { name: "Terracotta Clay", hex: "#b05d45", label: "Primary CTA" },
+  { name: "Honey Bronze",    hex: "#e2a03f", label: "Accent / Stats" },
+  { name: "Bright Snow",     hex: "#f8f9fa", label: "Light Background" },
+  { name: "White",           hex: "#ffffff", label: "Card Background" },
+];
+
+const downloads = [
+  { name: "Horizontal Logo (PNG)",    size: "1920×1080", format: "PNG", href: "#" },
+  { name: "Vertical Logo (PNG)",      size: "500×500",   format: "PNG", href: "#" },
+  { name: "GHL Integration Logo",     size: "350×180",   format: "PNG", href: "#" },
+  { name: "Dark Favicon",             size: "512×512",   format: "PNG", href: "#" },
+  { name: "Brand Guidelines (PDF)",   size: "—",         format: "PDF", href: "#" },
+];
+
+const facts = [
+  { label: "Founded",        value: "2020" },
+  { label: "Headquarters",   value: "McKinney, TX" },
+  { label: "Service Area",   value: "North Texas (Dallas Metroplex)" },
+  { label: "Reviews",        value: "100+ 5-Star Reviews" },
+  { label: "Jobs Completed", value: "500+" },
+  { label: "Phone",          value: PHONE_DISPLAY },
+  { label: "Email",          value: EMAIL },
+  { label: "Website",        value: SITE_URL.replace("https://", "") },
+];
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
+    { "@type": "ListItem", "position": 2, "name": "Media Kit", "item": `${SITE_URL}/media-kit` }
+  ]
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": `Media Kit | ${BUSINESS_NAME}`,
+  "url": `${SITE_URL}/media-kit`,
+  "description": `${BUSINESS_NAME} media kit — brand assets, logos, color palette, company facts, and press contact information.`
+};
+---
+
+<Layout
+  title={`Media Kit | ${BUSINESS_NAME} — Brand Assets & Press Information`}
+  description={`${BUSINESS_NAME} media kit — brand assets, logos, color palette, company facts, and press contact information.`}
+  schema={[breadcrumbSchema, webPageSchema]}
+>
+  <Header />
+
+  <!-- ── Dark Hero ──────────────────────────────────────────────────────── -->
+  <section class="bg-[#151d25] py-20 lg:py-28">
+    <div class="site-container">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-[13px] text-white/70 mb-6">
+        <a href="/" class="hover:text-white transition-colors">Home</a>
+        <span>/</span>
+        <span class="text-white/90">Media Kit</span>
+      </div>
+      <p class="section-label">Press & Media</p>
+      <h1 class="text-white font-black tracking-tight leading-[1.05] mb-5 max-w-[640px]" style="font-size: clamp(2.25rem, 4vw, 3.5rem);">
+        {BUSINESS_NAME}<br/>Media Kit
+      </h1>
+      <p class="text-white/90 text-[17px] max-w-[520px] leading-relaxed">
+        Brand assets, company facts, and press contact information for media professionals and partners.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Company Overview + Quick Facts ────────────────────────────────── -->
+  <section class="bg-white section-padding">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+
+        <!-- About copy -->
+        <div class="reveal-item">
+          <p class="section-label">About Us</p>
+          <h2 class="section-heading mb-2">About {BUSINESS_NAME}</h2>
+          <div class="accent-divider mb-6"></div>
+          <div class="flex flex-col gap-5 text-[#567798] text-[17px] leading-relaxed">
+            <p>
+              {BUSINESS_NAME} is the North Texas area's most trusted handyman service, specializing in residential home repair, maintenance, and improvement for busy homeowners.
+            </p>
+            <p>
+              Founded in McKinney, TX in 2020, we've grown from a single technician to a team serving homeowners across the Dallas-Fort Worth metroplex — including McKinney, Allen, Frisco, Prosper, and Celina.
+            </p>
+            <p>
+              Our differentiation: transparent upfront pricing, background-checked technicians, full liability insurance, and a satisfaction guarantee on every job.
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick facts -->
+        <div class="reveal-item">
+          <p class="section-label">At a Glance</p>
+          <h2 class="section-heading mb-2">Company Quick Facts</h2>
+          <div class="accent-divider mb-6"></div>
+          <div class="bg-[#f0f2f4] rounded-2xl border border-[#cdd8e3] overflow-hidden">
+            {facts.map(({ label, value }, i) => (
+              <div class={`flex justify-between items-baseline px-6 py-4 ${i < facts.length - 1 ? "border-b border-[#cdd8e3]" : ""}`}>
+                <span class="text-[#567798] text-[14px] font-medium">{label}</span>
+                <span class="text-[#151d25] text-[14px] font-bold text-right">{value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Brand Colors ───────────────────────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+      <div class="text-center mb-12 reveal-item">
+        <p class="section-label">Visual Identity</p>
+        <h2 class="section-heading">Brand Colors</h2>
+        <div class="accent-divider-center"></div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-5 reveal-item">
+        {brandColors.map(({ name, hex, label }) => (
+          <div class="flex flex-col gap-3">
+            <div
+              class={`h-24 rounded-2xl border shadow-sm ${hex === "#ffffff" ? "border-[#cdd8e3]" : "border-transparent"}`}
+              style={`background-color: ${hex};`}
+            ></div>
+            <div>
+              <p class="text-[#151d25] text-[14px] font-bold">{name}</p>
+              <p class="text-[#567798] text-[12px] font-mono">{hex}</p>
+              <p class="text-[#94a3b8] text-[11px] mt-0.5">{label}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Typography ─────────────────────────────────────────────────────── -->
+  <section class="bg-white section-padding">
+    <div class="site-container">
+      <div class="text-center mb-12 reveal-item">
+        <p class="section-label">Type System</p>
+        <h2 class="section-heading">Brand Typography</h2>
+        <div class="accent-divider-center"></div>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-8 reveal-item">
+        <!-- Display font -->
+        <div class="bg-[#f0f2f4] rounded-2xl border border-[#cdd8e3] p-8">
+          <p class="text-[#567798] text-[12px] font-semibold uppercase tracking-widest mb-5">Display Typeface — Plus Jakarta Sans</p>
+          <div class="flex flex-col gap-5">
+            {[
+              { weight: "900", label: "Black",   sample: "The #1 Handyman in McKinney" },
+              { weight: "800", label: "ExtraBold", sample: "Expert Home Repairs" },
+              { weight: "700", label: "Bold",    sample: "Licensed, Insured & Background Checked" },
+            ].map(({ weight, label, sample }) => (
+              <div class="border-b border-[#cdd8e3] pb-5 last:border-0 last:pb-0">
+                <span class="text-[#94a3b8] text-[11px] font-mono block mb-1">{label} / {weight}</span>
+                <span class="text-[#151d25]" style={`font-family: 'Plus Jakarta Sans', sans-serif; font-weight: ${weight}; font-size: 18px;`}>{sample}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <!-- Body font -->
+        <div class="bg-[#f0f2f4] rounded-2xl border border-[#cdd8e3] p-8">
+          <p class="text-[#567798] text-[12px] font-semibold uppercase tracking-widest mb-5">Body Typeface — DM Sans</p>
+          <div class="flex flex-col gap-5">
+            {[
+              { weight: "700", label: "Bold",      sample: "Fast, reliable home repairs." },
+              { weight: "600", label: "Semi-Bold", sample: "Serving McKinney since 2020." },
+              { weight: "400", label: "Regular",   sample: "Professional handyman services for busy homeowners across North Texas — licensed, insured, and background checked." },
+            ].map(({ weight, label, sample }) => (
+              <div class="border-b border-[#cdd8e3] pb-5 last:border-0 last:pb-0">
+                <span class="text-[#94a3b8] text-[11px] font-mono block mb-1">{label} / {weight}</span>
+                <span class="text-[#151d25]" style={`font-family: 'DM Sans', sans-serif; font-weight: ${weight}; font-size: 15px; line-height: 1.6;`}>{sample}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Logo Downloads ─────────────────────────────────────────────────── -->
+  <section class="bg-[#f0f2f4] section-padding">
+    <div class="site-container">
+      <div class="text-center mb-12 reveal-item">
+        <p class="section-label">Assets</p>
+        <h2 class="section-heading">Logo Downloads</h2>
+        <div class="accent-divider-center"></div>
+      </div>
+      <div class="flex flex-col gap-4 max-w-[760px] mx-auto reveal-item">
+        {downloads.map(({ name, size, format, href }) => (
+          <div class="bg-white rounded-2xl border border-[#cdd8e3] px-6 py-5 flex items-center justify-between gap-4 hover:border-[#2c3e50] hover:shadow-md transition-all">
+            <div class="flex items-center gap-4">
+              <div class={`w-12 h-12 rounded-xl flex items-center justify-center text-[11px] font-black shrink-0 ${format === "PDF" ? "bg-red-50 text-red-600" : "bg-[#2c3e50] text-white"}`}>
+                {format}
+              </div>
+              <div>
+                <p class="text-[#151d25] text-[15px] font-semibold">{name}</p>
+                {size !== "—" && <p class="text-[#94a3b8] text-[12px] mt-0.5">{size}px</p>}
+              </div>
+            </div>
+            <a
+              href={href}
+              class="flex items-center gap-1.5 bg-[#f0f2f4] hover:bg-[#2c3e50] hover:text-white text-[#2c3e50] text-[13px] font-semibold px-4 py-2 rounded-full transition-all shrink-0"
+            >
+              Download
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Press Contact CTA ──────────────────────────────────────────────── -->
+  <section class="bg-[#2c3e50] py-14 lg:py-16">
+    <div class="site-container flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left reveal-item">
+      <div>
+        <h2 class="text-white font-black text-[28px] lg:text-[34px] tracking-tight mb-2">Press Inquiries</h2>
+        <p class="text-white/85 text-[16px]">For interviews, features, or partnership opportunities:</p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 shrink-0">
+        <a
+          href={mailHref}
+          class="flex items-center gap-2 border-2 border-white/30 hover:border-white text-white font-semibold text-[14px] px-6 py-3.5 rounded-full transition-colors whitespace-nowrap"
+        >
+          {EMAIL}
+        </a>
+        <a
+          href={telHref}
+          class="flex items-center gap-2 bg-[#b05d45] hover:bg-[#8d4a37] text-white font-bold text-[15px] px-7 py-3.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] whitespace-nowrap"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {PHONE_DISPLAY}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>
