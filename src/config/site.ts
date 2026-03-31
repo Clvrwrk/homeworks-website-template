@@ -71,6 +71,9 @@ export const REVIEW_COUNT      = "{{NUMBER_OF_REVIEWS}}";
 export const REVIEW_RATING     = "5.0";
 export const HAPPY_CUSTOMERS   = "{{HAPPY_CUSTOMERS}}";
 export const YEARS_IN_BUSINESS = "{{YEARS_IN_BUSINESS}}";
+export const YEARS_EXPERIENCE  = "{{YEARS_IN_BUSINESS}}";
+export const JOBS_COMPLETED    = "{{JOBS_COMPLETED}}";
+export const RESPONSE_TIME     = "{{RESPONSE_TIME}}";
 export const IS_LICENSED: boolean = false;
 export const IS_INSURED: boolean  = false;
 export const IS_BONDED: boolean   = false;
@@ -108,7 +111,7 @@ export const SEO_DEFAULT_DESC   =
 export const OG_IMAGE_DEFAULT   = "/og-default.jpg";
 export const SCHEMA_TYPE        = "HomeAndConstructionBusiness";
 export const SCHEMA_PRICE_RANGE = "$$";
-export const BUSINESS_HOURS     = "Mon–Sat: 7am–7pm";
+export const BUSINESS_HOURS     = "{{BUSINESS_HOURS}}";
 
 // ---- Derived helpers ----------------------------------------
 

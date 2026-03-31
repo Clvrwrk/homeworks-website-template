@@ -29,34 +29,6 @@ export default defineConfig({
     }),
   ],
 
-  experimental: {
-    fonts: [
-      {
-        name: "Plus Jakarta Sans",
-        cssVariable: "--font-display",
-        provider: "local",
-        variants: [
-          { weight: "400", style: "normal", src: [{ path: "public/fonts/plus-jakarta-sans-400.woff2" }] },
-          { weight: "500", style: "normal", src: [{ path: "public/fonts/plus-jakarta-sans-500.woff2" }] },
-          { weight: "600", style: "normal", src: [{ path: "public/fonts/plus-jakarta-sans-600.woff2" }] },
-          { weight: "700", style: "normal", src: [{ path: "public/fonts/plus-jakarta-sans-700.woff2" }] },
-          { weight: "800", style: "normal", src: [{ path: "public/fonts/plus-jakarta-sans-800.woff2" }] },
-        ],
-      },
-      {
-        name: "DM Sans",
-        cssVariable: "--font-body",
-        provider: "local",
-        variants: [
-          { weight: "400", style: "normal", src: [{ path: "public/fonts/dm-sans-400.woff2" }] },
-          { weight: "500", style: "normal", src: [{ path: "public/fonts/dm-sans-500.woff2" }] },
-          { weight: "600", style: "normal", src: [{ path: "public/fonts/dm-sans-600.woff2" }] },
-          { weight: "700", style: "normal", src: [{ path: "public/fonts/dm-sans-700.woff2" }] },
-        ],
-      },
-    ],
-  },
-
   vite: {
     plugins: [tailwindcss()],
     build: {

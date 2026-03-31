@@ -7,6 +7,19 @@
 
 @import "tailwindcss";
 
+/* ---- Local fonts -------------------------------------------- */
+
+@font-face { font-family: "Plus Jakarta Sans"; font-weight: 400; font-style: normal; font-display: swap; src: url("/fonts/plus-jakarta-sans-400.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-weight: 500; font-style: normal; font-display: swap; src: url("/fonts/plus-jakarta-sans-500.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-weight: 600; font-style: normal; font-display: swap; src: url("/fonts/plus-jakarta-sans-600.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-weight: 700; font-style: normal; font-display: swap; src: url("/fonts/plus-jakarta-sans-700.woff2") format("woff2"); }
+@font-face { font-family: "Plus Jakarta Sans"; font-weight: 800; font-style: normal; font-display: swap; src: url("/fonts/plus-jakarta-sans-800.woff2") format("woff2"); }
+
+@font-face { font-family: "DM Sans"; font-weight: 400; font-style: normal; font-display: swap; src: url("/fonts/dm-sans-400.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-weight: 500; font-style: normal; font-display: swap; src: url("/fonts/dm-sans-500.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-weight: 600; font-style: normal; font-display: swap; src: url("/fonts/dm-sans-600.woff2") format("woff2"); }
+@font-face { font-family: "DM Sans"; font-weight: 700; font-style: normal; font-display: swap; src: url("/fonts/dm-sans-700.woff2") format("woff2"); }
+
 @theme inline {
   /* Brand palette — set by Layout.astro define:vars from site.ts */
   --color-brand-primary:        var(--brand-primary, #b05d45);
@@ -23,8 +36,8 @@
   --color-snow:   #f8f9fa;
 
   /* Typography */
-  --font-sans:    var(--font-body);
-  --font-display: var(--font-display);
+  --font-sans:    "DM Sans", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
 /* ---- Reset ------------------------------------------------- */
@@ -34,7 +47,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family:            var(--font-body, system-ui, sans-serif);
+  font-family:            var(--font-sans, system-ui, sans-serif);
   font-size:              1.0625rem;   /* 17px base */
   line-height:            1.7;
   color:                  #151d25;
