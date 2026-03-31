@@ -1,707 +1,121 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import {
-  BUSINESS_NAME,
-  PHONE_DISPLAY,
-  PHONE_RAW,
-  PRIMARY_CITY,
-  PRIMARY_STATE,
-  SITE_URL,
-} from "@/config/site";
+import Layout from "../../layouts/Layout.astro";
+import { SERVICES, BUSINESS_NAME, ADDRESS_CITY, ADDRESS_STATE } from "../../config/site";
+import { SERVICES_CONTENT } from "../../data/services";
+import { CONTENT_PLACEHOLDER } from "../../types/content";
+import type { ServiceDef } from "../../config/site";
 
-const telHref = `tel:${PHONE_RAW}`;
+export async function getStaticPaths() {
+  return SERVICES.map((s: ServiceDef) => ({
+    params: { slug: s.slug },
+    props:  { service: s },
+  }));
+}
 
-const allServices = [
-  {
-    slug: "drywall-repair",
-    title: "Expert Drywall Repair Near Me - Trusted Drywall Repair Contractors",
-    metaDesc: "Find reliable drywall repair contractors in your area, offering transparent pricing and a satisfaction guarantee. Our expert team respects your home with every visit, wearing shoe covers and cleaning up before leaving. Fully insured professionals ensure your peace of mind. Experience fast responses with our 60-minute guarantee during business hours. We\u2019re committed to arriving on time and meeting your repair needs efficiently. Discover skilled craftsman services for your drywall repair projects today. Your to-do list won\u2019t fix itself, let us lend a hand with seamless finishes and trusted expertise.",
-    hero: "Expert Drywall Repair Near Me - Trusted Drywall Repair Contractors",
-    intro: "When your walls begin to crack or holes mar the surface, it\u2019s a sign that your home needs attention. Our experienced drywall repair contractors in McKinney, TX, and surrounding DFW suburbs offer a seamless solution to restore your walls to their original glory.",
-    image: "/services/drywall.webp",
-    subServices: [
-      { title: "Hole Patching", desc: "Small holes from screws to fist-sized damage — filled and finished flush." },
-      { title: "Texture Matching", desc: "Orange peel, knockdown, smooth, or custom — we match what's there." },
-      { title: "Water Damage Repair", desc: "Cut out the damaged section, treat for mold, replace, and finish." },
-      { title: "Ceiling Repair", desc: "Sagging, cracked, or damaged ceilings restored to like-new condition." },
-    ],
-    faqs: [
-      { q: "What kinds of drywall services do you offer?", a: "We cover a comprehensive range of drywall services including drywall repair, drywall patch, and full drywall installations, ensuring seamless results every time." },
-      { q: "How do you ensure the safety and trustworthiness of your technicians?", a: "All our technicians are fully insured and background-checked. They are trained to respect your home by using shoe covers and protecting your floors during the service." },
-      { q: "Can you guarantee no surprise costs?", a: "Yes, our transparent pricing ensures you know the cost upfront with no hidden fees. This fosters trust and provides peace of mind." },
-      { q: "How quickly can I expect a response to my service request?", a: "We pride ourselves on rapid response times to ensure your drywall concerns don\u2019t linger, offering timely and efficient solutions." },
-      { q: "What steps do you take to keep my home clean during the repair process?", a: "We wear shoe covers and use floor protection to ensure your home remains pristine. Our team performs a thorough clean-up after the service." },
-    ],
-    seoContent: {
-      overview: "Expert drywall repair services in McKinney, TX, prioritize transparency, professionalism, and respect for your home. Our fully insured and background-checked technicians guarantee seamless repairs from patchwork to complete drywall installations. You\u2019ll experience clear communication and no surprise invoices with our transparent pricing approach. We arrive on time, protect your space with shoe covers and floor protection, and leave no mess behind.",
-      highlights: [
-        "Experienced contractors offer drywall repair in McKinney, guaranteeing structural integrity and aesthetic appeal.",
-        "Transparent pricing ensures no surprise costs, fostering trust and peace of mind for homeowners.",
-        "Professional teams respect your home using shoe covers and thorough cleanup post-service.",
-        "Fully insured and background-checked technicians guarantee reliable and safe drywall services.",
-        "Rapid response and punctual services mean your to-do list won\u2019t grow longer.",
-      ],
-      contractorSection: {
-        heading: "Choosing the Right Drywall Repair Contractor in McKinney",
-        body: "Finding a qualified drywall contractor you can trust for your home is crucial. Homeowners in McKinney, TX, and the surrounding areas deserve contractors who value punctuality, transparency, and quality service. Our approach centers on delivering trust through transparent pricing, meticulous cleanup, and timely responses. Each technician is fully insured and background-checked, ensuring peace of mind.",
-        tableRows: [
-          { criteria: "Reliability", description: "Contractor\u2019s ability to complete the project on time and within budget.", benefit: "Ensures scheduling clarity and financial predictability.", outcome: "Increased trust and reduced project delays." },
-          { criteria: "Professionalism", description: "Conduct and presentation of the contractor and their team.", benefit: "Reflects commitment and respect towards clients.", outcome: "Professional engagement and clear communication." },
-          { criteria: "Quality Service", description: "Standard of work and materials used in drywall repair.", benefit: "Results in durable and aesthetically pleasing repairs.", outcome: "Enhanced appearance and longevity of the repairs." },
-        ],
-      },
-      comprehensiveSection: {
-        heading: "Comprehensive Drywall Services in McKinney and Surrounding Areas",
-        body: "Partnering with expert drywall contractors can transform your home. In McKinney and surrounding areas, reliable drywall repair, drywall installation, and drywall finishing services are crucial. With our transparent pricing, you\u2019ll know the exact cost before work begins, leaving no room for surprise invoices. From drywall restoration to seamless drywall finishing, a dedicated drywall contractor ensures projects meet your expectations. Every drywall patch fixed and drywall ceiling repaired is handled with respect for your home.",
-      },
-      transparencySection: {
-        heading: "Our Commitment to Transparency and Professionalism",
-        body: "Choosing the right drywall contractor is more than just a necessity; it\u2019s a step toward ensuring your home radiates perfection with minimal hassle. Transparency and professionalism aren\u2019t just words; they\u2019re our promise. We offer comprehensive drywall services, including drywall repair, drywall patch, and more, right here in your neighborhood. Our transparent pricing means no hidden surprises, just the quality service you expect. Fully insured and background-checked, every drywall contractor in our team is dedicated to maintaining respect for your home.",
-        tableRows: [
-          { service: "Drywall Installation", features: "Precision workmanship", assurance: "Quality guaranteed", commitment: "Skilled technicians" },
-          { service: "Drywall Repair", features: "Seamless finish", assurance: "Long-lasting results", commitment: "Timely service" },
-          { service: "Interior Renovation", features: "Comprehensive solutions", assurance: "Customer-focused process", commitment: "Attention to detail" },
-          { service: "Consultation Services", features: "Personalized guidance", assurance: "Transparent communication", commitment: "Expert advice" },
-        ],
-      },
-      expertiseSection: {
-        heading: "Why Expert Drywall Repair Goes Beyond Standard Handyman Services",
-        body: "Expert drywall repair offers more precision and quality compared to standard handyman services. It\u2019s about using specialized tools and techniques that a generic handyman might not possess. A trusted drywall contractor focuses on the tiny details, ensuring everything from drywall patch to drywall finishing is seamless. Homeowners from Frisco to Allen can expect no hidden costs and punctual service that respects their time. This commitment to professionalism is why experienced drywall repairers remain indispensable, promising long-lasting results that reflect the value of your home.",
-      },
-    },
-  },
-  {
-    slug: "tv-mounting",
-    title: "TV Mounting Services Near Me - Secure TV Wall Mount Installation Services",
-    metaDesc: "Experience seamless TV mounting services in McKinney, TX. Our trusted team ensures secure and precise TV wall mount installation. With transparent pricing and a satisfaction guarantee, expect professional service from vetted technicians. We respect your home, ensuring full cleanup and adherence to scheduled times. For hassle-free TV installations, choose us. Available in Frisco, Allen, Prosper, Anna, and Fairview.",
-    hero: "TV Mounting Services Near Me - Secure TV Wall Mount Installation Services",
-    intro: "Your living room should be a sanctuary, not a tangle of wires and cluttered surfaces. Our TV mounting services transform your space with secure wall installations that enhance your viewing experience and free up valuable floor space. Proudly serving McKinney, TX, and the surrounding DFW suburbs.",
-    image: "/services/tv-mount.webp",
-    subServices: [
-      { title: "Fixed & Tilting Mounts", desc: "Perfect for bedrooms and rooms where you sit directly in front of the TV." },
-      { title: "Full-Motion Mounts", desc: "Swivel and extend for corner installations or flexible viewing angles." },
-      { title: "Cable Concealment", desc: "In-wall conduit or surface raceways for a clean, cord-free look." },
-      { title: "Soundbar & Component Setup", desc: "Mount your soundbar and organize AV components for a complete setup." },
-    ],
-    faqs: [
-      { q: "What areas do your TV mounting services cover?", a: "We proudly serve McKinney, TX, and the surrounding DFW suburbs including Frisco, Allen, Prosper, Anna, and Fairview. Our local expertise ensures tailored solutions for your specific needs." },
-      { q: "How is pricing structured for your TV mounting services?", a: "We offer transparent pricing so you know the exact cost before installation begins. This eliminates surprise invoices and ensures trust and reliability." },
-      { q: "What measures do you take to protect my home during installation?", a: "Our technicians are fully insured and background-checked. They respect your home by using shoe covers and providing thorough cleanup post-installation." },
-      { q: "What happens if there's an issue after installation?", a: "Our commitment to excellence includes a satisfaction guarantee. If there's an issue, we'll return to make it right without hassle, ensuring your peace of mind." },
-      { q: "How do you ensure a secure TV mounting?", a: "We conduct a thorough assessment of your wall and use appropriate anchors to ensure a secure and professional finish. This attention to detail is what sets us apart." },
-    ],
-    seoContent: {
-      overview: "Experience seamless TV mounting services in McKinney, TX, and surrounding suburbs with our trusted team. We ensure secure, precise installations with transparent pricing, eliminating surprise invoices. Our fully insured and background-checked technicians respect your home, using shoe covers and ensuring a thorough cleanup post-installation. With a commitment to excellence and a satisfaction guarantee, we transform your space with meticulous attention to detail.",
-      highlights: [
-        "TV mounting services transform cluttered spaces into organized, sleek setups, enhancing the viewing experience.",
-        "Transparent pricing and fully vetted technicians ensure trust and reliability in your home.",
-        "Professional service respects your space with thorough cleanup, shoe covers, and wall protection.",
-        "Fast response to mounting questions and issues, delivering satisfaction and peace of mind.",
-        "Local expertise offers tailored solutions with no surprise fees, focusing on quality and communication.",
-      ],
-      contractorSection: {
-        heading: "Understanding TV Wall Mount Installation Services",
-        body: "When it comes to enhancing your living space, understanding the role of expert TV mounting services is crucial. Ensuring a secure and aesthetically pleasing setup isn\u2019t just about finding a mount installer, but about selecting a service that reflects professionalism and trust. Our approach to TV wall mount installation brings peace of mind through attention to detail and respect for your home. From choosing the right wall anchors to understanding the nuances of wall mounting, a reliable service like ours makes all the difference.",
-        tableRows: [
-          { criteria: "Professional Installation", description: "Expert technicians with proper tools and training", benefit: "Enhanced viewing experience and space optimization", outcome: "Certified technicians supporting the local community" },
-          { criteria: "Custom Mounting Solutions", description: "Tailored approach for every wall type and TV size", benefit: "Space optimization with seamless aesthetics", outcome: "Quality guarantee with community-centered service" },
-          { criteria: "Comprehensive Support", description: "Pre-installation consultation through post-job cleanup", benefit: "Safety assurance and reliable scheduling", outcome: "Responsive local team with post-installation support" },
-          { criteria: "Integration Options", description: "Cable management and AV component organization", benefit: "Seamless aesthetics with no visible wires", outcome: "Knowledge of local standards and building codes" },
-        ],
-      },
-      comprehensiveSection: {
-        heading: "Reliable TV Mounting Service for Your Home",
-        body: "Securing your TV to the wall with professionalism and care makes all the difference. Our TV mounting service delivers not just precision but also a commitment that your home in McKinney, TX stays pristine. With every installation, we emphasize transparent pricing, ensuring no surprise costs. We pride ourselves on our team being fully insured and background-checked for your peace of mind. From Allen to Prosper, our TV wall mounting services promise prompt and effective solutions, all while respecting your home with thorough post-job cleanup. Our technicians arrive on time and in uniform, offer virtual consultation options, handle cable management expertly, and are equipped to handle unexpected challenges efficiently and professionally.",
-      },
-      transparencySection: {
-        heading: "Quick and Efficient Response to Your TV Mounting Questions",
-        body: "Need reliable TV mounting services in McKinney and surrounding suburbs? We offer prompt assistance, ensuring seamless installations for your sleek entertainment setups. Our team understands the importance of respect and transparency, values reflected in every interaction and installation. By focusing on clear communication and quality service, we answer your mounting questions with clarity and expertise. Expect your home to remain unscathed, wires concealed, and your trust rewarded with meticulous execution and fair price assurances.",
-        tableRows: [
-          { service: "Service Efficiency", features: "Timely and streamlined installation process", assurance: "Minimizes disruption to daily routine", commitment: "Clear scheduling and updates" },
-          { service: "Expertise in Installation", features: "Professionally trained technicians", assurance: "Ensures durable and secure mounts", commitment: "Technical explanations offered pre-installation" },
-          { service: "Customer Interaction", features: "Friendly and attentive service", assurance: "Enhances overall experience", commitment: "Responsive support channels available" },
-          { service: "Pricing Transparency", features: "Clear breakdown of associated costs", assurance: "Enables informed decision-making", commitment: "Itemized estimates provided upfront" },
-        ],
-      },
-      expertiseSection: {
-        heading: "Getting the Most from Our TV Mount Services",
-        body: "Maximizing your TV viewing experience starts with our mount services. We provide comprehensive solutions tailored to your needs, ensuring every piece of equipment is securely attached. Our professionals are equipped with the latest tools for accurate in-wall cord concealment, creating an aesthetically pleasing setup free from visible wires. Hands-on help from our skilled team guarantees that every question you have about the process is answered promptly. We maintain transparency with our pricing, avoiding unexpected costs, and focusing on delivering value. Ensure your TV is mounted securely and with care by choosing a team that values your home like its own.",
-      },
-    },
-  },
-  {
-    slug: "plumbing",
-    title: "Plumbing",
-    metaDesc: "Handyman plumbing services in McKinney, TX. Faucet repair, toilet repair, fixture installation, and more. Free estimates. Free estimates.",
-    hero: "Reliable plumbing repairs and fixture installs.",
-    intro: "From a dripping faucet to a running toilet, we handle the everyday plumbing tasks that waste water and add up on your bill. We also install new fixtures when you're ready to upgrade.",
-    image: "/services/plumbing.webp",
-    subServices: [
-      { title: "Faucet Repair & Replace", desc: "Fix leaks or install a brand-new faucet in kitchen, bath, or utility." },
-      { title: "Toilet Repair", desc: "Running, rocking, or leaking toilets diagnosed and fixed correctly." },
-      { title: "Fixture Installation", desc: "Sinks, faucets, showerheads, and tub spouts installed properly." },
-      { title: "Garbage Disposal", desc: "Install or replace garbage disposals quickly and correctly." },
-    ],
-    faqs: [
-      { q: "Are you licensed plumbers?", a: "We handle common handyman-level plumbing repairs. For major line work or new construction plumbing, we recommend a licensed plumber." },
-      { q: "Can you install a new faucet I already purchased?", a: "Absolutely. Supply the faucet and we'll install it. We charge for labor only." },
-      { q: "My toilet is rocking — is that a big repair?", a: "Usually not. A rocking toilet typically needs a new wax ring and mounting hardware — a straightforward repair." },
-    ],
-  },
-  {
-    slug: "door-installation",
-    title: "Door Installation",
-    metaDesc: "Professional door installation in McKinney, TX. Interior, exterior, and storm doors installed level and weather-tight. Free estimates. Free estimates.",
-    hero: "Doors installed plumb, level, and weather-tight.",
-    intro: "A properly hung door makes a big difference — in function, in energy efficiency, and in how your home looks and feels. We install interior and exterior doors that open and close perfectly.",
-    image: "/services/door.webp",
-    subServices: [
-      { title: "Interior Door Install", desc: "Pre-hung and slab doors installed plumb, level, and properly trimmed." },
-      { title: "Exterior Door Install", desc: "Entry doors installed with proper weatherstripping and threshold seals." },
-      { title: "Storm & Screen Doors", desc: "Added protection and ventilation — measured, cut, and mounted." },
-      { title: "Door Hardware", desc: "Knobs, levers, deadbolts, and hinges installed or upgraded." },
-    ],
-    faqs: [
-      { q: "Can you install a door I already bought?", a: "Yes. Supply the door and we'll handle all the installation labor." },
-      { q: "Do you remove and dispose of old doors?", a: "Yes, we haul away the old door as part of the job." },
-      { q: "What if my door frame is damaged?", a: "Minor frame repairs are included. If the frame needs major work, we'll assess and quote separately." },
-    ],
-  },
-  {
-    slug: "interior-painting",
-    title: "Interior Painting",
-    metaDesc: "Professional interior painting in McKinney, TX. Rooms, accent walls, trim, and more. Free estimates. Free estimates.",
-    hero: "Prep, prime, and paint — flawless results every time.",
-    intro: "The difference between a DIY paint job and a professional one is in the prep. We patch, caulk, tape, and prime before ever picking up a brush — so the final coat looks perfect and lasts.",
-    image: "/services/painting.webp",
-    subServices: [
-      { title: "Full Room Painting", desc: "Walls, ceiling, and trim — masked, prepped, and painted to a clean finish." },
-      { title: "Accent Walls", desc: "Make a statement with a single bold wall done right." },
-      { title: "Trim & Baseboards", desc: "Clean, crisp lines on all your trim work — refreshed or repainted." },
-      { title: "Cabinet Painting", desc: "Transform your kitchen or bathroom cabinets with a durable new finish." },
-    ],
-    faqs: [
-      { q: "Do I need to supply the paint?", a: "You can supply paint or we can source it. If you want help choosing a color, we're happy to assist." },
-      { q: "How long does a room take to paint?", a: "A standard bedroom takes 3–5 hours with prep. Larger rooms or those needing more prep will take longer." },
-      { q: "Do you move furniture?", a: "We move small to medium furniture. Large pieces like pianos or pool tables should be moved in advance." },
-    ],
-  },
-  {
-    slug: "electrical-fixtures",
-    title: "Electrical Fixtures",
-    metaDesc: "Electrical fixture installation in McKinney, TX. Light fixtures, ceiling fans, outlets, and more. Free estimates. Free estimates.",
-    hero: "Electrical fixtures installed safely and to code.",
-    intro: "We install and replace light fixtures, ceiling fans, dimmer switches, and outlets. All electrical work is done safely and up to code with proper wire connections.",
-    image: "/services/electrical.webp",
-    subServices: [
-      { title: "Light Fixture Install", desc: "Chandeliers, pendants, flush mounts, and sconces installed cleanly." },
-      { title: "Ceiling Fan Install", desc: "Fans with or without lights, including remote and smart controls." },
-      { title: "Dimmer Switches", desc: "Single-pole and 3-way dimmers installed for any fixture." },
-      { title: "Outlet & Switch Replacement", desc: "Worn or damaged outlets and switches replaced safely." },
-    ],
-    faqs: [
-      { q: "Do you need to turn off power?", a: "Yes. We always cut power at the breaker before working on any electrical fixture." },
-      { q: "Can you install a ceiling fan where there's no existing fixture?", a: "If there's an existing box and wiring, yes. New wiring runs require a licensed electrician." },
-      { q: "Can you install smart switches?", a: "Yes. We install smart dimmers and switches compatible with Alexa, Google Home, and Apple HomeKit." },
-    ],
-  },
-  {
-    slug: "furniture-assembly",
-    title: "Furniture Assembly",
-    metaDesc: "Furniture assembly in McKinney, TX. IKEA, flat-pack, and ready-to-assemble furniture built right. Free estimates. Free estimates.",
-    hero: "Furniture assembled right the first time.",
-    intro: "Save time and avoid the frustration. We assemble all major furniture brands — beds, desks, shelving, entertainment centers — quickly and correctly.",
-    image: "/services/drywall.webp",
-    subServices: [
-      { title: "IKEA Assembly", desc: "All IKEA furniture assembled correctly, every time." },
-      { title: "Flat-Pack Furniture", desc: "Any brand, any style — we handle the instructions so you don't have to." },
-      { title: "Beds & Bedroom Sets", desc: "Bed frames, headboards, dressers, and nightstands assembled." },
-      { title: "Office & Shelving", desc: "Desks, bookcases, entertainment centers, and storage units." },
-    ],
-    faqs: [
-      { q: "Do you bring tools?", a: "Yes, we bring all necessary tools. You just need to have the furniture on-site." },
-      { q: "What if parts are missing?", a: "We'll help you identify missing parts and contact the manufacturer for replacements." },
-      { q: "Can you assemble multiple pieces in one visit?", a: "Absolutely. We can knock out your entire furniture list in a single visit." },
-    ],
-  },
-  {
-    slug: "carpentry",
-    title: "Carpentry & Trim",
-    metaDesc: "Carpentry and trim work in McKinney, TX. Crown molding, baseboards, shelving, and custom woodwork. Free estimates. Free estimates.",
-    hero: "Precision carpentry and trim work.",
-    intro: "We install and repair crown molding, baseboards, door casings, window trim, and floating shelves. Clean miters, caulked and paint-ready.",
-    image: "/services/door.webp",
-    subServices: [
-      { title: "Crown Molding", desc: "Elegant crown molding installed with tight, clean miters." },
-      { title: "Baseboard & Casing", desc: "New or replacement baseboards and door/window casing installed clean." },
-      { title: "Floating Shelves", desc: "Sturdy, level shelves mounted to stud or with proper wall anchors." },
-      { title: "Built-In Repairs", desc: "Repairs and modifications to existing built-in cabinets and shelving." },
-    ],
-    faqs: [
-      { q: "Can you match existing trim profiles?", a: "We work to match existing profiles as closely as possible using standard stock profiles." },
-      { q: "Do you paint the trim after installing?", a: "We caulk and prepare for paint. We can also paint for an additional charge." },
-      { q: "Can you install floating shelves in plaster walls?", a: "Yes. We use appropriate anchors for plaster and lathe or locate studs to ensure solid mounting." },
-    ],
-  },
-  {
-    slug: "pressure-washing",
-    title: "Pressure Washing",
-    metaDesc: "Pressure washing in McKinney, TX. Driveways, patios, sidewalks, siding, and more cleaned professionally. Free estimates. Free estimates.",
-    hero: "Exterior surfaces cleaned and refreshed.",
-    intro: "McKinney summers are tough on exterior surfaces. We pressure wash driveways, patios, decks, siding, and fences to remove years of dirt, algae, and mildew — restoring them to like-new condition.",
-    image: "/services/painting.webp",
-    subServices: [
-      { title: "Driveway & Sidewalk", desc: "Concrete cleaned of oil stains, dirt, and mildew for great curb appeal." },
-      { title: "Patio & Deck", desc: "Wood and concrete decks, patios, and pool surrounds washed safely." },
-      { title: "Siding & Exterior", desc: "Vinyl, wood, and fiber cement siding cleaned without damage." },
-      { title: "Fences & Gates", desc: "Wood and vinyl fences cleaned of algae and mildew." },
-    ],
-    faqs: [
-      { q: "Will pressure washing damage my wood deck?", a: "Not when done correctly. We use appropriate pressure settings for wood to clean without raising the grain." },
-      { q: "How long does a driveway take?", a: "A standard two-car driveway takes 45–90 minutes." },
-      { q: "Do you apply sealant after washing?", a: "We can apply concrete or wood sealer after washing for an additional charge." },
-    ],
-  },
-];
+const { service }  = Astro.props as { service: ServiceDef };
+const content      = SERVICES_CONTENT[service.slug] ?? CONTENT_PLACEHOLDER;
+const canonicalUrl = `${Astro.site?.toString().replace(/\/$/, "")}/services/${service.slug}`;
 
-const { slug } = Astro.params;
-const service = allServices.find((s) => s.slug === slug);
-if (!service) return Astro.redirect("/404");
+const faqSchema = content.faqSchemaJsonLd
+  ? JSON.parse(content.faqSchemaJsonLd)
+  : null;
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": `${SITE_URL}/` },
-    { "@type": "ListItem", "position": 2, "name": "Services", "item": `${SITE_URL}/services` },
-    { "@type": "ListItem", "position": 3, "name": service.title, "item": `${SITE_URL}/services/${service.slug}` }
-  ]
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home",     item: Astro.site?.toString() },
+    { "@type": "ListItem", position: 2, name: "Services", item: `${Astro.site}services` },
+    { "@type": "ListItem", position: 3, name: service.name },
+  ],
 };
-
-const serviceSchema = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  "name": service.title,
-  "provider": { "@id": `${SITE_URL}/#business` },
-  "areaServed": { "@type": "City", "name": PRIMARY_CITY, "addressRegion": PRIMARY_STATE },
-  "description": service.intro
-};
-
-const faqSchema = service.faqs.length > 0 ? {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": service.faqs.map(({ q, a }) => ({
-    "@type": "Question",
-    "name": q,
-    "acceptedAnswer": { "@type": "Answer", "text": a }
-  }))
-} : null;
-
-// HowTo schema — maps to the 4-step "Our Seamless Process" section.
-// Used by Google for rich results and AI Overviews (GEO signal).
-const howToSchema = {
-  "@context": "https://schema.org",
-  "@type": "HowTo",
-  "name": `How to Get ${service.title} in ${PRIMARY_CITY}, ${PRIMARY_STATE}`,
-  "description": `The simple 4-step process to book ${service.title.toLowerCase()} with ${BUSINESS_NAME} in ${PRIMARY_CITY}, TX.`,
-  "totalTime": "PT30M",
-  "estimatedCost": {
-    "@type": "MonetaryAmount",
-    "currency": "USD",
-    "value": "Free estimate"
-  },
-  "step": [
-    {
-      "@type": "HowToStep",
-      "position": 1,
-      "name": "Request a Quote",
-      "text": "Tell us what you need via our online form or by phone. We respond within 60 minutes during business hours.",
-      "url": `${SITE_URL}/contact`
-    },
-    {
-      "@type": "HowToStep",
-      "position": 2,
-      "name": "Transparent Pricing",
-      "text": "Receive a clear, upfront price before any work begins. No hidden fees, no surprise invoices."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 3,
-      "name": "Expert Repair",
-      "text": "A background-checked, fully insured technician arrives on time wearing shoe covers and ready to work."
-    },
-    {
-      "@type": "HowToStep",
-      "position": 4,
-      "name": "Clean Home",
-      "text": "We clean up completely before we leave — floors protected, debris removed, your home left spotless."
-    }
-  ]
-};
-
-// Article schema — injected only on pages with SEO article content (e.g. drywall-repair).
-// Primary GEO signal: tells AI systems (ChatGPT, Perplexity, Google AI Overviews)
-// this is authoritative editorial content about the topic.
-const articleSchema = service.seoContent ? {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "@id": `${SITE_URL}/services/${service.slug}#article`,
-  "headline": service.title,
-  "description": service.metaDesc,
-  "datePublished": "2026-03-27",
-  "dateModified": new Date().toISOString().split('T')[0],
-  "author": {
-    "@type": "Organization",
-    "name": BUSINESS_NAME,
-    "url": SITE_URL
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": BUSINESS_NAME,
-    "url": SITE_URL,
-    "logo": {
-      "@type": "ImageObject",
-      "url": `${SITE_URL}/logo-horizontal-dark.webp`
-    }
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": `${SITE_URL}/services/${service.slug}`
-  },
-  "about": {
-    "@type": "Service",
-    "name": service.title,
-    "provider": { "@id": `${SITE_URL}/#business` },
-    "areaServed": { "@type": "City", "name": PRIMARY_CITY, "addressRegion": PRIMARY_STATE }
-  },
-  "image": {
-    "@type": "ImageObject",
-    "url": `${SITE_URL}${service.image}`,
-    "width": 600,
-    "height": 400
-  },
-  "speakable": {
-    "@type": "SpeakableSpecification",
-    "cssSelector": [".hero-speakable", ".overview-speakable"]
-  }
-} : null;
-
-const pageSchemas = [breadcrumbSchema, serviceSchema, howToSchema];
-if (faqSchema) pageSchemas.push(faqSchema);
-if (articleSchema) pageSchemas.push(articleSchema);
 ---
 
 <Layout
-  title={(service.slug === 'drywall-repair' || service.slug === 'tv-mounting') ? service.title : `${service.title} in ${PRIMARY_CITY}, ${PRIMARY_STATE} | ${BUSINESS_NAME}`}
-  description={service.metaDesc}
-  ogImage={service.image}
-  schema={pageSchemas}
+  title={content.seoTitle}
+  description={content.metaDescription}
+  canonical={canonicalUrl}
 >
-  <Header />
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    {faqSchema && (
+      <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+    )}
+  </Fragment>
 
-  <!-- ── Photo Hero ─────────────────────────────────────────────────────── -->
-  <section class="relative min-h-[420px] lg:min-h-[500px] flex items-end overflow-hidden">
-    <!-- Service photo background -->
-    <div class="absolute inset-0 z-0">
-      <img
-        src={service.image}
-        alt={`${service.title} service in ${PRIMARY_CITY} TX`}
-        class="w-full h-full object-cover object-[55%_top]"
-        loading="eager"
-        fetchpriority="high"
-        width="600"
-        height="400"
-        srcset={`${service.image.replace('.webp', '-400w.webp')} 400w, ${service.image.replace('.webp', '-600w.webp')} 600w, ${service.image.replace('.webp', '-800w.webp')} 800w`}
-        sizes="100vw"
-      />
-      <!-- Gradient overlay — dark at bottom for text legibility -->
-      <div class="absolute inset-0 bg-gradient-to-t from-[#151d25]/98 via-[#151d25]/70 to-[#151d25]/30"></div>
-    </div>
-
-    <!-- Hero content -->
-    <div class="relative z-10 w-full site-container pb-16 lg:pb-20 pt-32 hero-speakable">
-      <!-- Breadcrumb -->
-      <div class="flex items-center gap-2 text-[13px] text-white/70 mb-5">
-        <a href="/" class="hover:text-white transition-colors">Home</a>
-        <span>/</span>
-        <a href="/services" class="hover:text-white transition-colors">Services</a>
-        <span>/</span>
-        <span class="text-white/90">{service.title}</span>
-      </div>
-      <p class="section-label">{BUSINESS_NAME}</p>
-      <h1 class="text-white font-black tracking-tight leading-[1.05] mb-5 max-w-[720px]" style="font-size: clamp(2rem, 4vw, 3.25rem);">
-        {service.hero}
-      </h1>
-      <p class="text-white/90 text-[17px] max-w-[580px] leading-relaxed mb-8">
-        {service.intro}
-      </p>
-      <div class="flex flex-wrap gap-4">
-        <a href={telHref} class="btn-primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Get a Free Estimate
-        </a>
-        <a href="/contact" class="btn-ghost">
-          Request Online
-        </a>
+  <!-- Hero -->
+  <section class="section-padding bg-brand-secondary text-white">
+    <div class="site-container">
+      <span class="section-label-light">{ADDRESS_CITY}, {ADDRESS_STATE}</span>
+      <h1 class="section-heading-white reveal-up">{content.h1}</h1>
+      <div class="accent-divider" style="background: var(--brand-accent);" />
+      <p class="section-subheading text-white/80 reveal-up">{content.metaDescription}</p>
+      <div class="mt-8 flex gap-4 flex-wrap reveal-up">
+        <a href="/contact" class="btn-primary">Get a Free Quote</a>
+        <a href={`tel:{{PHONE_RAW}}`} class="btn-ghost">Call Now</a>
       </div>
     </div>
   </section>
 
-  <!-- ── What's Included ────────────────────────────────────────────────── -->
-  <section class="bg-[#f0f2f4] section-padding">
-    <div class="site-container">
-      <div class="text-center section-header">
-        <p class="section-label">What's Included</p>
-        <h2 class="section-heading">{service.title} — Full Service</h2>
-        <div class="accent-divider-center"></div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-[960px] mx-auto">
-        {service.subServices.map(({ title, desc }) => (
-          <div class="bg-white rounded-2xl p-8 border border-[#cdd8e3] hover:shadow-lg hover:border-[#2c3e50] transition-all duration-300">
-            <div class="flex items-start gap-4">
-              <div class="mt-0.5 w-8 h-8 shrink-0 rounded-full bg-[#b05d45] flex items-center justify-center shadow-md">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <polyline points="20 6 9 17 4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="text-[#151d25] text-[18px] font-bold mb-2">{title}</h3>
-                <p class="text-[#567798] text-[15px] leading-relaxed">{desc}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+  <!-- Generated body content -->
+  <section class="section-padding bg-snow">
+    <div class="site-container prose prose-lg max-w-none">
+      <Fragment set:html={content.bodyHtml} />
     </div>
   </section>
 
-  <!-- ── Process ────────────────────────────────────────────────────────── -->
-  <section class="bg-white section-padding">
-    <div class="site-container">
-      <div class="text-center section-header">
-        <p class="section-label">How It Works</p>
-        <h2 class="section-heading">Our Seamless Process</h2>
-        <div class="accent-divider-center"></div>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-        {[
-          { num: "01", title: "Request a Quote",     desc: "Tell us what you need via form or phone." },
-          { num: "02", title: "Transparent Pricing", desc: "Know the exact cost before we start." },
-          { num: "03", title: "Expert Repair",       desc: "Background-checked pros arrive on time." },
-          { num: "04", title: "Clean Home",          desc: "We clean up completely before we leave." },
-        ].map(({ num, title, desc }) => (
-          <div class="flex flex-col items-center text-center gap-5">
-            <div class="w-20 h-20 rounded-full bg-[#2c3e50] flex items-center justify-center shadow-lg">
-              <span class="text-white text-[22px] font-black">{num}</span>
-            </div>
-            <h3 class="text-[#151d25] text-[17px] font-bold">{title}</h3>
-            <p class="text-[#567798] text-[15px] leading-relaxed">{desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ── SEO Article Content (service-specific, e.g. drywall-repair) ────────── -->
-  {service.seoContent && (
-    <>
-      {/* Overview + Key Highlights */}
-      <section class="bg-[#f0f2f4] section-padding">
-        <div class="site-container">
-          <div class="grid lg:grid-cols-[1fr_380px] gap-12 lg:gap-16 items-start overview-speakable">
-            <div>
-              <p class="section-label">Brief Overview</p>
-              <h2 class="section-heading mb-6">About Our Drywall Repair Services</h2>
-              <div class="accent-divider"></div>
-              <p class="text-[#151d25] text-[17px] leading-relaxed mt-6">{service.seoContent.overview}</p>
-            </div>
-            <div class="bg-white rounded-2xl border border-[#cdd8e3] p-8 shadow-sm">
-              <p class="section-label mb-4">Key Highlights</p>
-              <ul class="flex flex-col gap-4">
-                {service.seoContent.highlights.map((item) => (
-                  <li class="flex items-start gap-3">
-                    <div class="mt-1 w-5 h-5 shrink-0 rounded-full bg-[#b05d45] flex items-center justify-center shadow-sm">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-                        <polyline points="20 6 9 17 4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </div>
-                    <span class="text-[#151d25] text-[15px] leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Choosing the Right Contractor + Comparison Table */}
-      <section class="bg-white section-padding">
-        <div class="site-container">
-          <p class="section-label">How to Choose</p>
-          <h2 class="section-heading mb-6">{service.seoContent.contractorSection.heading}</h2>
-          <div class="accent-divider"></div>
-          <p class="text-[#151d25] text-[17px] leading-relaxed mt-6 max-w-[760px] mb-10">{service.seoContent.contractorSection.body}</p>
-          <div class="overflow-x-auto rounded-2xl border border-[#cdd8e3] shadow-sm">
-            <table class="w-full text-left">
-              <thead class="bg-[#2c3e50] text-white">
-                <tr>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Criteria</th>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Description</th>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Benefit</th>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Outcome</th>
-                </tr>
-              </thead>
-              <tbody>
-                {service.seoContent.contractorSection.tableRows.map((row, i) => (
-                  <tr class={i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}>
-                    <td class="px-6 py-4 text-[15px] font-semibold text-[#151d25]">{row.criteria}</td>
-                    <td class="px-6 py-4 text-[15px] text-[#567798]">{row.description}</td>
-                    <td class="px-6 py-4 text-[15px] text-[#567798]">{row.benefit}</td>
-                    <td class="px-6 py-4 text-[15px] text-[#567798]">{row.outcome}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p class="text-[#567798] text-[13px] italic mt-3">Key factors to consider when selecting a drywall repair contractor, emphasizing alignment of service quality with homeowner expectations.</p>
-        </div>
-      </section>
-
-      {/* Comprehensive Services */}
-      <section class="bg-[#f0f2f4] section-padding">
-        <div class="site-container">
-          <p class="section-label">Full Service Range</p>
-          <h2 class="section-heading mb-6">{service.seoContent.comprehensiveSection.heading}</h2>
-          <div class="accent-divider"></div>
-          <p class="text-[#151d25] text-[17px] leading-relaxed mt-6 max-w-[760px]">{service.seoContent.comprehensiveSection.body}</p>
-        </div>
-      </section>
-
-      {/* Transparency + Services Table */}
-      <section class="bg-white section-padding">
-        <div class="site-container">
-          <p class="section-label">Our Promise</p>
-          <h2 class="section-heading mb-6">{service.seoContent.transparencySection.heading}</h2>
-          <div class="accent-divider"></div>
-          <p class="text-[#151d25] text-[17px] leading-relaxed mt-6 max-w-[760px] mb-10">{service.seoContent.transparencySection.body}</p>
-          <div class="overflow-x-auto rounded-2xl border border-[#cdd8e3] shadow-sm">
-            <table class="w-full text-left">
-              <thead class="bg-[#2c3e50] text-white">
-                <tr>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Service Offered</th>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Key Features</th>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Customer Assurance</th>
-                  <th class="px-6 py-4 text-[14px] font-bold uppercase tracking-wide">Professional Commitment</th>
-                </tr>
-              </thead>
-              <tbody>
-                {service.seoContent.transparencySection.tableRows.map((row, i) => (
-                  <tr class={i % 2 === 0 ? "bg-white" : "bg-[#f8f9fa]"}>
-                    <td class="px-6 py-4 text-[15px] font-semibold text-[#151d25]">{row.service}</td>
-                    <td class="px-6 py-4 text-[15px] text-[#567798]">{row.features}</td>
-                    <td class="px-6 py-4 text-[15px] text-[#567798]">{row.assurance}</td>
-                    <td class="px-6 py-4 text-[15px] text-[#567798]">{row.commitment}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p class="text-[#567798] text-[13px] italic mt-3">Our dedication to transparency and professionalism across all drywall services and customer-focused approach.</p>
-        </div>
-      </section>
-
-      {/* Why Expert Repair Goes Beyond Handyman */}
-      <section class="bg-[#f0f2f4] section-padding">
-        <div class="site-container">
-          <p class="section-label">Expert Difference</p>
-          <h2 class="section-heading mb-6">{service.seoContent.expertiseSection.heading}</h2>
-          <div class="accent-divider"></div>
-          <p class="text-[#151d25] text-[17px] leading-relaxed mt-6 max-w-[760px]">{service.seoContent.expertiseSection.body}</p>
-        </div>
-      </section>
-    </>
-  )}
-
-  <!-- ── FAQ ──────────────────────────────────────────────────── -->
-  <section class="bg-white section-padding">>
-    <div class="site-container">
-      <div class="max-w-[760px] mx-auto">
-        <div class="text-center section-header">
-          <p class="section-label">Common Questions</p>
-          <h2 class="section-heading">Frequently Asked Questions</h2>
-          <div class="accent-divider-center"></div>
-        </div>
-
-        <div class="flex flex-col divide-y divide-[#cdd8e3]">
-          {service.faqs.map(({ q, a }, i) => (
-            <div class="faq-item py-6">
-              <button
-                class="w-full flex items-center justify-between gap-5 text-left"
-                aria-expanded="false"
-                data-faq={i}
-              >
-                <span class="text-[#151d25] text-[16px] font-semibold leading-snug">{q}</span>
-                <svg
-                  class="faq-icon shrink-0 text-[#2c3e50] transition-transform duration-200"
-                  width="20" height="20" viewBox="0 0 24 24" fill="none"
-                >
-                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </button>
-              <div class="faq-answer hidden mt-4">
-                <p class="text-[#567798] text-[15px] leading-relaxed">{a}</p>
-              </div>
-            </div>
+  <!-- FAQs -->
+  {content.faqs.length > 0 && (
+    <section class="section-padding bg-brand-accent">
+      <div class="site-container-narrow">
+        <span class="section-label">Common Questions</span>
+        <h2 class="section-heading reveal-up">Frequently Asked Questions</h2>
+        <div class="mt-10 space-y-6">
+          {content.faqs.map((faq, i) => (
+            <details class="reveal-up border border-border rounded-xl p-6 bg-white">
+              <summary class="font-display font-700 text-ink cursor-pointer">{faq.question}</summary>
+              <p class="mt-4 text-muted">{faq.answer}</p>
+            </details>
           ))}
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
-  <!-- ── Service Area + CTA ─────────────────────────────────────────────── -->
-  <section class="bg-[#2c3e50] section-padding-sm">
-    <div class="site-container">
-      <div class="flex flex-col lg:flex-row items-center justify-between gap-10 text-center lg:text-left">
-        <div>
-          <h2 class="text-white text-[28px] lg:text-[34px] font-black tracking-tight mb-4">
-            Serving the {PRIMARY_CITY}, {PRIMARY_STATE} Area
-          </h2>
-          <div class="flex flex-wrap gap-2 justify-center lg:justify-start">
-            {["McKinney", "Allen", "Frisco", "Plano", "Prosper", "Celina"].map((city) => (
-              <span class={`px-4 py-2 rounded-full text-[13px] font-semibold ${city === PRIMARY_CITY ? "bg-[#b05d45] text-white" : "bg-white/10 text-white/75"}`}>
-                {city}
-              </span>
-            ))}
-          </div>
-        </div>
-        <a href={telHref} class="btn-primary shrink-0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.73 2.03z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Call Now {PHONE_DISPLAY}
-        </a>
+  <!-- CTA -->
+  <section class="section-padding-sm bg-brand-secondary">
+    <div class="site-container text-center">
+      <h2 class="section-heading-white reveal-up">Ready to Get Started?</h2>
+      <p class="section-subheading text-white/75 mx-auto reveal-up">
+        {BUSINESS_NAME} serves {ADDRESS_CITY} and surrounding areas.
+      </p>
+      <div class="mt-8 flex gap-4 justify-center flex-wrap reveal-up">
+        <a href="/contact" class="btn-primary">Request a Free Quote</a>
       </div>
     </div>
   </section>
-
-  <Footer />
 </Layout>
 
 <script>
-  document.querySelectorAll(".faq-item button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const expanded = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", String(!expanded));
-      const answer = btn.nextElementSibling as HTMLElement;
-      const icon   = btn.querySelector(".faq-icon") as SVGElement;
-      answer?.classList.toggle("hidden", expanded);
-      if (icon) icon.style.transform = expanded ? "" : "rotate(45deg)";
-    });
+  // GSAP scroll reveals — fires once per element on viewport entry
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.querySelectorAll<HTMLElement>(".reveal-up").forEach((el) => {
+    gsap.fromTo(
+      el,
+      { opacity: 0, y: 24 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.4,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 88%",
+          once: true,
+        },
+      },
+    );
   });
 </script>
