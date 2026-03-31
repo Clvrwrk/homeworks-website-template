@@ -1,878 +1,260 @@
+/* ============================================================
+   HOMEWORKS WEBSITE TEMPLATE — Global Styles
+   Brand colors are injected as CSS vars by Layout.astro.
+   Typography follows golden ratio (base 17px, ratio 1.618).
+   Exactly 2 fonts: Plus Jakarta Sans (display) + DM Sans (body).
+   ============================================================ */
+
 @import "tailwindcss";
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   Handyman Site Template — Design System v5
-   ─────────────────────────────────────────────────────────────────────────────
-   Fonts:   Plus Jakarta Sans (display/headings) + DM Sans (body)
-            Loaded via Astro Font API — experimental.fonts in astro.config.mjs
-   Colors:  WCAG 2.1 AA compliant brand palette
-   Scale:   Golden ratio (1.618) type scale, base 17px
-   Spacing: 8pt grid — section padding 120px mobile → 160px desktop
-
-   COMPONENT STANDARD — Every pill, badge, chip, trust-badge, stat-card, and
-   button-like element MUST follow these universal rules:
-     • Minimum internal padding: 12px vertical / 20px horizontal (px-5 py-3)
-     • Minimum touch target: 44px height (WCAG 2.1 SC 2.5.5)
-     • Text must NEVER touch the edge of its container
-     • Background color defines allowed text color (see WCAG pairs below)
-     • External margin: minimum 8px between sibling pill/badge elements
-     • Buttons below card grids: minimum mt-16 separation
-   ───────────────────────────────────────────────────────────────────────────── */
-
 @theme inline {
-  /* ── Font families (wired from Astro Font API CSS variables) ── */
+  /* Brand palette — set by Layout.astro define:vars from site.ts */
+  --color-brand-primary:        var(--brand-primary, #b05d45);
+  --color-brand-primary-dark:   var(--brand-primary-dark, #8d4a37);
+  --color-brand-secondary:      var(--brand-secondary, #2c3e50);
+  --color-brand-secondary-dark: var(--brand-secondary-dark, #1a252f);
+  --color-brand-accent:         var(--brand-accent, #f0f2f4);
+  --color-brand-accent-2:       var(--brand-accent-2, #151d25);
+
+  /* Fixed neutrals — same across all clients */
+  --color-ink:    #151d25;
+  --color-muted:  #567798;
+  --color-border: #cdd8e3;
+  --color-snow:   #f8f9fa;
+
+  /* Typography */
   --font-sans:    var(--font-body);
   --font-display: var(--font-display);
-
-  /* ── Brand Color Tokens (WCAG 2.1 AA compliant) ── */
-  --color-mfp-snow:       #f8f9fa;   /* Bright Snow — light backgrounds */
-  --color-mfp-clay:       #b05d45;   /* Terracotta Clay — primary CTA */
-  --color-mfp-clay-dark:  #8d4a37;   /* Terracotta Clay hover */
-  --color-mfp-navy:       #2c3e50;   /* Charcoal Blue — header, dark sections */
-  --color-mfp-navy-dark:  #1a252f;   /* Charcoal Blue hover */
-  --color-mfp-gold:       #e2a03f;   /* Honey Bronze — stars, accents on DARK only */
-  --color-mfp-ink:        #151d25;   /* Ink Black — body text */
-  --color-mfp-muted:      #567798;   /* Charcoal Blue 700 — secondary text */
-  --color-mfp-border:     #cdd8e3;   /* Charcoal Blue 900 — borders */
-  --color-mfp-offwhite:   #f0f2f4;   /* Off-white section backgrounds */
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   WCAG 2.1 AA COLOR PAIRING RULES
-   Background → Required text color (contrast ratio)
-   ─────────────────────────────────────────────────────────────────────────────
-   #151d25 (Ink Black)     → #f8f9fa white text         (18:1 ✅)
-   #2c3e50 (Charcoal Blue) → #f8f9fa white text          (9:1 ✅)
-   #2c3e50 (Charcoal Blue) → #e2a03f gold accent         (4.5:1 ✅)
-   #b05d45 (Terracotta)    → #f8f9fa white text          (4.7:1 ✅)
-   #f8f9fa (Bright Snow)   → #151d25 ink text            (18:1 ✅)
-   #f8f9fa (Bright Snow)   → #2c3e50 navy text           (9:1 ✅)
-   #f8f9fa (Bright Snow)   → #b05d45 clay accent         (4.7:1 ✅)
-   #f0f2f4 (Off-white)     → #151d25 ink text            (16:1 ✅)
-   FORBIDDEN:
-   ❌ #e2a03f gold on #f8f9fa light bg (2.8:1 — FAIL)
-   ❌ #b05d45 clay on #2c3e50 navy     (2.9:1 — FAIL)
-   ❌ white/55 opacity on #2c3e50      (~3.2:1 — FAIL)
-   ❌ white/75 opacity on dark photo   (~5.8:1 — borderline, use white/90+)
-   ───────────────────────────────────────────────────────────────────────────── */
+/* ---- Reset ------------------------------------------------- */
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   GLOBAL RESET
-   ───────────────────────────────────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  /* NOTE: margin:0 and padding:0 intentionally removed — Tailwind preflight
-     handles the reset correctly. Our explicit padding:0 was overriding
-     .form-input padding, .p-8 utility classes, and all Tailwind p-* spacing.
-     box-sizing:border-box is the only universal rule we need here. */
-}
+*, *::before, *::after { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-}
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-body), 'DM Sans', ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.0625rem; /* 17px — golden ratio body base */
-  line-height: 1.7;
-  color: #151d25;
-  background: #f8f9fa;
+  font-family:            var(--font-body, system-ui, sans-serif);
+  font-size:              1.0625rem;   /* 17px base */
+  line-height:            1.7;
+  color:                  #151d25;
+  background-color:       #f8f9fa;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display font on all headings — Plus Jakarta Sans
-   MUST be inside @layer base to override Tailwind v4's own
-   @layer base rule that sets h1-h6 { color: inherit }.
-   Without @layer base, Tailwind's rule wins the cascade. */
-@layer base {
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display), 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    /* Explicit ink default — dark sections override with text-white or
-       style="color:#f8f9fa" directly on the heading element. */
-    color: #151d25;
-  }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-weight: 800;
+  line-height: 1.2;
 }
 
-/* ── Golden Ratio Type Scale (base 17px × 1.618) ──
-   MUST be inside @layer base — bare rules beat @layer utilities,
-   which would override Tailwind text-* size utilities.
-   17px → 27.5px → 44.5px → 72px → 116px
-   h4 → h3 → h2 → h1 */
-@layer base {
-  h1 { font-size: clamp(2.75rem, 5.5vw, 4.5rem);      font-weight: 900; line-height: 1.0; }
-  h2 { font-size: clamp(2rem, 3.75vw, 2.875rem);      font-weight: 800; line-height: 1.06; }
-  h3 { font-size: clamp(1.3125rem, 2.25vw, 1.625rem); font-weight: 700; line-height: 1.2; }
-  h4 { font-size: 1.0625rem;                           font-weight: 700; line-height: 1.3; }
-  p {
-    font-size: 1.0625rem;
-    line-height: 1.7;
-    color: #151d25;
-  }
-  /* Anchor reset — color:inherit so <a> tags respect parent text-* utilities */
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-}
+a   { color: inherit; text-decoration: none; }
+img, video { max-width: 100%; height: auto; display: block; }
 
-img, video {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* ADA: Visible focus rings — WCAG 2.1 SC 2.4.7 */
 :focus-visible {
-  outline: 3px solid #e2a03f;
+  outline:        3px solid var(--brand-primary, #b05d45);
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   LAYOUT — Container + Section Spacing
-   ───────────────────────────────────────────────────────────────────────────── */
+/* ---- Golden Ratio Type Scale (base 17px, ratio 1.618) ----- */
 
-/* Primary site container */
+h1 { font-size: clamp(2.75rem, 5.5vw, 4.5rem);      font-weight: 900; }
+h2 { font-size: clamp(2rem, 3.75vw, 2.875rem);       font-weight: 800; }
+h3 { font-size: clamp(1.3125rem, 2.25vw, 1.625rem);  font-weight: 700; }
+h4 { font-size: 1.0625rem;                            font-weight: 700; }
+p  { font-size: 1.0625rem; }
+
+.text-sm  { font-size: 0.875rem; }
+.text-xs  { font-size: 0.8125rem; }
+
+/* ---- Layout ----------------------------------------------- */
+
 .site-container {
-  width: 100%;
-  max-width: 1280px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;   /* 24px mobile */
-  padding-right: 1.5rem;
+  max-width:     1280px;
+  margin-left:   auto;
+  margin-right:  auto;
+  padding-left:  clamp(1.5rem, 5vw, 5rem);
+  padding-right: clamp(1.5rem, 5vw, 5rem);
 }
 
-@media (min-width: 640px) {
-  .site-container {
-    padding-left: 2.5rem;   /* 40px tablet */
-    padding-right: 2.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .site-container {
-    padding-left: 4rem;   /* 64px desktop */
-    padding-right: 4rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .site-container {
-    padding-left: 5rem;   /* 80px wide desktop */
-    padding-right: 5rem;
-  }
-}
-
-/* Narrow container for text-heavy content */
 .site-container-narrow {
-  width: 100%;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  max-width:     800px;
+  margin-left:   auto;
+  margin-right:  auto;
+  padding-left:  clamp(1.5rem, 5vw, 5rem);
+  padding-right: clamp(1.5rem, 5vw, 5rem);
 }
 
-@media (min-width: 640px) {
-  .site-container-narrow {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-  }
-}
+.section-padding    { padding-top: clamp(5rem, 10vw, 10rem); padding-bottom: clamp(5rem, 10vw, 10rem); }
+.section-padding-sm { padding-top: clamp(3rem, 6vw, 6rem);   padding-bottom: clamp(3rem, 6vw, 6rem); }
 
-/* ── Section Padding — Premium breathing room (8pt grid) ── */
-.section-padding {
-  padding-top: 7.5rem;      /* 120px mobile */
-  padding-bottom: 7.5rem;
-}
+/* ---- Section typography helpers --------------------------- */
 
-@media (min-width: 1024px) {
-  .section-padding {
-    padding-top: 10rem;     /* 160px desktop */
-    padding-bottom: 10rem;
-  }
-}
-
-/* Compact variant for trust bars, CTA bands */
-.section-padding-sm {
-  padding-top: 5rem;        /* 80px */
-  padding-bottom: 5rem;
-}
-
-@media (min-width: 1024px) {
-  .section-padding-sm {
-    padding-top: 6rem;      /* 96px */
-    padding-bottom: 6rem;
-  }
-}
-
-/* ── Section Header Block — space between eyebrow/heading and content grid ── */
-.section-header {
-  margin-bottom: 4rem;      /* 64px between heading block and cards/grid */
-}
-
-@media (min-width: 1024px) {
-  .section-header {
-    margin-bottom: 5rem;    /* 80px desktop */
-  }
-}
-
-/* ── Section CTA Gap — space between last card/grid row and a CTA button below ──
-   RULE: Any button that follows a card grid MUST use this class on its wrapper */
-.section-cta-gap {
-  margin-top: 4rem;         /* 64px — ensures button stands alone */
-}
-
-@media (min-width: 1024px) {
-  .section-cta-gap {
-    margin-top: 5rem;       /* 80px desktop */
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   TYPOGRAPHY COMPONENTS
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* Eyebrow label — light backgrounds */
 .section-label {
-  display: block;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 700;
+  display:        block;
+  font-family:    var(--font-display);
+  font-size:      0.8125rem;
+  font-weight:    700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #b05d45;            /* Terracotta on light bg — 4.7:1 on #f8f9fa ✅ */
-  margin-bottom: 1rem;
+  color:          var(--brand-primary, #b05d45);
+  margin-bottom:  0.75rem;
 }
 
-/* Eyebrow label — dark/navy/photo backgrounds */
-/* WCAG: #e2a03f gold on #2c3e50 = 4.5:1 ✅ | on #151d25 = 7.2:1 ✅ */
 .section-label-light {
-  display: block;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 700;
+  display:        block;
+  font-family:    var(--font-display);
+  font-size:      0.8125rem;
+  font-weight:    700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #e2a03f;            /* Gold on dark bg — always passes WCAG ✅ */
-  margin-bottom: 1rem;
+  color:          var(--brand-accent, #f0f2f4);
+  margin-bottom:  0.75rem;
 }
 
-/* Section H2 on light backgrounds */
-.section-heading {
-  font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(2rem, 3.75vw, 2.875rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.06;
-  color: #151d25;   /* Ink on light bg — 18:1 ✅ */
-}
+.section-heading       { font-size: clamp(2rem, 3.75vw, 2.875rem); font-weight: 800; color: #151d25; }
+.section-heading-white { font-size: clamp(2rem, 3.75vw, 2.875rem); font-weight: 800; color: #f8f9fa; }
+.section-subheading    { font-size: 1.0625rem; color: #567798; max-width: 68ch; line-height: 1.7; }
 
-/* Section H2 on dark backgrounds — WCAG: #f8f9fa on #2c3e50 = 9:1 ✅ */
-.section-heading-white,
-.section-heading-light {
-  font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(2rem, 3.75vw, 2.875rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.06;
-  color: #f8f9fa;   /* Snow on dark bg — 9:1 ✅ */
-}
-
-/* Section subheading / lead paragraph */
-.section-subheading {
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.7;
-  color: #567798;
-  margin-top: 1.25rem;
-  /* Widened from 52ch — was too narrow on desktop, causing visual
-     misalignment with the wider section-heading above it.
-     68ch allows ~10-12 words per line at 18px, which is optimal. */
-  max-width: 68ch;
-}
-
-/* Terracotta accent bar */
 .accent-divider {
-  width: 3.5rem;
-  height: 0.1875rem;
-  background: #b05d45;
+  width:         3.5rem;
+  height:        0.1875rem;
+  background:    var(--brand-primary, #b05d45);
   border-radius: 9999px;
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
+  margin:        1rem 0 1.5rem;
 }
 
-.accent-divider-center {
-  width: 3.5rem;
-  height: 0.1875rem;
-  background: #b05d45;
-  border-radius: 9999px;
-  margin: 1.5rem auto 2rem;
+/* ---- Button system ---------------------------------------- */
+
+.btn-primary, .btn-secondary, .btn-navy, .btn-ghost, .btn-submit {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             0.5rem;
+  font-family:     var(--font-display);
+  font-weight:     700;
+  border-radius:   9999px;
+  cursor:          pointer;
+  border:          2px solid transparent;
+  text-decoration: none;
+  transition:      transform 150ms ease, background-color 150ms ease,
+                   border-color 150ms ease, box-shadow 150ms ease;
+  min-height:      3.375rem; /* 54px */
+  padding:         0 1.75rem;
+  white-space:     nowrap;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   BUTTON SYSTEM — Pill-shaped, min 52px height, strong affordance
-   UNIVERSAL RULE: All buttons min-height 52px, padding px-8 py-3.5 (32px/14px)
-   ───────────────────────────────────────────────────────────────────────────── */
+/* Hover: lift 2px. Press: scale down. */
+.btn-primary:hover, .btn-secondary:hover,
+.btn-navy:hover, .btn-ghost:hover { transform: translateY(-2px); }
 
-/* Primary: Terracotta Clay — WCAG: #f8f9fa on #b05d45 = 4.7:1 ✅ */
+.btn-primary:active, .btn-secondary:active,
+.btn-navy:active, .btn-ghost:active { transform: scale(0.98); }
+
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  background: #b05d45;
-  color: #ffffff; /* WCAG AA: 4.67:1 on #b05d45 ✅ */
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0.9375rem 2.5rem;   /* 15px / 40px — generous touch target */
-  border-radius: 9999px;
-  min-height: 54px;
-  text-decoration: none;
-  white-space: nowrap;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 20px rgba(176, 93, 69, 0.4), 0 2px 6px rgba(176, 93, 69, 0.2);
-  letter-spacing: 0.01em;
+  background: var(--brand-primary, #b05d45);
+  color:      #f8f9fa;
 }
+.btn-primary:hover { background: var(--brand-primary-dark, #8d4a37); }
 
-.btn-primary:hover {
-  background: #8d4a37;
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(176, 93, 69, 0.5), 0 4px 10px rgba(176, 93, 69, 0.25);
-}
-
-.btn-primary:active {
-  transform: translateY(0) scale(0.97);
-  box-shadow: 0 2px 8px rgba(176, 93, 69, 0.3);
-}
-
-/* Secondary: Charcoal Blue outline — WCAG: #2c3e50 on #f8f9fa = 9:1 ✅ */
 .btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background: transparent;
-  color: #2c3e50;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0.9375rem 2.5rem;
-  border-radius: 9999px;
-  border: 2px solid #2c3e50;
-  min-height: 54px;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  border-color: var(--brand-secondary, #2c3e50);
+  color:        var(--brand-secondary, #2c3e50);
 }
+.btn-secondary:hover { background: var(--brand-secondary, #2c3e50); color: #f8f9fa; }
 
-.btn-secondary:hover {
-  background: #2c3e50;
-  color: #f8f9fa;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.25);
-}
-
-.btn-secondary:active {
-  transform: scale(0.97);
-}
-
-/* Navy fill — WCAG: #f8f9fa on #2c3e50 = 9:1 ✅ */
 .btn-navy {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background: #2c3e50;
-  color: #f8f9fa;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0.9375rem 2.5rem;
-  border-radius: 9999px;
-  min-height: 54px;
-  text-decoration: none;
-  white-space: nowrap;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 16px rgba(44, 62, 80, 0.3);
-  letter-spacing: 0.01em;
+  background: var(--brand-secondary, #2c3e50);
+  color:      #f8f9fa;
 }
+.btn-navy:hover { background: var(--brand-secondary-dark, #1a252f); }
 
-.btn-navy:hover {
-  background: #1a252f;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 28px rgba(44, 62, 80, 0.4);
-}
-
-.btn-navy:active {
-  transform: scale(0.97);
-}
-
-/* Ghost — for dark/photo backgrounds — WCAG: white on dark = passes ✅ */
 .btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0.9375rem 2.5rem;
-  border-radius: 9999px;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  min-height: 54px;
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  background:      rgba(255,255,255,0.12);
+  border-color:    rgba(255,255,255,0.3);
+  color:           #f8f9fa;
   backdrop-filter: blur(4px);
 }
+.btn-ghost:hover { background: rgba(255,255,255,0.22); }
 
-.btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.28);
-  border-color: rgba(255, 255, 255, 0.95);
-  transform: translateY(-2px);
-}
-
-.btn-ghost:active {
-  transform: scale(0.97);
-}
-
-/* Submit — full-width form CTA — WCAG: white on #b05d45 = 4.7:1 ✅ */
 .btn-submit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  width: 100%;
-  background: #b05d45;
-  color: #ffffff;
-  font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;
-  font-weight: 900;
-  font-size: 1.0625rem;
-  padding: 1.125rem 2rem;
-  border-radius: 0.875rem;
-  border: none;
-  min-height: 60px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 6px 20px rgba(176, 93, 69, 0.4), 0 2px 6px rgba(176, 93, 69, 0.2);
-  margin-top: 0.5rem;
-  letter-spacing: 0.01em;
+  width:         100%;
+  min-height:    3.75rem;
+  border-radius: 0.5rem;
+  background:    var(--brand-primary, #b05d45);
+  color:         #f8f9fa;
 }
+.btn-submit:hover  { background: var(--brand-primary-dark, #8d4a37); transform: translateY(-2px); }
+.btn-submit:active { transform: scale(0.98); }
 
-.btn-submit:hover {
-  background: #8d4a37;
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(176, 93, 69, 0.5), 0 4px 10px rgba(176, 93, 69, 0.25);
-}
+/* ---- Trust / badge / pill --------------------------------- */
 
-.btn-submit:active {
-  transform: scale(0.97);
-  box-shadow: 0 3px 10px rgba(176, 93, 69, 0.3);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   UNIVERSAL PILL / BADGE / CHIP SYSTEM
-   ─────────────────────────────────────────────────────────────────────────────
-   RULE: Any element with a background color, border, or highlight that contains
-   text MUST use one of these classes. Text must NEVER touch the edge.
-   Minimum: px-5 py-2.5 (20px / 10px) — gives 44px min-height touch target.
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* Trust badge — on dark/photo backgrounds (hero, dark sections) */
-/* WCAG: white text on rgba(255,255,255,0.15) over dark = passes ✅ */
 .trust-badge {
-  display: inline-flex;
+  display:     inline-flex;
   align-items: center;
-  gap: 0.5rem;                    /* 8px between icon and text */
-  background: rgba(255, 255, 255, 0.18);
-  border: 1.5px solid rgba(255, 255, 255, 0.45);
-  color: #ffffff;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.875rem;            /* 14px */
-  font-weight: 600;
-  padding: 0.625rem 1.25rem;      /* 10px / 20px — text never touches edge */
-  border-radius: 9999px;
-  min-height: 40px;               /* Comfortable touch target */
-  backdrop-filter: blur(6px);
-  white-space: nowrap;
+  gap:         0.5rem;
+  min-height:  3.25rem;
+  padding:     0.625rem 1.25rem;
 }
 
-/* Pill chip — for filter buttons, category labels, city tags on light backgrounds */
-/* WCAG: #151d25 on #f0f2f4 = 16:1 ✅ */
 .pill-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  background: #f0f2f4;
-  border: 1.5px solid #cdd8e3;
-  color: #2c3e50;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;           /* 13px */
-  font-weight: 600;
-  padding: 0.625rem 1.25rem;      /* 10px / 20px */
+  display:       inline-flex;
+  align-items:   center;
+  padding:       0.375rem 0.875rem;
   border-radius: 9999px;
-  min-height: 40px;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  font-size:     0.8125rem;
+  font-weight:   600;
+  border:        1px solid var(--color-border, #cdd8e3);
 }
 
-.pill-chip:hover,
-.pill-chip.active {
-  background: #2c3e50;
-  border-color: #2c3e50;
-  color: #f8f9fa;
+/* ---- Animation utilities (GSAP targets) ------------------- */
+/* Elements with .reveal-up start hidden; GSAP ScrollTrigger fades them in */
+
+.reveal-up {
+  opacity:   0;
+  transform: translateY(24px);
 }
 
-/* Pill chip — accent variant (terracotta) */
-.pill-chip-accent {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #f9eded;
-  border: 1.5px solid #e1b0a5;
-  color: #8d4a37;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  padding: 0.625rem 1.25rem;
-  border-radius: 9999px;
-  min-height: 40px;
-  white-space: nowrap;
-}
-
-/* Pill chip — dark/navy variant (footer city links, dark section chips) */
-/* WCAG: #cdd8e3 on #2c3e50 = 5.2:1 ✅ */
-.pill-chip-dark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  color: #f8f9fa;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  padding: 0.625rem 1.25rem;      /* 10px / 20px — text never touches edge */
-  border-radius: 9999px;
-  min-height: 40px;
-  white-space: nowrap;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.pill-chip-dark:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   STAT CARD — Centered number + label (used in about section, stats bars)
-   RULE: Always center-aligned text, generous padding, consistent sizing
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: #f0f2f4;
-  border: 1.5px solid #cdd8e3;
-  border-radius: 1rem;
-  padding: 1.75rem 1.5rem;        /* 28px / 24px — generous internal space */
-  gap: 0.375rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stat-card:hover {
-  border-color: #2c3e50;
-  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.1);
-}
-
-.stat-card-number {
-  font-family: var(--font-display), 'Plus Jakarta Sans', sans-serif;
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  font-weight: 900;
-  color: #2c3e50;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.stat-card-label {
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: #567798;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  line-height: 1.3;
-}
-
-/* Dark variant — for navy/dark section stat cards */
-/* WCAG: #e2a03f on #2c3e50 = 4.5:1 ✅ | #f8f9fa on #2c3e50 = 9:1 ✅ */
-.stat-card-dark {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 1rem;
-  padding: 1.75rem 1.5rem;
-  gap: 0.375rem;
-}
-
-.stat-card-dark .stat-card-number {
-  color: #e2a03f;                 /* Gold on navy — 4.5:1 ✅ */
-}
-
-.stat-card-dark .stat-card-label {
-  color: rgba(255, 255, 255, 0.8); /* White/80 on navy — 7.2:1 ✅ */
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   CARD SYSTEM
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.card-base {
-  background: #ffffff;
-  border-radius: 1.25rem;
-  border: 1px solid #cdd8e3;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-}
-
-.card-base:hover {
-  box-shadow: 0 24px 64px rgba(21, 29, 37, 0.13);
-  transform: translateY(-5px);
-  border-color: #2c3e50;
-}
-
-/* 4:3 photo ratio — optimal for service cards */
-.card-photo {
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: #cdd8e3;
-}
-
-.card-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.card-base:hover .card-photo img {
-  transform: scale(1.05);
-}
-
-/* Generous card body padding — 8pt grid: 32px / 40px */
-.card-body {
-  padding: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .card-body {
-    padding: 2.5rem;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   FORM ELEMENTS — WCAG 2.1 AA compliant
-   ───────────────────────────────────────────────────────────────────────────── */
-
-/* Form group wrapper — provides spacing between label+input pairs */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;              /* 8px between label and input */
-}
-
-/* Visible label — WCAG 2.1 SC 1.3.1 — NEVER use placeholder as label */
-.form-label {
-  display: block;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.9375rem;     /* 15px */
-  font-weight: 600;
-  color: #151d25;           /* Ink Black — 18:1 on white ✅ */
-  line-height: 1.4;
-  margin-bottom: 0.375rem;
-}
-
-/* Input field */
-/* CRITICAL: padding uses !important to guarantee it wins over any
-   browser base rule that sets padding:0 on input elements.
-   The Tailwind/browser base rule for button,input,textarea sets
-   padding via 'inherit' which can resolve to 0 if a reset is active. */
-.form-input {
-  width: 100%;
-  border: 2px solid #cdd8e3;
-  border-radius: 0.75rem;
-  padding: 0.9375rem 1.125rem !important;  /* 15px / 18px — guaranteed */
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 1rem;              /* 16px — prevents iOS zoom */
-  color: #151d25;
-  background: #ffffff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  outline: none;
-  min-height: 52px;             /* ADA touch target + premium height */
-  line-height: 1.5;
-}
-
-.form-input::placeholder {
-  color: #8ba4be;               /* Lighter than muted — clearly placeholder */
-}
-
-.form-input:focus {
-  border-color: #2c3e50;
-  box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.1);
-  outline: none;
-}
-
-/* Select element */
-select.form-input {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23567798' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-  cursor: pointer;
-}
-
-/* Textarea */
-textarea.form-input {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.6;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   HEADER LOGO — Universal sizing rule
-   ─────────────────────────────────────────────────────────────────────────────
-   Logo must be visually balanced with the nav and CTA button.
-   Target: 48px height on mobile, 56px on desktop.
-   Never use a fixed pixel width — use height only and let aspect ratio scale.
-   ───────────────────────────────────────────────────────────────────────────── */
-.site-logo {
-  height: 48px;
-  width: auto;
-  display: block;
-}
-
-@media (min-width: 1024px) {
-  .site-logo {
-    height: 56px;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   SCROLL REVEAL ANIMATION
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.reveal-item {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-  will-change: opacity, transform;
-}
-
-.reveal-item.is-visible {
-  opacity: 1;
+/* JS adds .is-visible after GSAP animates in */
+.reveal-up.is-visible {
+  opacity:   1;
   transform: translateY(0);
-  will-change: auto; /* release compositor hint after animation completes */
+  transition: opacity 350ms ease, transform 350ms ease;
 }
 
-.reveal-item:nth-child(2) { transition-delay: 0.1s; }
-.reveal-item:nth-child(3) { transition-delay: 0.2s; }
-.reveal-item:nth-child(4) { transition-delay: 0.3s; }
-.reveal-item:nth-child(5) { transition-delay: 0.4s; }
-.reveal-item:nth-child(6) { transition-delay: 0.5s; }
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   BREADCRUMB
-   ───────────────────────────────────────────────────────────────────────────── */
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.65);
-  margin-bottom: 1.25rem;
+/* Icon entrance: CSS-only, fires once on viewport entry */
+@keyframes icon-enter {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-.breadcrumb a:hover {
-  color: rgba(255, 255, 255, 0.95);
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   TRUST MARQUEE — Infinite horizontal scroll strip
-   ───────────────────────────────────────────────────────────────────────────── */
-.trust-marquee-track {
-  display: flex;
-  gap: 0;
-  width: max-content;
-  animation: marquee-scroll 32s linear infinite;
-  will-change: transform; /* promote marquee to compositor layer */
-  contain: layout style; /* prevent marquee from triggering outer reflows */
-}
-.trust-marquee-track:hover {
+.icon-reveal {
+  animation:            icon-enter 300ms ease forwards;
   animation-play-state: paused;
 }
-.trust-marquee-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 2.5rem;
-  font-family: var(--font-body), 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #151d25;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  border-right: 1.5px solid #cdd8e3;
+
+.icon-reveal.in-view {
+  animation-play-state: running;
 }
-.trust-marquee-item:last-child {
-  border-right: none;
+
+/* Accent line draw-in (GSAP sets scaleX from 0→1) */
+.line-draw {
+  transform-origin: left center;
+  transform:        scaleX(0);
 }
-@keyframes marquee-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+
+/* Mobile phone CTA pulse — subtle, 2s interval, max scale 1.03 */
+@keyframes cta-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.03); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .trust-marquee-track {
-    animation: none;
-    flex-wrap: wrap;
-    width: auto;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
-  }
-  .trust-marquee-item {
-    border-right: none;
-    padding: 0.375rem 1rem;
-    background: #f0f2f4;
-    border-radius: 9999px;
-    border: 1.5px solid #cdd8e3;
+
+.cta-pulse-mobile {
+  animation: none;
+}
+
+@media (max-width: 767px) {
+  .cta-pulse-mobile {
+    animation: cta-pulse 2s ease-in-out infinite;
   }
 }
