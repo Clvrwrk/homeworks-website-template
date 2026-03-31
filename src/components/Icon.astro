@@ -1,0 +1,44 @@
+---
+/**
+ * Thin wrapper around astro-icon for consistent sizing and accessibility.
+ *
+ * Usage:
+ *   <Icon name="lucide:phone" size={20} class="text-brand-primary" />
+ *
+ * Available icon sets (installed): lucide, heroicons
+ * Full catalogue: https://icon-sets.iconify.design/
+ */
+
+import { Icon as AstroIcon } from "astro-icon/components";
+
+interface Props {
+  name:          string;
+  size?:         number;
+  class?:        string;
+  label?:        string;
+  "aria-hidden"?: boolean | "true" | "false";
+}
+
+const {
+  name,
+  size = 20,
+  class: className = "",
+  label,
+  "aria-hidden": ariaHidden,
+  ...rest
+} = Astro.props;
+
+// If no label is provided, hide from screen readers
+const a11yProps = label
+  ? { role: "img", "aria-label": label }
+  : { "aria-hidden": ariaHidden ?? true };
+---
+
+<AstroIcon
+  name={name}
+  width={size}
+  height={size}
+  class={className}
+  {...a11yProps}
+  {...rest}
+/>
