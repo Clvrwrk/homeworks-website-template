@@ -1,89 +1,117 @@
-/**
- * ============================================================
- *  SITE CONFIG — Single Source of Truth
- *  Edit this file to rebrand the entire site for a new client.
- *  Run `npm run setup-client` for an interactive guided setup.
- * ============================================================
- */
+// ============================================================
+// HOMEWORKS WEBSITE TEMPLATE — SINGLE SOURCE OF TRUTH
+// All {{TEMPLATE_VARS}} are substituted by /build-website skill.
+// NEVER hardcode client data in this file.
+// ============================================================
 
-// ── Business Identity ─────────────────────────────────────────────────────────
-export const BUSINESS_NAME    = "McKinney Fix-It Pros";
-export const BUSINESS_TAGLINE = "McKinney's Most Trusted Handyman";
-export const BUSINESS_SLOGAN  = "Your To-Do List Won't Fix Itself";
-export const BUSINESS_EST     = "2008";
+// ---- Types --------------------------------------------------
 
-// ── NAP (Name · Address · Phone) ─────────────────────────────────────────────
-export const PHONE_RAW        = "9727952770";           // digits only, no formatting
-export const PHONE_DISPLAY    = "(972) 795-2770";       // human-readable
-export const EMAIL             = "cmiller@McKinneyFixItPros.com";
-export const ADDRESS_STREET   = "403 E Graham St";
-export const ADDRESS_CITY     = "McKinney";
-export const ADDRESS_STATE    = "TX";
-export const ADDRESS_ZIP      = "75069";
-export const ADDRESS_FULL     = "403 E Graham St, McKinney, TX 75069";
+export interface ServiceDef {
+  slug: string;
+  name: string;
+  description: string;
+  image: string;
+  cta: string;
+}
 
-// ── URLs ──────────────────────────────────────────────────────────────────────
-export const SITE_URL          = "https://mckinneyfixitpros.com";
-export const FACEBOOK_URL      = "https://facebook.com/mckinneyfixitpros";
-export const INSTAGRAM_URL     = "https://instagram.com/mckinneyfixitpros";
-export const NEXTDOOR_URL      = "";   // optional
+export interface LocationDef {
+  slug: string;
+  city: string;
+  state: string;
+}
 
-// ── GHL (GoHighLevel) ─────────────────────────────────────────────────────────
-// API key and Location ID live in .env — never hardcode here.
-// Pipeline and Stage IDs are safe to store here (not secrets).
-export const GHL_PIPELINE_ID   = "jR3dAD31rJdPAw7ln9Rm";
-export const GHL_STAGE_ID      = "dbe44958-64fc-45ae-b6db-ce72cacfda80"; // "New Lead"
+// ---- Business Identity --------------------------------------
 
-// ── Primary Service Area ──────────────────────────────────────────────────────
-export const PRIMARY_CITY      = "McKinney";
-export const PRIMARY_STATE     = "TX";
-export const PRIMARY_ZIP       = "75069";
-export const SERVICE_RADIUS    = "25";  // miles
+export const BUSINESS_NAME        = "{{CLIENT_DBA}}";
+export const BUSINESS_LEGAL_NAME  = "{{CLIENT_LEGAL_NAME}}";
+export const BUSINESS_TAGLINE     = "{{ADDRESS_CITY}}'s Most Trusted {{PRIMARY_CATEGORY}}";
+export const BUSINESS_SLOGAN      = "Quality Work. Honest Pricing.";
+export const BUSINESS_EST         = "{{YEAR_FOUNDED}}";
 
-// ── Brand Colors ─────────────────────────────────────────────────────────────
-// These are injected into global.css via CSS custom properties.
-// To change brand colors, update these values AND run `npm run build`.
-export const COLORS = {
-  clay:       "#b05d45",   // Primary CTA — Terracotta
-  clayDark:   "#8d4a37",   // Primary CTA hover
-  navy:       "#2c3e50",   // Header / dark sections
-  navyDark:   "#1a252f",   // Header hover
-  gold:       "#e2a03f",   // Stars / accents on dark backgrounds only
-  ink:        "#151d25",   // Body text
-  muted:      "#567798",   // Secondary text
-  border:     "#cdd8e3",   // Borders
-  offwhite:   "#f0f2f4",   // Section backgrounds
-  snow:       "#f8f9fa",   // Bright backgrounds
-} as const;
+// ---- NAP (Name · Address · Phone) ---------------------------
 
-// ── Typography ────────────────────────────────────────────────────────────────
-export const FONT_DISPLAY      = "'Plus Jakarta Sans'";  // headings
-export const FONT_BODY         = "'DM Sans'";            // body / UI
-export const GOOGLE_FONTS_URL  =
-  "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap";
+export const PHONE_RAW      = "{{PHONE_RAW}}";
+export const PHONE_DISPLAY  = "{{PHONE_DISPLAY}}";
+export const EMAIL          = "{{CLIENT_EMAIL}}";
+export const ADDRESS_STREET = "{{ADDRESS_STREET}}";
+export const ADDRESS_CITY   = "{{ADDRESS_CITY}}";
+export const ADDRESS_STATE  = "{{ADDRESS_STATE}}";
+export const ADDRESS_ZIP    = "{{ADDRESS_ZIP}}";
+export const ADDRESS_FULL   = "{{ADDRESS_FULL}}";
 
-// ── Trust Signals ─────────────────────────────────────────────────────────────
-export const REVIEW_COUNT      = "100+";
-export const REVIEW_PLATFORM   = "Google";
-export const REVIEW_RATING     = "4.9";
-export const YEARS_EXPERIENCE  = "15+";
-export const JOBS_COMPLETED    = "2,500+";
-export const RESPONSE_TIME     = "60 minutes";  // during business hours
-export const BUSINESS_HOURS   = "Mon–Sat: 7am–7pm";
+// ---- Brand Colors -------------------------------------------
+// Injected as CSS vars via Layout.astro define:vars.
+// Primary   = CTA button fill
+// Secondary = Nav / header / dark section backgrounds
+// Accent    = Light section backgrounds
+// Accent2   = Body text / ink on light backgrounds
 
-// ── SEO Defaults ─────────────────────────────────────────────────────────────
-export const SEO_TITLE_SUFFIX  = `| ${BUSINESS_NAME}`;
-export const SEO_DEFAULT_TITLE = `${BUSINESS_NAME} | Top-Rated Handyman Services in ${PRIMARY_CITY}, ${PRIMARY_STATE}`;
-export const SEO_DEFAULT_DESC  =
-  `${BUSINESS_NAME} offers reliable handyman services in ${PRIMARY_CITY}, TX. ` +
-  `Drywall, painting, plumbing, electrical & more. Free estimates. Call ${PHONE_DISPLAY}.`;
-export const OG_IMAGE_DEFAULT  = "/og-default.jpg";
+export const COLOR_PRIMARY        = "{{PRIMARY_BRAND_COLOR}}";
+export const COLOR_PRIMARY_DARK   = "{{PRIMARY_BRAND_COLOR_DARK}}";
+export const COLOR_SECONDARY      = "{{SECONDARY_BRAND_COLOR}}";
+export const COLOR_SECONDARY_DARK = "{{SECONDARY_BRAND_COLOR_DARK}}";
+export const COLOR_ACCENT         = "{{ACCENT_COLOR}}";
+export const COLOR_ACCENT_2       = "{{ACCENT_2_COLOR}}";
 
-// ── Schema.org / Local Business ───────────────────────────────────────────────
-export const SCHEMA_TYPE       = "HomeAndConstructionBusiness";
+// ---- Social (empty string if not provided) ------------------
+
+export const FACEBOOK_URL   = "{{FACEBOOK_URL}}";
+export const INSTAGRAM_URL  = "{{INSTAGRAM_URL}}";
+export const LINKEDIN_URL   = "{{LINKEDIN_URL}}";
+export const YOUTUBE_URL    = "{{YOUTUBE_URL}}";
+export const YELP_URL       = "{{YELP_URL}}";
+export const NEXTDOOR_URL   = "{{NEXTDOOR_URL}}";
+export const THUMBTACK_URL  = "{{THUMBTACK_URL}}";
+export const ANGI_URL       = "{{ANGI_URL}}";
+export const GOOGLE_LINK    = "{{GOOGLE_LINK}}";
+
+// ---- Trust Signals ------------------------------------------
+
+export const REVIEW_COUNT      = "{{NUMBER_OF_REVIEWS}}";
+export const REVIEW_RATING     = "5.0";
+export const HAPPY_CUSTOMERS   = "{{HAPPY_CUSTOMERS}}";
+export const YEARS_IN_BUSINESS = "{{YEARS_IN_BUSINESS}}";
+export const IS_LICENSED: boolean = false;
+export const IS_INSURED: boolean  = false;
+export const IS_BONDED: boolean   = false;
+export const LICENSE_NUMBER    = "{{LICENSE_NUMBER}}";
+export const MEMBERSHIPS: string[] = [];
+
+// ---- Services & Categories ----------------------------------
+
+export const PRIMARY_CATEGORY: string     = "{{PRIMARY_CATEGORY}}";
+export const SERVICE_CATEGORIES: string[] = [];
+export const SERVICES: ServiceDef[]       = [];
+
+// ---- Locations ----------------------------------------------
+
+export const PRIMARY_CITY   = "{{ADDRESS_CITY}}";
+export const PRIMARY_STATE  = "{{ADDRESS_STATE}}";
+export const SERVICE_RADIUS = "25";
+export const LOCATIONS: LocationDef[] = [];
+
+// ---- GHL CRM ------------------------------------------------
+
+export const GHL_LOCATION_ID = "{{GHL_LOCATION_ID}}";
+export const GHL_PIPELINE_ID = "{{GHL_PIPELINE_ID}}";
+export const GHL_STAGE_ID    = "{{GHL_STAGE_ID}}";
+
+// ---- Site & SEO ---------------------------------------------
+
+export const SITE_SLUG          = "{{SITE_SLUG}}";
+export const SITE_URL           = "https://{{SITE_URL}}";
+export const SEO_DEFAULT_TITLE  =
+  "{{CLIENT_DBA}} | {{PRIMARY_CATEGORY}} in {{ADDRESS_CITY}}, {{ADDRESS_STATE}}";
+export const SEO_DEFAULT_DESC   =
+  "{{CLIENT_DBA}} offers expert {{PRIMARY_CATEGORY}} services in {{ADDRESS_CITY}}, {{ADDRESS_STATE}}. " +
+  "Call {{PHONE_DISPLAY}} for a free quote.";
+export const OG_IMAGE_DEFAULT   = "/og-default.jpg";
+export const SCHEMA_TYPE        = "HomeAndConstructionBusiness";
 export const SCHEMA_PRICE_RANGE = "$$";
+export const BUSINESS_HOURS     = "Mon–Sat: 7am–7pm";
 
-// ── Derived helpers (do not edit) ─────────────────────────────────────────────
-export const TEL_HREF          = `tel:${PHONE_RAW}`;
-export const MAILTO_HREF       = `mailto:${EMAIL}`;
-export const SMS_HREF          = `sms:${PHONE_RAW}`;
+// ---- Derived helpers ----------------------------------------
+
+export const TEL_HREF    = `tel:{{PHONE_RAW}}`;
+export const MAILTO_HREF = `mailto:{{CLIENT_EMAIL}}`;
+export const SMS_HREF    = `sms:{{PHONE_RAW}}`;
