@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import QuoteModal from "../components/QuoteModal.astro";
 import "../styles/global.css";
 import {
   BUSINESS_NAME,
@@ -228,6 +229,7 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
   </head>
   <body class="bg-[#f8f9fa] text-[#151d25] antialiased">
     <slot />
+    <QuoteModal />
   </body>
 </html>
 
