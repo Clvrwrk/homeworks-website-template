@@ -61,6 +61,23 @@ const telHref     = `tel:${PHONE_RAW}`;
       ))}
     </nav>
 
+    <!-- Get a Quote — desktop only, triggers QuoteModal (no data-service — global context) -->
+    <button
+      type="button"
+      data-quote-modal
+      class="hidden lg:flex items-center gap-2
+             border-2 font-bold text-[14px]
+             px-5 py-2.5 rounded-full
+             transition-all duration-200
+             hover:text-white
+             shrink-0 min-h-[44px]"
+      style="border-color: var(--brand-primary); color: var(--brand-primary);"
+      onmouseover="this.style.background='var(--brand-primary)';"
+      onmouseout="this.style.background='transparent';"
+    >
+      Get a Quote
+    </button>
+
     <!-- CTA Phone Button — WCAG: white on clay = 4.7:1 ✅ -->
     <a
       href={telHref}
