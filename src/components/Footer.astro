@@ -243,8 +243,9 @@ const mailHref = `mailto:${EMAIL}`;
     </a>
 
     <!-- Quote — center CTA, elevated pill -->
-    <a
-      href="/#estimate"
+    <button
+      type="button"
+      data-quote-modal
       class="mobile-nav-item mobile-nav-cta"
       aria-label="Get a free quote"
     >
@@ -258,7 +259,7 @@ const mailHref = `mailto:${EMAIL}`;
         </svg>
       </div>
       <span>Quote</span>
-    </a>
+    </button>
 
     <!-- Call -->
     <a
@@ -294,6 +295,9 @@ const mailHref = `mailto:${EMAIL}`;
 <style>
   /* ── Mobile nav item — base state ──────────────────────────────────────── */
   .mobile-nav-item {
+    background: none;
+    border: none;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
