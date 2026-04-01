@@ -3,17 +3,20 @@
  *
  * 1. Validates phone (required)
  * 2. Inserts row into Supabase contacts table (sync_status: "pending")
- * 3. Redirects to /contact/success immediately (non-blocking)
- * 4. Fires async POST to /api/contact-sync with the new row id
+ * 3. For AJAX (X-Requested-With: fetch): returns JSON {success: true}
+ * 4. For regular form POST: redirects to /contact/success (303)
+ * 5. Fires async POST to /api/contact-sync with the new row id (non-blocking)
  *
  * GHL sync happens in contact-sync.ts — UX never waits on CRM.
  */
 
 import type { APIRoute } from "astro";
 import { createAdminClient } from "../../lib/supabase";
-import { GHL_LOCATION_ID } from "../../config/site";
+import { GHL_LOCATION_ID, SITE_URL } from "../../config/site";
 
 export const POST: APIRoute = async ({ request }) => {
+  const isAjax = request.headers.get("X-Requested-With") === "fetch";
+
   let formData: FormData;
   try {
     formData = await request.formData();
@@ -34,7 +37,8 @@ export const POST: APIRoute = async ({ request }) => {
   const services  = formData.getAll("services").map((s) => String(s).trim()).filter(Boolean);
 
   if (!phone) {
-    return Response.redirect(new URL("/contact?error=phone_required", request.url), 303);
+    if (isAjax) return Response.json({ error: "phone_required" }, { status: 400 });
+    return Response.redirect(new URL("/contact?error=phone_required", SITE_URL), 303);
   }
 
   const supabase = createAdminClient();
@@ -59,10 +63,10 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (error || !data) {
     console.error("[contact] Supabase insert failed:", error?.message);
-    // Still redirect to success — don't expose DB errors to visitors
+    // Still respond with success — don't expose DB errors to visitors
   } else {
     // Fire-and-forget GHL sync (non-blocking)
-    const syncUrl = new URL("/api/contact-sync", request.url);
+    const syncUrl = new URL("/api/contact-sync", SITE_URL);
     fetch(syncUrl.toString(), {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
@@ -72,5 +76,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  return Response.redirect(new URL("/contact/success", request.url), 303);
+  if (isAjax) {
+    return Response.json({ success: true }, { status: 200 });
+  }
+  return Response.redirect(new URL("/contact/success", SITE_URL), 303);
 };
