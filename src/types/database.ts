@@ -3,6 +3,8 @@
 //   npx supabase gen types typescript --project-id <ref> > src/types/database.ts
 
 export type ProjectStatus = "draft" | "published";
+// Shared publish lifecycle for all content types
+export type ContentStatus = "draft" | "published";
 export type ProjectCategory =
   | "Drywall"
   | "Painting"
@@ -75,7 +77,7 @@ export interface ProjectInsert {
 export interface EventRow {
   id: string;
   slug: string;
-  status: ProjectStatus;
+  status: ContentStatus;
   title: string;
   event_type: EventType;
   event_date: string;
@@ -94,7 +96,7 @@ export interface EventRow {
 
 export interface EventInsert {
   slug: string;
-  status?: ProjectStatus;
+  status?: ContentStatus;
   title: string;
   event_type: EventType;
   event_date: string;
@@ -164,21 +166,25 @@ export interface Database {
         Row: ProjectRow;
         Insert: ProjectInsert;
         Update: Partial<ProjectInsert>;
+        Relationships: [];
       };
       events: {
         Row: EventRow;
         Insert: EventInsert;
         Update: Partial<EventInsert>;
+        Relationships: [];
       };
       press_mentions: {
         Row: PressMentionRow;
         Insert: PressMentionInsert;
         Update: Partial<PressMentionInsert>;
+        Relationships: [];
       };
       media_items: {
         Row: MediaItemRow;
         Insert: MediaItemInsert;
         Update: Partial<MediaItemInsert>;
+        Relationships: [];
       };
     };
   };
