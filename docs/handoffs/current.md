@@ -1,126 +1,113 @@
-# Project Handoff — Homeworks Website Builder
-**Project:** homeworks-website-template
+# Project Handoff — Homeworks Website Template
+**Project:** Homeworks Website Template
 **Repo:** https://github.com/Clvrwrk/homeworks-website-template
-**Production URL:** not yet deployed
-**Date:** 2026-03-30 23:59
+**Production URL:** Not yet deployed for this feature set
+**Date:** 2026-04-02 11:30
 **Agent:** Lead Orchestrator
-**Reason:** User-requested end-of-session handoff
+**Reason:** User-requested end of session
 
 ---
 
 ## Accomplished This Session
 
-### Tasks 12–16 of 16 — TEMPLATE COMPLETE
+### Full brainstorm and approved design spec for 4 major features
 
-- `src/pages/services/[slug].astro`: Fully rewritten — reads from `SERVICES_CONTENT[service.slug]` with `CONTENT_PLACEHOLDER` fallback, breadcrumb + FAQ JSON-LD schemas, GSAP reveal-up. Commit `5f4d04a`.
-- `src/pages/locations/[slug].astro`: Fully rewritten — reads from `LOCATIONS_CONTENT[location.slug]`, services grid, FAQ accordion, GSAP reveals. Commit `5f4d04a`.
-- `src/pages/media-kit.astro`: SSR page lists Supabase `press-kit` bucket, renders download grid with image previews or file-type badges. Commit `972e94a`.
-- `.env.example`: Rewritten with all required vars, correct `PUBLIC_` prefix rules, `RETRY_SECRET` added. Commit `838c4ff`.
-- `docs/mcps/supabase-mcp.md` + `github-mcp.md` + `ghl-mcp.md` + `coolify-mcp.md`: Full setup READMEs with auth, config, key tools, common patterns, troubleshooting. Commit `6788e67`.
-- `astro.config.mjs`: Removed broken `experimental.fonts` block (API uses `variants` key which was unrecognized in Astro 5.18). Commit `7d76179`.
-- `src/styles/global.css`: Added 9 `@font-face` declarations for Plus Jakarta Sans (400–800) and DM Sans (400–700) from `public/fonts/`. Fixed self-referencing CSS vars `--font-display` and `--font-sans`. Commit `7d76179`.
-- `src/config/site.ts`: Added missing exports `JOBS_COMPLETED`, `YEARS_EXPERIENCE`, `RESPONSE_TIME`. Fixed duplicate `BUSINESS_HOURS` (was hardcoded `"Mon–Sat: 7am–7pm"`, now `"{{BUSINESS_HOURS}}"`). Commit `7d76179`.
-- `src/components/Header.astro`: Removed unused `COLORS` import (leftover from McKinney). Commit `7d76179`.
-- GitHub push: Repo created at `Clvrwrk/homeworks-website-template` (private). All commits pushed. Commit `31d7f31`.
+- `docs/superpowers/specs/2026-04-02-press-brand-events-admin-design.md`: Complete approved design spec covering Events System, Press/Media Hub, Brand Guidelines page, and Admin Interface — committed to main at `aff8a29`
+
+**Visual mockups produced and approved (in `.superpowers/brainstorm/`):**
+- Events hub: split hero + month-grouped 3-column card grid
+- Event detail: centered card stack (photo → info → map → local SEO links)
+- Admin interface: single-scroll sectioned form + readiness progress bar
+- Press/media hub: editorial-first layout
+- Brand guidelines: scrolling page + sticky side nav
+- Admin/worker profile page: tasks to complete + add new + published records
 
 ## Git State
-- **Branch:** main
-- **Last commit:** `31d7f31` — "chore: final build verification — template ready for /build-website skill"
-- **Uncommitted changes:** none — clean working tree, fully pushed
+- **Branch:** `main`
+- **Last commit:** `aff8a29` — "docs: add design spec for press hub, brand guidelines, events system, and admin interface"
+- **Uncommitted changes:** none
 
 ## Task Cut Off
-None — all 16 tasks complete. Template is finished and pushed. Session ended at a clean boundary.
+Design phase complete. No code written yet. Implementation planning is the next step.
 
 ## Next Task — Start Here
 
-**Task:** Build the `/build-website` skill
+**Task:** Generate implementation plan from the approved design spec
+**What to do:**
+1. Read `docs/superpowers/specs/2026-04-02-press-brand-events-admin-design.md` in full
+2. Invoke the `superpowers:writing-plans` skill
+3. Plan phases: Supabase migrations → WorkOS auth → Admin interface (React islands) → Public events pages → Press hub → Brand guidelines → GHL SOP execution
+4. Each phase should be independently deployable
 
-**What to check / do:**
-1. Read `docs/superpowers/plans/` — look for the build-website skill plan (may be at `/Users/chussey/Documents/Claude Projects/docs/superpowers/plans/`)
-2. The skill lives at `/Users/chussey/.claude/skills/build-website/` (create if not exists)
-3. The skill must: (a) gather client intake data, (b) run 4 parallel agents (GitHub repo, Supabase project, Rankability content, WCAG review), (c) populate `src/config/site.ts` + `src/data/services.ts` + `src/data/locations.ts` with real client values, (d) push to GitHub, (e) deploy via Coolify
-4. Reference `docs/mcps/` for MCP tool patterns
-
-**Prompt to use:** "Read docs/handoffs/current.md. The homeworks-website-template is complete (all 16 tasks done, last commit 31d7f31, pushed to Clvrwrk/homeworks-website-template). Next session: build the /build-website skill. Check /Users/chussey/Documents/Claude Projects/docs/superpowers/plans/ for the build-website plan, then scaffold the skill."
+**Prompt to use:** "Read `docs/superpowers/specs/2026-04-02-press-brand-events-admin-design.md`. Then invoke the writing-plans skill to create an implementation plan for all four features."
 
 ## Decisions Made This Session
 
-- **`Clvrwrk` is a personal GitHub account, not an org:** `mcp__plugin_github__create_repository` with `organization: "Clvrwrk"` returns 404. Use it without the `organization` param — the authenticated user IS Clvrwrk.
-- **Astro `experimental.fonts` local provider is broken in 5.18:** The `variants` key is not recognized. Replaced with standard `@font-face` declarations in `global.css`. Font files serve from `public/fonts/` at `/fonts/*.woff2`. No Astro magic needed.
-- **`--font-display: var(--font-display)` was self-referencing:** Fixed to `"Plus Jakarta Sans", system-ui, sans-serif`. Same issue with `--font-sans: var(--font-body)` — `--font-body` was never defined; fixed to `"DM Sans", system-ui, sans-serif`.
-- **`BUSINESS_HOURS` was hardcoded:** Was `"Mon–Sat: 7am–7pm"` — changed to `"{{BUSINESS_HOURS}}"` so `/build-website` can substitute client hours.
-- **`COLORS` import removed from Header.astro:** Was imported but never used in the template markup. Leftover from McKinney. Removal was safe.
+- **Astro SSR + React islands for admin** — same stack, no new deployment
+- **WorkOS for auth** — net-new to this site; same pattern as OmniDrop AI
+- **Three roles: Agency Admin, Client Admin, Worker** — Agency manages all users; Client manages their team only; Workers draft-only, Publish button hidden entirely
+- **Draft/publish + required fields gate** — all narrative fields required for EEAT/local SEO before publish
+- **Before AND after photos required** — two separate uploads per project
+- **Events hub** — split hero (next event + Google Maps) + month-grouped 3-column grid
+- **Event detail** — centered card stack: photo → info card → map → local SEO outbound links
+- **Admin form** — single scrollable page, amber disclaimer banner, readiness progress bar
+- **Press hub** — editorial-first order: Hero → Stats → Boilerplate + Contact → Videos/Podcasts → Press Mentions → Downloads
+- **Brand guidelines** — scrolling page, sticky left side nav, 6 sections
+- **Press mention intake** — URL-only → server-side OG fetch → placeholder image fallback → required 20–200 word summary if no OG description
+- **Profile page** — top section shows incomplete drafts (admins see all team drafts, workers see own only). Edit → unpublishes live records. Delete requires confirm.
+- **GHL Custom Objects** (not custom fields) — full SOP in spec Section 7 covering Projects, Events, Press Mentions, Media Items
+- **Brand guidelines page is static** — hardcoded Astro, no DB dependency
+- **Press stats in `site.ts`** — not a DB table
+- **Existing projects grandfathered** — publish gate applies to new records only
 
 ## Blockers Requiring Human Action
 
-1. **`OPERATOR_GHL_CONTACT_ID` in `src/pages/api/contact-sync.ts` ~line 157** — Hardcoded placeholder string. Must be replaced with a real GHL contact ID before the alert email feature works. Do this per-client during `/build-website`.
-2. **Rankability API key** — `RANKABILITY_API_KEY` must be set before running `/build-website` for HAWC. Get from rankability.com/developers.
-3. **Coolify MCP server** — `@coolify/mcp-server` package name in `docs/mcps/coolify-mcp.md` is placeholder. Verify actual package name before using.
+1. **WorkOS org** — needs a new WorkOS organization created for this site (separate from OmniDrop AI)
+2. **GHL Custom Objects** — must be created manually per spec Section 7 SOP before automation workflows can fire
+3. **Supabase `project-photos` bucket** — `press-kit` already exists; `project-photos` needs to be created before implementation begins
+4. **Spec review** — read `docs/superpowers/specs/2026-04-02-press-brand-events-admin-design.md` and confirm before implementation planning starts
 
 ## Verification Commands
-1. `cd "/Users/chussey/Documents/Claude Projects/homeworks-website-template" && git log --oneline -5` — should show `31d7f31` at top
-2. `npm run build 2>&1 | tail -5` — should complete with no errors
-3. `ls dist/server/entry.mjs && echo "PASS"` — should return PASS
-4. `grep -c "font-face" src/styles/global.css` — should return `9`
-5. `git remote get-url origin` — should return `https://github.com/Clvrwrk/homeworks-website-template.git`
+1. `cd "/Users/chussey/Documents/Claude Projects/homeworks-website-template" && git log --oneline -3` — should show `aff8a29` as most recent
+2. `ls docs/superpowers/specs/` — should show the spec file
 
 ## Full Context
 
 ### What was built across ALL sessions (complete feature list)
-
-**Session 1 (2026-03-30):**
-- Cloned McKinney Fixit Pros as starting template
-- Full brainstorming + design for Homeworks Website Builder system
-- Design spec (11 sections), 3 implementation plans (template repo, build-website skill, HAWC execution)
-- Updated project-handoff skill to OmniDrop format
-- Added session-handoff-system reference doc
-- Task 1 of 16: homeworks-website-template repo initialized with new dependencies
-
-**Session 2 (2026-03-31):**
-- Tasks 2–11: site.ts anonymized, content types, Rankability client, placeholder data files, Supabase migration, local fonts, global.css, Icon.astro, Layout.astro brand vars, contact API Supabase→GHL sync
-
-**Session 3 (2026-03-30 evening):**
-- Tasks 12–16: [slug].astro pages, media-kit, .env.example, MCP docs, build verification, GitHub push
-- Build fixes: experimental.fonts removal, @font-face CSS, missing site.ts exports
+- Full Astro SSR website template (16 tasks across 3 prior sessions)
+- All core pages: Home, About, Services, Projects, Locations, Process, Contact, Privacy, Terms, 404
+- GHL contact form integration
+- Supabase integration (press-kit bucket, services/locations content)
+- SEO: schema markup, sitemap, robots.txt, OG tags
+- Image optimization pipeline (scripts)
+- Rankability content integration
+- `media-kit.astro` stub (pulls from Supabase press-kit bucket — will be replaced by press hub)
+- **This session:** Full approved design spec for Events, Press Hub, Brand Guidelines, Admin Interface
 
 ### Architecture decisions
-
-- **Single source of truth:** `src/config/site.ts` holds ALL client-specific constants as `{{TEMPLATE_VAR}}` strings. The `/build-website` skill does a single-pass replacement of this file. Nothing else in the codebase is client-specific.
-- **Brand color injection:** `Layout.astro` uses Astro's `define:vars` to set `:root` CSS custom properties at build time. `global.css` consumes these via `var(--brand-primary)` etc. No CSS-in-JS, no runtime theming.
-- **4-agent parallel Phase 1:** When `/build-website` runs, Agent A (GitHub), Agent B (Supabase), Agent C (Rankability content), Agent D (WCAG/design review) run in parallel. Phase 2 (populate + push files) waits for all four.
-- **Contact sync is fire-and-forget:** `/api/contact` inserts to Supabase and returns 303 redirect immediately. GHL sync happens async in `/api/contact-sync`. If sync fails 3 times, status becomes `needs_attention` and an alert email fires via GHL.
-- **Rankability content is 24 jobs for HAWC:** 15 service pages + 9 location pages, all parallel, poll every 10s, max 10 min timeout. Results stored as TypeScript data files.
-- **Clvrwrk is a personal GitHub account:** Not an org — create repos without `organization` param.
+- Astro SSR (not static) — required for Supabase queries and WorkOS auth
+- React islands for admin form interactivity (file upload, dynamic lists, readiness bar)
+- WorkOS authkitMiddleware pattern (same as OmniDrop AI)
+- Supabase service role key server-side only
+- OG fetch for press mentions runs server-side only
 
 ### Design system
-
-- **Fonts:** Plus Jakarta Sans (display/headings, `--font-display`) + DM Sans (body, `--font-sans`). Two fonts max — never add a third.
-- **Font files:** `public/fonts/*.woff2` — 9 files (Plus Jakarta Sans 400/500/600/700/800, DM Sans 400/500/600/700). Weight 900 not available in @fontsource.
-- **Type scale:** Golden ratio, base 17px, ratio 1.618. h1: clamp(2.75rem, 5.5vw, 4.5rem). h2: clamp(2rem, 3.75vw, 2.875rem).
-- **Colors:** All via CSS vars — `--brand-primary` (CTA fill), `--brand-secondary` (nav/dark sections), `--brand-accent` (light section bg), `--brand-accent-2` (body text). Fixed neutrals: `--color-ink: #151d25`, `--color-muted: #567798`.
-- **Animation:** GSAP ScrollTrigger for `.reveal-up` (opacity 0→1, y 24→0, 400ms, once:true). CSS-only `icon-enter` keyframe for icons. `cta-pulse-mobile` pulse (max scale 1.03, 2s, mobile only).
-- **Buttons:** `.btn-primary`, `.btn-secondary`, `.btn-navy`, `.btn-ghost`, `.btn-submit` — all min-height 54px, font-display, 700 weight, border-radius 9999px.
+- Font: Syne (headings) + DM Mono (data) + DM Sans (body)
+- Palette: `#151d25` ink, `#b05d45` terracotta, `#2c3e50` navy, `#567798` steel, `#f0f2f4` snow
+- Admin: `#151d25` top bar, `#1e2a35` sidebar
 
 ### Key invariants (never violate)
-
-- `SUPABASE_SERVICE_ROLE_KEY` is never `PUBLIC_SUPABASE_SERVICE_ROLE_KEY` — server-side only
-- `GHL_API_KEY` is never `PUBLIC_GHL_API_KEY` — server-side only
-- `RANKABILITY_API_KEY` is never `PUBLIC_RANKABILITY_API_KEY` — server-side only
-- `PUBLIC_SUPABASE_URL` is correct (URL is not a secret)
-- WCAG AA minimum 4.5:1 for normal text, 3:1 for large text/UI components — validate before shipping any brand color
-- Max 2 fonts — Plus Jakarta Sans + DM Sans. Never add a third.
-- Max animation scale: 1.03. No looping animations on page content. `once: true` on all ScrollTriggers.
-- Contact form always writes to Supabase first, then fires GHL sync async. Never write directly to GHL only.
-- `Clvrwrk` GitHub = personal account, not org. Omit `organization` param on `create_repository`.
+- Draft records never appear on public-facing pages
+- Publish button hidden (not just disabled) for Worker role
+- Server-side OG fetch only — never in browser
+- `before_photo_url` AND `after_photo_url` both required for projects to publish
+- Brand guidelines page is static — do not add a DB dependency
+- All outbound event links: `target="_blank" rel="noopener noreferrer"`
 
 ### Service / deployment map
-
 | Service | Detail |
-|---------|--------|
-| GitHub | Clvrwrk/homeworks-website-template (private) — pushed, up to date |
-| Supabase | One project per client — provisioned via MCP during `/build-website` |
-| GoHighLevel | Per-client location ID, pipeline ID, stage ID — set in site.ts |
-| Rankability | RANKABILITY_API_KEY env var — one key, multiple client_ids |
-| Coolify | nixpacks deployment — port 4321, `node ./dist/server/entry.mjs` start command |
-| Plans location | `/Users/chussey/Documents/Claude Projects/docs/superpowers/plans/` |
-| Specs location | `/Users/chussey/Documents/Claude Projects/docs/superpowers/specs/` |
+|---|---|
+| Supabase | `press-kit` bucket exists; `project-photos` bucket needs creation |
+| WorkOS | Needs new org created for this site (separate from OmniDrop AI org) |
+| GHL | Custom Objects need manual creation per spec Section 7 |
+| Hosting | Coolify (per new-project skill) |
