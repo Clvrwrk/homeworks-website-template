@@ -1,24 +1,23 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { SERVICES, BUSINESS_NAME, ADDRESS_CITY, ADDRESS_STATE } from "../../config/site";
-import { SERVICES_CONTENT } from "../../data/services";
-import { CONTENT_PLACEHOLDER } from "../../types/content";
-import type { ServiceDef } from "../../config/site";
+import { BUSINESS_NAME, ADDRESS_CITY, ADDRESS_STATE } from "../../config/site";
+import { createServerClient } from "../../lib/supabase";
+import type { ServiceRow } from "../../types/database";
 
-export async function getStaticPaths() {
-  return SERVICES.map((s: ServiceDef) => ({
-    params: { slug: s.slug },
-    props:  { service: s },
-  }));
-}
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+const supabase = createServerClient();
+const { data, error } = await supabase
+  .from("services")
+  .select("*")
+  .eq("slug", slug)
+  .eq("is_active", true)
+  .single();
 
-const { service }  = Astro.props as { service: ServiceDef };
-const content      = SERVICES_CONTENT[service.slug] ?? CONTENT_PLACEHOLDER;
+if (error || !data) return Astro.redirect("/404");
+
+const service = data as ServiceRow;
 const canonicalUrl = `${Astro.site?.toString().replace(/\/$/, "")}/services/${service.slug}`;
-
-const faqSchema = content.faqSchemaJsonLd
-  ? JSON.parse(content.faqSchemaJsonLd)
-  : null;
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -29,12 +28,21 @@ const breadcrumbSchema = {
     { "@type": "ListItem", position: 3, name: service.name },
   ],
 };
+
+const faqSchema = service.faq_items.length > 0 ? {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: service.faq_items.map(faq => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+} : null;
 ---
 
 <Layout
-  title={content.seoTitle}
-  description={content.metaDescription}
-  canonical={canonicalUrl}
+  title={service.seo_title || service.name}
+  description={service.meta_description || service.description}
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
@@ -47,31 +55,32 @@ const breadcrumbSchema = {
   <section class="section-padding bg-brand-secondary text-white">
     <div class="site-container">
       <span class="section-label-light">{ADDRESS_CITY}, {ADDRESS_STATE}</span>
-      <h1 class="section-heading-white reveal-up">{content.h1}</h1>
+      <h1 class="section-heading-white reveal-up">{service.h1 || service.name}</h1>
       <div class="accent-divider" style="background: var(--brand-accent);" />
-      <p class="section-subheading text-white/80 reveal-up">{content.metaDescription}</p>
+      <p class="section-subheading text-white/80 reveal-up">{service.meta_description || service.description}</p>
       <div class="mt-8 flex gap-4 flex-wrap reveal-up">
-        <a href="/contact" class="btn-primary">Get a Free Quote</a>
-        <a href={`tel:{{PHONE_RAW}}`} class="btn-ghost">Call Now</a>
+        <a href="/contact" class="btn-primary">{service.cta || "Get a Free Quote"}</a>
       </div>
     </div>
   </section>
 
   <!-- Generated body content -->
-  <section class="section-padding bg-snow">
-    <div class="site-container prose prose-lg max-w-none">
-      <Fragment set:html={content.bodyHtml} />
-    </div>
-  </section>
+  {service.body_html && (
+    <section class="section-padding bg-snow">
+      <div class="site-container prose prose-lg max-w-none">
+        <Fragment set:html={service.body_html} />
+      </div>
+    </section>
+  )}
 
   <!-- FAQs -->
-  {content.faqs.length > 0 && (
+  {service.faq_items.length > 0 && (
     <section class="section-padding bg-brand-accent">
       <div class="site-container-narrow">
         <span class="section-label">Common Questions</span>
         <h2 class="section-heading reveal-up">Frequently Asked Questions</h2>
         <div class="mt-10 space-y-6">
-          {content.faqs.map((faq, i) => (
+          {service.faq_items.map((faq) => (
             <details class="reveal-up border border-border rounded-xl p-6 bg-white">
               <summary class="font-display font-700 text-ink cursor-pointer">{faq.question}</summary>
               <p class="mt-4 text-muted">{faq.answer}</p>

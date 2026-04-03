@@ -1,0 +1,74 @@
+---
+// src/pages/admin/users/invite.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { getWorkOSClient } from "@/lib/workos";
+if (Astro.locals.user?.role !== "agency_admin") return Astro.redirect("/admin");
+
+let successEmail = "";
+let inviteError  = "";
+
+if (Astro.request.method === "POST") {
+  const form  = await Astro.request.formData();
+  const email = form.get("email") as string;
+  const role  = form.get("role")  as string;
+  const orgId = import.meta.env.WORKOS_ORGANIZATION_ID as string;
+
+  try {
+    const workos = getWorkOSClient();
+    await workos.userManagement.sendInvitation({
+      email,
+      organizationId: orgId,
+      roleSlug:       role,
+    });
+    successEmail = email;
+  } catch (err) {
+    inviteError = (err as Error).message;
+  }
+}
+---
+
+<AdminLayout title="Invite User" activeSection="users">
+  <div class="mb-6">
+    <a href="/admin/users" class="text-[#567798] text-[13px] hover:text-[#151d25]">← Users</a>
+    <h1 class="text-[#151d25] text-[26px] font-black tracking-tight mt-2">Invite User</h1>
+  </div>
+
+  {successEmail && (
+    <div class="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl p-5 text-[#166534] mb-6">
+      ✓ Invitation sent to <strong>{successEmail}</strong>
+    </div>
+  )}
+
+  {inviteError && (
+    <div class="bg-[#fef2f2] border border-[#fecaca] rounded-xl p-5 text-[#991b1b] mb-6">
+      ✗ {inviteError}
+    </div>
+  )}
+
+  <form method="POST" class="bg-white rounded-2xl border border-[#cdd8e3] p-7 flex flex-col gap-5 max-w-[480px]">
+    <div>
+      <label class="admin-label" for="email">Email Address *</label>
+      <input id="email" name="email" type="email" required class="admin-input" placeholder="worker@company.com" />
+    </div>
+    <div>
+      <label class="admin-label" for="role">Role *</label>
+      <select id="role" name="role" required class="admin-input">
+        <option value="worker">Worker — can create drafts, cannot publish</option>
+        <option value="client_admin">Client Admin — can publish, manage their team</option>
+        <option value="agency_admin">Agency Admin — full access</option>
+      </select>
+    </div>
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-800 text-[13px]">
+      The user will receive an email with a link to set up their account. Their role is set immediately upon acceptance.
+    </div>
+    <button type="submit" class="bg-[#b05d45] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#8d4a37] transition-colors">
+      Send Invitation
+    </button>
+  </form>
+</AdminLayout>
+
+<style>
+  .admin-label { display: block; font-size: 0.8125rem; font-weight: 700; color: #151d25; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .admin-input { width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid #cdd8e3; border-radius: 0.625rem; font-size: 0.9375rem; color: #151d25; background: #fff; transition: border-color 0.15s ease; }
+  .admin-input:focus { outline: none; border-color: #b05d45; }
+</style>

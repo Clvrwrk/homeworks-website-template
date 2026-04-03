@@ -1,0 +1,200 @@
+---
+// src/pages/admin/profile.astro
+// Three sections: Tasks to Complete, Add New Record, My Published Records
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import { getProjectReadiness, getEventReadiness } from "@/lib/admin";
+import type { ProjectRow, EventRow } from "@/types/database";
+
+const user     = Astro.locals.user!;
+const supabase = createAdminClient();
+const isAdmin  = user.role === "agency_admin" || user.role === "client_admin";
+
+// Fetch drafts
+const [projectsRes, eventsRes] = await Promise.all([
+  supabase.from("projects").select("*").eq("status", "draft")
+    .order("updated_at", { ascending: false, nullsFirst: false }),
+  supabase.from("events").select("*").eq("status", "draft")
+    .order("updated_at", { ascending: false, nullsFirst: false }),
+]);
+
+let draftProjects = (projectsRes.data ?? []) as ProjectRow[];
+let draftEvents   = (eventsRes.data ?? []) as EventRow[];
+
+// Workers: filter to only their own drafts
+if (!isAdmin) {
+  draftProjects = draftProjects.filter(p => p.created_by === user.id);
+  draftEvents   = draftEvents.filter(e => e.created_by === user.id);
+}
+
+// Compute readiness for each draft
+const projectTasks = draftProjects.map(p => ({
+  type:     "Project" as const,
+  title:    p.title,
+  slug:     p.slug,
+  editUrl:  `/admin/projects/${p.slug}`,
+  readiness: getProjectReadiness(p as any),
+}));
+
+const eventTasks = draftEvents.map(e => ({
+  type:     "Event" as const,
+  title:    e.title,
+  slug:     e.slug,
+  editUrl:  `/admin/events/${e.slug}`,
+  readiness: getEventReadiness(e as any),
+}));
+
+const allTasks = [...projectTasks, ...eventTasks]
+  .sort((a, b) => b.readiness.percent - a.readiness.percent); // closest to complete first
+
+// My published records
+const [pubProjectsRes, pubEventsRes] = await Promise.all([
+  supabase.from("projects").select("id, slug, title, published_at, created_by").eq("status", "published")
+    .order("published_at", { ascending: false }),
+  supabase.from("events").select("id, slug, title, event_date, created_by").eq("status", "published")
+    .order("event_date", { ascending: false }),
+]);
+
+type PubProject = { id: string; slug: string; title: string; published_at: string | null; created_by: string | null };
+type PubEvent   = { id: string; slug: string; title: string; event_date: string; created_by: string | null };
+
+const myPublishedProjects = ((pubProjectsRes.data ?? []) as PubProject[])
+  .filter(p => isAdmin || p.created_by === user.id);
+const myPublishedEvents   = ((pubEventsRes.data ?? []) as PubEvent[])
+  .filter(e => isAdmin || e.created_by === user.id);
+---
+
+<AdminLayout title="Profile" activeSection="profile">
+  <div class="mb-8">
+    <h1 class="text-[#151d25] text-[28px] font-black tracking-tight">
+      {user.firstName ? `${user.firstName}'s Profile` : "My Profile"}
+    </h1>
+    <p class="text-[#567798] text-[14px] mt-1">{user.email} · {user.role.replace("_", " ")}</p>
+  </div>
+
+  <!-- ── Section 1: Tasks to Complete ─────────────────────────────────── -->
+  <section class="mb-10">
+    <h2 class="text-[#151d25] font-black text-[20px] mb-5 flex items-center gap-3">
+      <span class="w-8 h-8 rounded-full bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-amber-600 text-[14px] font-black">{allTasks.length}</span>
+      Tasks to Complete
+    </h2>
+
+    {allTasks.length === 0 ? (
+      <div class="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-8 text-center text-[#166534]">
+        ✓ No incomplete drafts — you're all caught up!
+      </div>
+    ) : (
+      <div class="flex flex-col gap-4">
+        {allTasks.map(({ type, title, editUrl, readiness }) => {
+          const pct   = readiness.percent;
+          const color = pct < 50 ? "#ef4444" : pct < 90 ? "#f59e0b" : "#22c55e";
+          return (
+            <div class="bg-white rounded-2xl border-2 border-amber-200 p-5">
+              <div class="flex items-start gap-4">
+                <span class="text-[11px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-[#f0f2f4] text-[#567798] shrink-0 mt-0.5">
+                  {type}
+                </span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-[#151d25] font-semibold truncate">{title}</p>
+                  <!-- Readiness bar -->
+                  <div class="flex items-center gap-3 mt-2">
+                    <div class="flex-1 h-1.5 bg-[#e8edf2] rounded-full overflow-hidden">
+                      <div class="h-full rounded-full transition-all" style={`width: ${pct}%; background: ${color};`}></div>
+                    </div>
+                    <span class="text-[12px] text-[#567798] whitespace-nowrap shrink-0">{readiness.filled}/{readiness.total}</span>
+                  </div>
+                  {readiness.missing.length > 0 && (
+                    <p class="text-[#567798] text-[12px] mt-1">Missing: {readiness.missing.join(", ")}</p>
+                  )}
+                </div>
+                <a href={editUrl} class="shrink-0 bg-[#b05d45] text-white text-[12px] font-bold px-4 py-2 rounded-lg hover:bg-[#8d4a37] transition-colors whitespace-nowrap">
+                  Edit →
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </section>
+
+  <!-- ── Section 2: Add New Record ─────────────────────────────────────── -->
+  <section class="mb-10">
+    <h2 class="text-[#151d25] font-black text-[20px] mb-5">Add New Record</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {[
+        { label: "New Project",     href: "/admin/projects/new", show: true },
+        { label: "New Event",       href: "/admin/events/new",   show: true },
+        { label: "Press Mention",   href: "/admin/press/mentions/new", show: isAdmin },
+        { label: "Video/Podcast",   href: "/admin/press/media/new",   show: isAdmin },
+      ].filter(t => t.show).map(({ label, href }) => (
+        <a href={href} class="flex flex-col items-center justify-center gap-2 bg-white border-2 border-[#cdd8e3] rounded-2xl p-6 hover:border-[#b05d45] hover:shadow-md transition-all text-center group">
+          <span class="w-10 h-10 rounded-full bg-[#f0f2f4] group-hover:bg-[#b05d45]/10 flex items-center justify-center text-[20px] transition-colors">+</span>
+          <span class="text-[#151d25] text-[13px] font-bold">{label}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ── Section 3: My Published Records ──────────────────────────────── -->
+  <section>
+    <h2 class="text-[#151d25] font-black text-[20px] mb-5">
+      {isAdmin ? "All Published Records" : "My Published Records"}
+    </h2>
+
+    {myPublishedProjects.length === 0 && myPublishedEvents.length === 0 ? (
+      <div class="bg-[#f0f2f4] rounded-2xl p-8 text-center text-[#567798]">
+        No published records yet.
+      </div>
+    ) : (
+      <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+        <table class="w-full text-[13px]">
+          <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+            <tr>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Record</th>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden sm:table-cell">Type</th>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden lg:table-cell">Published</th>
+              <th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#f0f2f4]">
+            {myPublishedProjects.map(p => (
+              <tr class="hover:bg-[#f8fafc]">
+                <td class="px-5 py-4">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#22c55e] shrink-0"></span>
+                    <span class="text-[#151d25] font-semibold">{p.title}</span>
+                  </div>
+                </td>
+                <td class="px-5 py-4 text-[#567798] hidden sm:table-cell">Project</td>
+                <td class="px-5 py-4 text-[#567798] hidden lg:table-cell">
+                  {p.published_at ? new Date(p.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <a href={`/admin/projects/${p.slug}`} class="text-[#b05d45] font-semibold hover:underline text-[12px]">Edit</a>
+                </td>
+              </tr>
+            ))}
+            {myPublishedEvents.map(e => (
+              <tr class="hover:bg-[#f8fafc]">
+                <td class="px-5 py-4">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#22c55e] shrink-0"></span>
+                    <span class="text-[#151d25] font-semibold">{e.title}</span>
+                  </div>
+                </td>
+                <td class="px-5 py-4 text-[#567798] hidden sm:table-cell">Event</td>
+                <td class="px-5 py-4 text-[#567798] hidden lg:table-cell">
+                  {new Date(e.event_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <a href={`/admin/events/${e.slug}`} class="text-[#b05d45] font-semibold hover:underline text-[12px]">Edit</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </section>
+</AdminLayout>

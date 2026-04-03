@@ -1,0 +1,148 @@
+---
+// src/pages/admin/press/mentions/new.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+---
+
+<AdminLayout title="Add Press Mention" activeSection="press">
+  <div class="mb-6">
+    <a href="/admin/press" class="text-[#567798] text-[13px] hover:text-[#151d25]">← Press</a>
+    <h1 class="text-[#151d25] text-[26px] font-black tracking-tight mt-2">Add Press Mention</h1>
+    <p class="text-[#567798] text-[14px] mt-1">Paste the article URL — we'll auto-fill headline, publication, and summary from the page.</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+    <!-- Step 1: URL input -->
+    <div class="mb-6">
+      <label class="admin-label" for="url">Article URL *</label>
+      <div class="flex gap-3">
+        <input id="url" name="url" type="url" required class="admin-input flex-1" placeholder="https://dallasnews.com/article..." />
+        <button type="button" id="fetch-btn" class="bg-[#2c3e50] text-white font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#1a2533] transition-colors whitespace-nowrap">
+          Fetch Details
+        </button>
+      </div>
+      <p id="fetch-status" class="text-[12px] text-[#567798] mt-1"></p>
+    </div>
+
+    <!-- Auto-prefilled (and editable) fields -->
+    <div id="mention-fields" class="flex flex-col gap-5">
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="admin-label" for="headline">Headline *</label>
+          <input id="headline" name="headline" type="text" required class="admin-input" placeholder="Article headline" />
+        </div>
+        <div>
+          <label class="admin-label" for="publication">Publication *</label>
+          <input id="publication" name="publication" type="text" required class="admin-input" placeholder="Dallas Morning News" />
+        </div>
+        <div>
+          <label class="admin-label" for="published_date">Published Date</label>
+          <input id="published_date" name="published_date" type="date" class="admin-input" />
+        </div>
+        <div>
+          <label class="admin-label" for="image_url">
+            Image URL
+            <span class="text-[#567798] font-normal">(falls back to site placeholder automatically)</span>
+          </label>
+          <input id="image_url" name="image_url" type="url" class="admin-input" placeholder="https://..." />
+        </div>
+      </div>
+      <div>
+        <label class="admin-label" for="summary">
+          Summary *
+          <span class="text-[#567798] font-normal">(20–200 words required)</span>
+        </label>
+        <textarea id="summary" name="summary" required rows="5" class="admin-input" placeholder="Article summary…"></textarea>
+        <p id="word-count-display" class="text-[12px] text-[#567798] mt-1">0 words</p>
+      </div>
+    </div>
+
+    <div class="flex justify-end pt-6 border-t border-[#f0f2f4] mt-6">
+      <button type="button" id="save-btn" class="bg-[#b05d45] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#8d4a37] transition-colors disabled:opacity-50" disabled>
+        Save Press Mention
+      </button>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .admin-label { display: block; font-size: 0.8125rem; font-weight: 700; color: #151d25; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .admin-input { width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid #cdd8e3; border-radius: 0.625rem; font-size: 0.9375rem; color: #151d25; background: #fff; transition: border-color 0.15s ease; }
+  .admin-input:focus { outline: none; border-color: #b05d45; }
+  textarea.admin-input { resize: vertical; min-height: 80px; }
+</style>
+
+<script>
+  const fetchBtn  = document.getElementById("fetch-btn")!;
+  const fetchStatus = document.getElementById("fetch-status")!;
+  const saveBtn   = document.getElementById("save-btn") as HTMLButtonElement;
+  const summaryEl = document.getElementById("summary") as HTMLTextAreaElement;
+  const wcDisplay = document.getElementById("word-count-display")!;
+
+  // Word count check
+  function wordCount(s: string) { return s.trim() === "" ? 0 : s.trim().split(/\s+/).length; }
+
+  function updateSaveState() {
+    const wc = wordCount(summaryEl.value);
+    const headlineOk     = !!(document.getElementById("headline") as HTMLInputElement)?.value.trim();
+    const publicationOk  = !!(document.getElementById("publication") as HTMLInputElement)?.value.trim();
+    const urlOk          = !!(document.getElementById("url") as HTMLInputElement)?.value.trim();
+    const summaryOk      = wc >= 20 && wc <= 200;
+
+    wcDisplay.textContent = `${wc} words${summaryOk ? " ✓" : wc > 0 ? ` (need 20–200)` : ""}`;
+    wcDisplay.style.color = summaryOk ? "#22c55e" : wc > 0 ? "#ef4444" : "#567798";
+    saveBtn.disabled = !(headlineOk && publicationOk && urlOk && summaryOk);
+  }
+
+  document.querySelectorAll("#headline, #publication, #url, #summary").forEach(el => {
+    el.addEventListener("input", updateSaveState);
+  });
+
+  // OG auto-fetch
+  fetchBtn.addEventListener("click", async () => {
+    const url = (document.getElementById("url") as HTMLInputElement).value.trim();
+    if (!url) return;
+    fetchStatus.textContent = "Fetching…";
+    (fetchBtn as HTMLButtonElement).disabled = true;
+    try {
+      const res  = await fetch(`/api/admin/og-fetch?url=${encodeURIComponent(url)}`);
+      const json = await res.json() as {
+        headline?: string; publication?: string;
+        image_url?: string; summary?: string; published_date?: string;
+        error?: string;
+      };
+
+      if (json.error) { fetchStatus.textContent = `⚠ Fetch failed: ${json.error} — fill fields manually.`; }
+      else { fetchStatus.textContent = "✓ Auto-filled from page. Review and edit as needed."; fetchStatus.style.color = "#22c55e"; }
+
+      if (json.headline)       (document.getElementById("headline")      as HTMLInputElement).value = json.headline;
+      if (json.publication)    (document.getElementById("publication")   as HTMLInputElement).value = json.publication;
+      if (json.image_url)      (document.getElementById("image_url")     as HTMLInputElement).value = json.image_url;
+      if (json.summary)        summaryEl.value = json.summary;
+      if (json.published_date) (document.getElementById("published_date") as HTMLInputElement).value = json.published_date;
+
+      updateSaveState();
+    } catch {
+      fetchStatus.textContent = "⚠ Network error — fill fields manually.";
+    } finally {
+      (fetchBtn as HTMLButtonElement).disabled = false;
+    }
+  });
+
+  // Save
+  saveBtn.addEventListener("click", async () => {
+    const payload = {
+      recordType:     "mention",
+      url:            (document.getElementById("url")          as HTMLInputElement).value.trim(),
+      headline:       (document.getElementById("headline")     as HTMLInputElement).value.trim(),
+      publication:    (document.getElementById("publication")  as HTMLInputElement).value.trim(),
+      image_url:      (document.getElementById("image_url")    as HTMLInputElement).value.trim() || "/og-default.jpg",
+      summary:        summaryEl.value.trim(),
+      published_date: (document.getElementById("published_date") as HTMLInputElement).value || null,
+    };
+
+    const res  = await fetch("/api/admin/press", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const json = await res.json() as { id?: string; error?: string; missing?: string[] };
+    if (res.ok) { window.location.href = "/admin/press"; }
+    else { alert(`Error: ${json.error}\n${json.missing?.join("\n") ?? ""}`); }
+  });
+</script>

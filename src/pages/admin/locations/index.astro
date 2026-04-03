@@ -1,0 +1,67 @@
+---
+// src/pages/admin/locations/index.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { LocationRow } from "@/types/database";
+
+if (Astro.locals.user?.role !== "agency_admin") return Astro.redirect("/admin");
+
+const { data } = await createAdminClient()
+  .from("locations")
+  .select("id, slug, city, state, is_active, sort_order, seo_doc_url, updated_at")
+  .order("sort_order");
+
+const locations = (data ?? []) as Pick<LocationRow, "id" | "slug" | "city" | "state" | "is_active" | "sort_order" | "seo_doc_url" | "updated_at">[];
+---
+
+<AdminLayout title="Locations" activeSection="locations">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-[#151d25] text-[28px] font-black tracking-tight">Locations</h1>
+      <p class="text-[#567798] text-[14px] mt-1">Agency Admin only · {locations.filter(l => l.is_active).length} active</p>
+    </div>
+    <a href="/admin/locations/new" class="inline-flex items-center gap-2 bg-[#b05d45] text-white font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#8d4a37] transition-colors">+ New Location</a>
+  </div>
+
+  {locations.length === 0 ? (
+    <div class="text-center py-16 bg-white rounded-2xl border border-[#cdd8e3] text-[#567798]">No locations yet.</div>
+  ) : (
+    <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+      <table class="w-full text-[13px]">
+        <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+          <tr>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Location</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden sm:table-cell">Status</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden lg:table-cell">SEO Doc</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#f0f2f4]">
+          {locations.map((l) => (
+            <tr class="hover:bg-[#f8fafc]">
+              <td class="px-5 py-4">
+                <p class="text-[#151d25] font-semibold">{l.city}, {l.state}</p>
+                <p class="text-[#567798] text-[12px] font-mono">/locations/{l.slug}</p>
+              </td>
+              <td class="px-5 py-4 hidden sm:table-cell">
+                <span class={`text-[11px] font-bold uppercase px-2 py-0.5 rounded-full ${l.is_active ? "bg-[#dcfce7] text-[#166534]" : "bg-[#f0f2f4] text-[#567798]"}`}>
+                  {l.is_active ? "Active" : "Inactive"}
+                </span>
+              </td>
+              <td class="px-5 py-4 hidden lg:table-cell">
+                {l.seo_doc_url ? (
+                  <a href={l.seo_doc_url} target="_blank" rel="noopener noreferrer" class="text-[#b05d45] text-[12px] hover:underline">View Doc ↗</a>
+                ) : (
+                  <span class="text-[#567798] text-[12px]">None</span>
+                )}
+              </td>
+              <td class="px-5 py-4 text-right">
+                <a href={`/admin/locations/${l.slug}`} class="text-[#b05d45] font-semibold hover:underline">Edit</a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>

@@ -1,0 +1,78 @@
+---
+// src/pages/admin/users/index.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { getWorkOSClient } from "@/lib/workos";
+if (Astro.locals.user?.role !== "agency_admin") return Astro.redirect("/admin");
+
+const workos = getWorkOSClient();
+
+// List all users in the organization
+// Note: requires WORKOS_ORGANIZATION_ID env var to be set
+const orgId = import.meta.env.WORKOS_ORGANIZATION_ID as string | undefined;
+let memberships: Array<{ userId: string; email: string; role: string }> = [];
+
+if (orgId) {
+  try {
+    const result = await workos.userManagement.listOrganizationMemberships({ organizationId: orgId });
+    memberships = await Promise.all(
+      result.data.map(async (m) => {
+        const user = await workos.userManagement.getUser(m.userId);
+        return {
+          userId: m.userId,
+          email:  user.email,
+          role:   m.role?.slug ?? "worker",
+        };
+      })
+    );
+  } catch (err) {
+    console.error("[admin/users] Failed to list members:", err);
+  }
+}
+---
+
+<AdminLayout title="Users" activeSection="users">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-[#151d25] text-[28px] font-black tracking-tight">Users</h1>
+      <p class="text-[#567798] text-[14px] mt-1">Agency Admin only · {memberships.length} members</p>
+    </div>
+    <a href="/admin/users/invite" class="inline-flex items-center gap-2 bg-[#b05d45] text-white font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#8d4a37] transition-colors">
+      + Invite User
+    </a>
+  </div>
+
+  {!orgId && (
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 text-amber-800 text-[14px] mb-6">
+      <strong>Setup needed:</strong> Add <code>WORKOS_ORGANIZATION_ID</code> to your environment variables to manage users.
+    </div>
+  )}
+
+  {memberships.length === 0 ? (
+    <div class="text-center py-16 bg-white rounded-2xl border border-[#cdd8e3] text-[#567798]">
+      {orgId ? "No users yet." : "Set WORKOS_ORGANIZATION_ID to see users."}
+    </div>
+  ) : (
+    <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+      <table class="w-full text-[13px]">
+        <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+          <tr>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Email</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Role</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#f0f2f4]">
+          {memberships.map((m) => (
+            <tr class="hover:bg-[#f8fafc]">
+              <td class="px-5 py-4 text-[#151d25] font-medium">{m.email}</td>
+              <td class="px-5 py-4">
+                <span class="text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-[#f0f2f4] text-[#567798]">
+                  {m.role.replace("_", " ")}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>

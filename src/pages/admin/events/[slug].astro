@@ -1,0 +1,270 @@
+---
+// src/pages/admin/events/[slug].astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { EventRow } from "@/types/database";
+import { getEventReadiness } from "@/lib/admin";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/admin/events");
+const supabase = createAdminClient();
+const { data, error } = await supabase.from("events").select("*").eq("slug", slug).single();
+
+if (error || !data) return Astro.redirect("/admin/events");
+
+const e = data as EventRow;
+const user = Astro.locals.user!;
+const canPublish = user.role !== "worker";
+const readiness = getEventReadiness(e as any);
+const pct = readiness.percent;
+const barColor = pct < 50 ? "#ef4444" : pct < 90 ? "#f59e0b" : "#22c55e";
+
+// Format datetime-local value
+function toDatetimeLocal(val: string | null): string {
+  if (!val) return "";
+  return new Date(val).toISOString().slice(0, 16);
+}
+---
+
+<AdminLayout title={`Edit: ${e.title}`} activeSection="events">
+  <div class="mb-6">
+    <a href="/admin/events" class="text-[#567798] text-[13px] hover:text-[#151d25]">← Events</a>
+    <div class="flex items-center gap-3 mt-2">
+      <h1 class="text-[#151d25] text-[26px] font-black tracking-tight">{e.title}</h1>
+      <span class={`text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${e.status === "published" ? "bg-[#dcfce7] text-[#166534]" : "bg-amber-50 text-amber-700"}`}>
+        {e.status}
+      </span>
+    </div>
+  </div>
+
+  <!-- Readiness bar -->
+  <div class="bg-white rounded-2xl border border-[#cdd8e3] p-5 mb-6">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-[#151d25] text-[13px] font-bold">Publish Readiness</span>
+      <span id="readiness-text" class="text-[#567798] text-[13px]">{readiness.filled} / {readiness.total} fields complete</span>
+    </div>
+    <div class="h-2 bg-[#e8edf2] rounded-full overflow-hidden">
+      <div id="readiness-bar" class="h-full rounded-full transition-all duration-300" style={`width: ${pct}%; background: ${barColor};`}></div>
+    </div>
+    {readiness.missing.length > 0 && (
+      <p id="readiness-missing" class="text-[#567798] text-[12px] mt-2">Missing: {readiness.missing.join(", ")}</p>
+    )}
+    {readiness.missing.length === 0 && (
+      <p id="readiness-missing" class="text-[12px] mt-2"></p>
+    )}
+  </div>
+
+  <form id="event-form" data-record-id={e.id} class="flex flex-col gap-8">
+
+    <!-- Section 1: Basics -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">1. Basics</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="sm:col-span-2">
+          <label class="admin-label" for="title">Title *</label>
+          <input id="title" name="title" type="text" required class="admin-input" value={e.title} />
+        </div>
+        <div>
+          <label class="admin-label" for="event_type">Event Type *</label>
+          <select id="event_type" name="event_type" required class="admin-input">
+            {["Sponsor", "Booth", "Speaking", "Community", "Other"].map(t => (
+              <option value={t} selected={e.event_type === t}>{t}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="admin-label" for="event_date">Event Date & Time *</label>
+          <input id="event_date" name="event_date" type="datetime-local" required class="admin-input" value={toDatetimeLocal(e.event_date)} />
+        </div>
+        <div>
+          <label class="admin-label" for="end_date">End Date & Time <span class="text-[#567798] font-normal">(optional)</span></label>
+          <input id="end_date" name="end_date" type="datetime-local" class="admin-input" value={toDatetimeLocal(e.end_date)} />
+        </div>
+        <div>
+          <label class="admin-label" for="location_name">Venue Name *</label>
+          <input id="location_name" name="location_name" type="text" required class="admin-input" value={e.location_name} />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="admin-label" for="address">Address *</label>
+          <input id="address" name="address" type="text" required class="admin-input" value={e.address} />
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Photo -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">2. Event Photo *</h2>
+      {e.image_url && <img src={e.image_url} alt="Current event photo" class="w-full h-40 object-cover rounded-lg mb-3" />}
+      <input id="image_file" type="file" accept="image/*" class="admin-input" />
+      <input id="image_url" name="image_url" type="hidden" value={e.image_url ?? ""} />
+      <p id="image_preview" class="text-[12px] text-[#567798] mt-2">{e.image_url ? "✓ Photo set" : "No photo yet"}</p>
+    </section>
+
+    <!-- Section 3: Details -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">3. Details</h2>
+      <div class="flex flex-col gap-5">
+        <div>
+          <label class="admin-label" for="description">Description *</label>
+          <textarea id="description" name="description" required rows="4" class="admin-input">{e.description}</textarea>
+        </div>
+        <div>
+          <label class="admin-label" for="website_url">Event Website <span class="text-[#567798] font-normal">(optional)</span></label>
+          <input id="website_url" name="website_url" type="url" class="admin-input" value={e.website_url ?? ""} />
+        </div>
+        <div>
+          <label class="admin-label" for="google_place_id">Google Place ID <span class="text-[#567798] font-normal">(optional)</span></label>
+          <input id="google_place_id" name="google_place_id" type="text" class="admin-input" value={e.google_place_id ?? ""} />
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Local SEO Links (prefilled) -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">4. Local SEO Links</h2>
+      <div id="local-links-list" class="flex flex-col gap-3 mb-4">
+        {(e.local_links ?? []).map((link) => (
+          <div class="grid sm:grid-cols-2 gap-3 items-center local-link-row">
+            <input type="text" name="local_link_label[]" class="admin-input" value={link.label} />
+            <div class="flex gap-2">
+              <input type="url" name="local_link_url[]" class="admin-input flex-1" value={link.url} />
+              <button type="button" class="remove-link text-[#ef4444] font-bold text-[18px] px-2">×</button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button type="button" id="add-local-link" class="text-[#b05d45] text-[13px] font-semibold hover:underline">+ Add local link</button>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-between pt-2">
+      <div class="flex gap-3">
+        <button type="button" id="save-draft-btn" class="bg-[#f0f2f4] text-[#151d25] font-bold px-6 py-3 rounded-xl hover:bg-[#e0e7ef] transition-colors">Save Draft</button>
+        {e.status === "published" && (
+          <button type="button" id="unpublish-btn" class="bg-[#f0f2f4] text-[#567798] font-bold px-5 py-3 rounded-xl hover:bg-[#e0e7ef] transition-colors text-[13px]">Unpublish</button>
+        )}
+      </div>
+      {canPublish && (
+        <button type="button" id="publish-btn" class="bg-[#22c55e] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#16a34a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled={!readiness.canPublish}>
+          {e.status === "published" ? "Save & Republish" : "Publish"}
+        </button>
+      )}
+    </div>
+  </form>
+</AdminLayout>
+
+<style>
+  .admin-label { display: block; font-size: 0.8125rem; font-weight: 700; color: #151d25; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .admin-input { width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid #cdd8e3; border-radius: 0.625rem; font-size: 0.9375rem; color: #151d25; background: #fff; transition: border-color 0.15s ease; }
+  .admin-input:focus { outline: none; border-color: #b05d45; }
+  textarea.admin-input { resize: vertical; min-height: 80px; }
+</style>
+
+<script>
+  const form = document.getElementById("event-form") as HTMLFormElement;
+  const recordId = form.dataset.recordId!;
+
+  const REQUIRED = ["title", "event_type", "event_date", "location_name", "address", "description", "image_url"];
+  const TOTAL = REQUIRED.length;
+  const bar = document.getElementById("readiness-bar")!;
+  const readinessText = document.getElementById("readiness-text")!;
+  const missingEl = document.getElementById("readiness-missing")!;
+  const publishBtn = document.getElementById("publish-btn") as HTMLButtonElement | null;
+
+  function updateReadiness() {
+    const missingLabels: string[] = [];
+    let filled = 0;
+    for (const id of REQUIRED) {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      if (el?.value?.trim()) { filled++; } else { missingLabels.push(id.replace(/_/g, " ")); }
+    }
+    const pct = Math.round((filled / TOTAL) * 100);
+    bar.style.width = `${pct}%`;
+    bar.style.background = pct < 50 ? "#ef4444" : pct < 90 ? "#f59e0b" : "#22c55e";
+    readinessText.textContent = `${filled} / ${TOTAL} fields complete`;
+    missingEl.textContent = missingLabels.length > 0 ? `Missing: ${missingLabels.join(", ")}` : "";
+    if (publishBtn) publishBtn.disabled = missingLabels.length > 0;
+  }
+
+  form.addEventListener("input", updateReadiness);
+
+  // Local links
+  document.getElementById("add-local-link")!.addEventListener("click", () => {
+    const row = document.createElement("div");
+    row.className = "grid sm:grid-cols-2 gap-3 items-center local-link-row";
+    row.innerHTML = `
+      <input type="text" name="local_link_label[]" class="admin-input" placeholder="Link label" />
+      <div class="flex gap-2">
+        <input type="url" name="local_link_url[]" class="admin-input flex-1" placeholder="https://..." />
+        <button type="button" class="remove-link text-[#ef4444] font-bold text-[18px] px-2">×</button>
+      </div>
+    `;
+    row.querySelector(".remove-link")!.addEventListener("click", () => row.remove());
+    document.getElementById("local-links-list")!.appendChild(row);
+  });
+
+  document.querySelectorAll<HTMLButtonElement>(".remove-link").forEach(btn => {
+    btn.addEventListener("click", () => btn.closest(".local-link-row")?.remove());
+  });
+
+  // Image upload
+  document.getElementById("image_file")!.addEventListener("change", async function(this: HTMLInputElement) {
+    const file = this.files?.[0];
+    if (!file) return;
+    const preview = document.getElementById("image_preview")!;
+    preview.textContent = "Uploading…";
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("bucket", "project-photos");
+    fd.append("path", `events/${Date.now()}`);
+    try {
+      const res  = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const json = await res.json() as { url?: string; error?: string };
+      if (json.url) {
+        (document.getElementById("image_url") as HTMLInputElement).value = json.url;
+        preview.textContent = `✓ ${file.name}`;
+        preview.className = "text-[12px] text-[#22c55e] mt-2";
+        updateReadiness();
+      } else {
+        preview.textContent = `✗ ${json.error}`;
+        preview.className = "text-[12px] text-[#ef4444] mt-2";
+      }
+    } catch { preview.textContent = "✗ Upload error"; }
+  });
+
+  async function submitForm(status: string) {
+    const localLinks = Array.from(form.querySelectorAll<HTMLElement>(".local-link-row")).map(row => ({
+      label: (row.querySelector<HTMLInputElement>("[name='local_link_label[]']"))!.value.trim(),
+      url:   (row.querySelector<HTMLInputElement>("[name='local_link_url[]']"))!.value.trim(),
+    })).filter(l => l.label && l.url);
+
+    const payload = {
+      id:             recordId,
+      title:          (form.querySelector<HTMLInputElement>("#title"))!.value.trim(),
+      event_type:     (form.querySelector<HTMLSelectElement>("#event_type"))!.value,
+      event_date:     (form.querySelector<HTMLInputElement>("#event_date"))!.value,
+      end_date:       (form.querySelector<HTMLInputElement>("#end_date"))!.value || null,
+      location_name:  (form.querySelector<HTMLInputElement>("#location_name"))!.value.trim(),
+      address:        (form.querySelector<HTMLInputElement>("#address"))!.value.trim(),
+      description:    (form.querySelector<HTMLTextAreaElement>("#description"))!.value.trim(),
+      image_url:      (form.querySelector<HTMLInputElement>("#image_url"))!.value.trim(),
+      website_url:    (form.querySelector<HTMLInputElement>("#website_url"))!.value.trim() || null,
+      google_place_id:(form.querySelector<HTMLInputElement>("#google_place_id"))!.value.trim() || null,
+      local_links:    localLinks,
+      status:         status === "unpublished" ? "draft" : status,
+    };
+
+    const res  = await fetch("/api/admin/events", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const json = await res.json() as { slug?: string; error?: string; missing?: string[] };
+    if (res.ok) { window.location.reload(); }
+    else { alert(`Error: ${json.error}\n${json.missing?.join("\n") ?? ""}`); }
+  }
+
+  document.getElementById("save-draft-btn")!.addEventListener("click", () => submitForm("draft"));
+  publishBtn?.addEventListener("click", () => submitForm("published"));
+  document.getElementById("unpublish-btn")?.addEventListener("click", () => {
+    if (confirm("This will remove the event from the live site immediately.")) submitForm("unpublished");
+  });
+
+  updateReadiness();
+</script>
