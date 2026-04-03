@@ -1,0 +1,402 @@
+---
+// src/pages/brand.astro
+// Static — content is hardcoded per spec. Not database-driven.
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { BUSINESS_NAME } from "@/config/site";
+
+const sections = [
+  { id: "logo-usage",          label: "Logo Usage" },
+  { id: "color-palette",       label: "Color Palette" },
+  { id: "typography",          label: "Typography" },
+  { id: "voice-tone",          label: "Voice & Tone" },
+  { id: "photography",         label: "Photography" },
+  { id: "downloads",           label: "Downloads" },
+];
+
+const colors = [
+  { name: "Ink",       hex: "#151d25", textClass: "text-white" },
+  { name: "Terracotta", hex: "#b05d45", textClass: "text-white" },
+  { name: "Navy",      hex: "#2c3e50", textClass: "text-white" },
+  { name: "Steel",     hex: "#567798", textClass: "text-white" },
+  { name: "Snow",      hex: "#f0f2f4", textClass: "text-[#151d25]" },
+];
+
+const colorPairings = [
+  { bg: "#151d25", fg: "#f0f2f4", label: "Ink bg, Snow text",       ratio: "18:1" },
+  { bg: "#b05d45", fg: "#ffffff", label: "Terracotta bg, White text", ratio: "4.7:1" },
+  { bg: "#2c3e50", fg: "#ffffff", label: "Navy bg, White text",       ratio: "9:1" },
+  { bg: "#f0f2f4", fg: "#151d25", label: "Snow bg, Ink text",         ratio: "16:1" },
+];
+---
+
+<Layout
+  title={`Brand Guidelines | ${BUSINESS_NAME}`}
+  description={`Official brand guidelines for ${BUSINESS_NAME} — logo usage, color palette, typography, voice, and photography style.`}
+  noindex={false}
+>
+  <Header />
+
+  <!-- ── Page Hero ──────────────────────────────────────────────────────── -->
+  <section class="bg-[#151d25] py-20">
+    <div class="site-container">
+      <p class="section-label-light">Internal Resource</p>
+      <h1 class="text-white font-black tracking-tight leading-tight mb-4" style="font-size: clamp(2rem, 4vw, 3rem);">
+        Brand Guidelines
+      </h1>
+      <p class="text-white/70 text-[17px] max-w-[540px]">
+        Everything you need to represent {BUSINESS_NAME} consistently — from logo usage to the words we use.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Mobile: horizontal anchor bar ─────────────────────────────────── -->
+  <nav class="lg:hidden sticky top-0 z-40 bg-white border-b border-[#cdd8e3] overflow-x-auto" aria-label="Brand sections">
+    <div class="flex gap-0">
+      {sections.map(({ id, label }) => (
+        <a
+          href={`#${id}`}
+          class="shrink-0 px-4 py-3 text-[13px] font-semibold text-[#567798] hover:text-[#151d25] hover:bg-[#f0f2f4] transition-colors whitespace-nowrap border-b-2 border-transparent data-[active]:border-[#b05d45] data-[active]:text-[#151d25]"
+          data-section={id}
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+  </nav>
+
+  <!-- ── Two-column layout: sticky nav (desktop) + content ──────────────── -->
+  <div class="site-container py-16 lg:py-24 flex gap-16 items-start">
+
+    <!-- Sticky side nav (desktop only) -->
+    <nav class="hidden lg:block w-52 shrink-0 sticky top-28" aria-label="Brand sections">
+      <p class="text-[11px] font-black uppercase tracking-widest text-[#567798] mb-4">Sections</p>
+      <ul class="flex flex-col gap-1">
+        {sections.map(({ id, label }) => (
+          <li>
+            <a
+              href={`#${id}`}
+              class="block px-3 py-2 rounded-lg text-[14px] font-medium text-[#567798] hover:text-[#151d25] hover:bg-[#f0f2f4] transition-colors"
+              data-section={id}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Content sections -->
+    <div class="flex-1 min-w-0 flex flex-col gap-20">
+
+      <!-- ── Logo Usage ──────────────────────────────────────────────── -->
+      <section id="logo-usage">
+        <h2 class="section-heading mb-2">Logo Usage</h2>
+        <div class="accent-divider mb-8"></div>
+
+        <!-- Light / Dark variants -->
+        <div class="grid sm:grid-cols-2 gap-6 mb-10">
+          <div class="rounded-2xl bg-white border border-[#cdd8e3] p-8 flex items-center justify-center min-h-[160px]">
+            <img src="/logo-horizontal-dark.webp" alt={`${BUSINESS_NAME} logo — dark version`} class="max-h-16 w-auto" />
+          </div>
+          <div class="rounded-2xl bg-[#151d25] p-8 flex items-center justify-center min-h-[160px]">
+            <img src="/logo-horizontal-light.webp" alt={`${BUSINESS_NAME} logo — light version`} class="max-h-16 w-auto" />
+          </div>
+        </div>
+        <p class="text-[#567798] text-[14px] mb-2"><strong class="text-[#151d25]">Light version:</strong> Use on dark or colored backgrounds (navy, terracotta, photos with dark overlays).</p>
+        <p class="text-[#567798] text-[14px] mb-8"><strong class="text-[#151d25]">Dark version:</strong> Use on white or snow backgrounds.</p>
+
+        <!-- Clear space -->
+        <div class="bg-[#f0f2f4] rounded-2xl p-8 mb-8">
+          <h3 class="text-[#151d25] font-black text-[16px] mb-3">Clear Space Rule</h3>
+          <p class="text-[#567798] text-[14px] leading-relaxed">
+            Maintain clear space equal to the height of the "H" letterform on all four sides of the logo. Never crowd the logo with text, icons, or graphic elements.
+          </p>
+        </div>
+
+        <!-- Don'ts grid -->
+        <h3 class="text-[#151d25] font-black text-[16px] mb-4">Logo Don'ts</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {[
+            "Stretch or distort",
+            "Recolor the wordmark",
+            "Add drop shadows or effects",
+            "Rotate at any angle",
+            "Place on busy backgrounds",
+            "Use low-resolution versions",
+          ].map((rule) => (
+            <div class="flex items-center gap-3 bg-[#fef2f2] border border-[#fecaca] rounded-xl p-4 text-[13px] text-[#991b1b]">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              {rule}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- ── Color Palette ───────────────────────────────────────────── -->
+      <section id="color-palette">
+        <h2 class="section-heading mb-2">Color Palette</h2>
+        <div class="accent-divider mb-8"></div>
+
+        <!-- Swatches -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-10">
+          {colors.map(({ name, hex }) => (
+            <div class="rounded-2xl overflow-hidden border border-[#cdd8e3]">
+              <div class="h-24" style={`background: ${hex};`}></div>
+              <div class="bg-white p-3">
+                <p class="text-[#151d25] font-bold text-[13px]">{name}</p>
+                <p class="text-[#567798] text-[12px] font-mono">{hex}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <!-- Accessible pairings -->
+        <h3 class="text-[#151d25] font-black text-[16px] mb-4">Accessible Pairings</h3>
+        <div class="flex flex-col gap-3">
+          {colorPairings.map(({ bg, fg, label, ratio }) => (
+            <div class="flex items-center gap-4 rounded-xl border border-[#cdd8e3] overflow-hidden">
+              <div class="w-24 h-14 shrink-0 flex items-center justify-center font-bold text-[14px]" style={`background: ${bg}; color: ${fg};`}>Aa</div>
+              <div class="flex-1 text-[14px] text-[#567798]">{label}</div>
+              <div class="pr-4 text-[13px] font-mono text-[#22c55e] font-bold shrink-0">✓ {ratio}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- ── Typography ──────────────────────────────────────────────── -->
+      <section id="typography">
+        <h2 class="section-heading mb-2">Typography</h2>
+        <div class="accent-divider mb-8"></div>
+
+        <div class="flex flex-col gap-8">
+          <!-- Syne -->
+          <div class="bg-[#f0f2f4] rounded-2xl p-8">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <p class="text-[#b05d45] text-[12px] font-bold uppercase tracking-widest mb-1">Display / Headings</p>
+                <p class="text-[#151d25] font-black text-[32px] leading-none" style="font-family: var(--font-display, 'Syne', sans-serif);">Syne</p>
+              </div>
+              <span class="text-[#567798] text-[13px]">700, 900</span>
+            </div>
+            <p class="text-[#567798] text-[14px]">Used for: all headings (H1–H4), navigation, CTAs, badge labels, hero text.</p>
+          </div>
+
+          <!-- DM Mono -->
+          <div class="bg-[#f0f2f4] rounded-2xl p-8">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <p class="text-[#b05d45] text-[12px] font-bold uppercase tracking-widest mb-1">Numbers / Data</p>
+                <p class="text-[#151d25] font-medium text-[32px] leading-none font-mono">DM Mono</p>
+              </div>
+              <span class="text-[#567798] text-[13px]">400</span>
+            </div>
+            <p class="text-[#567798] text-[14px]">Used for: stat numbers, review counts, code snippets, pricing, telephone numbers displayed as data.</p>
+          </div>
+
+          <!-- DM Sans -->
+          <div class="bg-[#f0f2f4] rounded-2xl p-8">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <p class="text-[#b05d45] text-[12px] font-bold uppercase tracking-widest mb-1">Body / UI</p>
+                <p class="text-[#151d25] text-[32px] leading-none">DM Sans</p>
+              </div>
+              <span class="text-[#567798] text-[13px]">400, 600</span>
+            </div>
+            <p class="text-[#567798] text-[14px]">Used for: all body text, form labels, captions, meta descriptions, UI copy.</p>
+          </div>
+        </div>
+
+        <!-- Type scale -->
+        <div class="mt-8 bg-white border border-[#cdd8e3] rounded-2xl p-8">
+          <h3 class="text-[#151d25] font-black text-[16px] mb-6">Type Scale</h3>
+          <div class="flex flex-col gap-4">
+            {[
+              { tag: "H1", size: "clamp(2rem, 4vw, 3.5rem)", weight: "900" },
+              { tag: "H2", size: "clamp(1.6rem, 3vw, 2.5rem)", weight: "900" },
+              { tag: "H3", size: "clamp(1.25rem, 2vw, 1.75rem)", weight: "800" },
+              { tag: "H4", size: "1.125rem", weight: "700" },
+              { tag: "Body", size: "1.0625rem (17px)", weight: "400" },
+              { tag: "Caption", size: "0.8125rem (13px)", weight: "400" },
+            ].map(({ tag, size, weight }) => (
+              <div class="flex items-baseline gap-4 py-2 border-b border-[#f0f2f4] last:border-0">
+                <span class="w-16 shrink-0 text-[#567798] text-[12px] font-mono font-bold">{tag}</span>
+                <span class="text-[#151d25] flex-1 truncate" style={`font-size: min(${size.split(" ")[0].replace("clamp(", "").split(",")[0]}, 2rem); font-weight: ${weight};`}>
+                  The quick brown fox
+                </span>
+                <span class="text-[#567798] text-[12px] shrink-0">{size}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Voice & Tone ────────────────────────────────────────────── -->
+      <section id="voice-tone">
+        <h2 class="section-heading mb-2">Voice & Tone</h2>
+        <div class="accent-divider mb-8"></div>
+
+        <div class="grid sm:grid-cols-2 gap-8 mb-10">
+          <!-- We Are -->
+          <div class="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-8">
+            <h3 class="text-[#166534] font-black text-[16px] mb-4">We Are</h3>
+            <ul class="flex flex-col gap-3">
+              {["Direct — say what we mean, no filler", "Honest — prices upfront, no surprises", "Neighborly — we know this area and show it", "Specific — real numbers, real projects, real results", "Earned — confident without overpromising"].map((trait) => (
+                <li class="flex items-start gap-2 text-[#166534] text-[14px]">
+                  <svg class="w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {trait}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <!-- We're Not -->
+          <div class="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-8">
+            <h3 class="text-[#991b1b] font-black text-[16px] mb-4">We're Not</h3>
+            <ul class="flex flex-col gap-3">
+              {["Corporate — no jargon, no suits-speak", "Salesy — we don't push, we earn trust", "Vague — no 'quality craftsmanship' without proof", "Overpromising — we deliver what we say", "Jargon-heavy — homeowners shouldn't need a dictionary"].map((trait) => (
+                <li class="flex items-start gap-2 text-[#991b1b] text-[14px]">
+                  <svg class="w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  {trait}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Before/After copy examples -->
+        <h3 class="text-[#151d25] font-black text-[16px] mb-4">Copy Examples</h3>
+        <div class="flex flex-col gap-6">
+          {[
+            {
+              scenario: "Project description",
+              wrong: "Quality drywall services delivered with passion and excellence.",
+              right: "Water-damaged drywall in the master bedroom — cut out, replaced, and textured to match. Done in one day.",
+            },
+            {
+              scenario: "Estimate CTA",
+              wrong: "Contact us today for a free, no-obligation consultation with our experienced team!",
+              right: "Get a free estimate — we'll respond same day.",
+            },
+            {
+              scenario: "Review response",
+              wrong: "Thank you for your kind words! We truly appreciate your business and look forward to serving you again!",
+              right: "Glad the drywall came out right. Thanks for the kind words — let us know when you need us.",
+            },
+          ].map(({ scenario, wrong, right }) => (
+            <div class="border border-[#cdd8e3] rounded-2xl overflow-hidden">
+              <div class="bg-[#f0f2f4] px-6 py-3 border-b border-[#cdd8e3]">
+                <span class="text-[#151d25] text-[13px] font-black uppercase tracking-widest">{scenario}</span>
+              </div>
+              <div class="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#cdd8e3]">
+                <div class="p-6 bg-[#fef2f2]">
+                  <p class="text-[#991b1b] text-[11px] font-bold uppercase tracking-widest mb-2">❌ Don't</p>
+                  <p class="text-[#7f1d1d] text-[14px] italic">"{wrong}"</p>
+                </div>
+                <div class="p-6 bg-[#f0fdf4]">
+                  <p class="text-[#166534] text-[11px] font-bold uppercase tracking-widest mb-2">✓ Do</p>
+                  <p class="text-[#14532d] text-[14px]">"{right}"</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- ── Photography Style ───────────────────────────────────────── -->
+      <section id="photography">
+        <h2 class="section-heading mb-2">Photography Style</h2>
+        <div class="accent-divider mb-8"></div>
+
+        <div class="grid sm:grid-cols-2 gap-8 mb-8">
+          <div class="bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-8">
+            <h3 class="text-[#166534] font-black text-[16px] mb-4">Subject Guidelines</h3>
+            <ul class="flex flex-col gap-3 text-[#166534] text-[14px]">
+              {[
+                "Real work, real homes — no stock photography",
+                "Natural light preferred; supplement with fill when needed",
+                "Consistent framing: same angle and distance for before/after",
+                "Show the full scope — wide shots + detail shots",
+                "Clean, uncluttered background where possible",
+              ].map((rule) => (
+                <li class="flex items-start gap-2">
+                  <svg class="w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {rule}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-8">
+            <h3 class="text-[#991b1b] font-black text-[16px] mb-4">What to Avoid</h3>
+            <ul class="flex flex-col gap-3 text-[#991b1b] text-[14px]">
+              {[
+                "Stock photos of tools, workers, or homes",
+                "Heavy editing — no HDR, vignette, or oversaturation",
+                "Inconsistent framing between before/after pairs",
+                "Cluttered backgrounds that distract from the work",
+                "Low-resolution or blurry images",
+              ].map((rule) => (
+                <li class="flex items-start gap-2">
+                  <svg class="w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  {rule}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-[#f0f2f4] rounded-2xl p-6 border border-[#cdd8e3]">
+          <h3 class="text-[#151d25] font-black text-[15px] mb-2">Filter & Treatment Style</h3>
+          <p class="text-[#567798] text-[14px] leading-relaxed">
+            Apply natural tones with mild contrast enhancement only. Avoid heavy vignettes, color grading, or Instagram-style filters. The goal is accurate representation of the finished work.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Downloads ───────────────────────────────────────────────── -->
+      <section id="downloads">
+        <h2 class="section-heading mb-2">Downloads</h2>
+        <div class="accent-divider mb-8"></div>
+        <div class="flex flex-col gap-4">
+          <a href="/media-kit" class="flex items-center gap-4 p-5 bg-white border border-[#cdd8e3] rounded-xl hover:border-[#b05d45] hover:shadow-md transition-all group">
+            <div class="w-12 h-12 rounded-lg bg-[#b05d45]/10 flex items-center justify-center shrink-0 group-hover:bg-[#b05d45]/20 transition-colors">
+              <svg class="w-5 h-5 text-[#b05d45]" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <p class="text-[#151d25] font-bold text-[15px]">Full Media Kit & Asset Library</p>
+              <p class="text-[#567798] text-[13px]">Logos, photography, and all downloadable brand assets</p>
+            </div>
+            <svg class="w-4 h-4 text-[#b05d45] ml-auto" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  // ── Active section highlight in side/top nav ──────────────────────────
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>("[data-section]");
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          navLinks.forEach((link) => {
+            const active = link.dataset.section === entry.target.id;
+            link.classList.toggle("text-[#151d25]", active);
+            link.classList.toggle("bg-[#f0f2f4]", active);
+            link.dataset.active = active ? "true" : undefined;
+          });
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+
+  document.querySelectorAll("section[id]").forEach((s) => observer.observe(s));
+</script>
