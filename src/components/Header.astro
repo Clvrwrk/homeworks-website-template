@@ -26,14 +26,14 @@ const telHref     = `tel:${PHONE_RAW}`;
       <picture>
         <source
           type="image/webp"
-          srcset="/logo-horizontal-dark.webp 350w, /logo-horizontal-dark-700w.webp 700w"
+          srcset="/logo-horizontal-700w.webp 350w, /logo-horizontal-700w.webp 700w"
           sizes="(max-width: 640px) 160px, 200px"
         />
         <img
-          src="/logo-horizontal-dark.webp"
+          src="/logo-horizontal.webp"
           alt={`${BUSINESS_NAME} — Handyman & Repairs`}
           width="200"
-          height="88"
+          height="44"
           class="site-logo"
           loading="eager"
           decoding="async"
@@ -60,6 +60,23 @@ const telHref     = `tel:${PHONE_RAW}`;
         </a>
       ))}
     </nav>
+
+    <!-- Get a Quote — desktop only, triggers QuoteModal (no data-service — global context) -->
+    <button
+      type="button"
+      data-quote-modal
+      class="hidden lg:flex items-center gap-2
+             border-2 font-bold text-[14px]
+             px-5 py-2.5 rounded-full
+             transition-all duration-200
+             hover:text-white
+             shrink-0 min-h-[44px]"
+      style="border-color: var(--brand-primary); color: var(--brand-primary);"
+      onmouseover="this.style.background='var(--brand-primary)';"
+      onmouseout="this.style.background='transparent';"
+    >
+      Get a Quote
+    </button>
 
     <!-- CTA Phone Button — WCAG: white on clay = 4.7:1 ✅ -->
     <a

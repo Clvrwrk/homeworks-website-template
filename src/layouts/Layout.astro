@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import QuoteModal from "../components/QuoteModal.astro";
 import "../styles/global.css";
 import {
   BUSINESS_NAME,
@@ -8,6 +9,8 @@ import {
   EMAIL,
   ADDRESS_STREET,
   ADDRESS_CITY,
+  ADDRESS_STATE,
+  ADDRESS_ZIP,
   PRIMARY_CITY,
   COLOR_PRIMARY,
   COLOR_PRIMARY_DARK,
@@ -25,6 +28,7 @@ import {
   FACEBOOK_URL,
   INSTAGRAM_URL,
   NEXTDOOR_URL,
+  LOCATIONS,
 } from "../config/site";
 
 interface Props {
@@ -55,7 +59,7 @@ const localBusinessSchema = {
   "@type": ["LocalBusiness", SCHEMA_TYPE],
   "@id": `${siteUrl}/#business`,
   "name": BUSINESS_NAME,
-  "description": `Top-rated handyman services in ${PRIMARY_CITY}. Drywall repair, TV mounting, plumbing, door installation, interior painting, electrical fixtures, and more.`,
+  "description": SEO_DEFAULT_DESC,
   "url": siteUrl,
   "telephone": `+1${PHONE_RAW}`,
   "email": EMAIL,
@@ -63,26 +67,11 @@ const localBusinessSchema = {
     "@type": "PostalAddress",
     "streetAddress": ADDRESS_STREET,
     "addressLocality": PRIMARY_CITY,
-    "addressRegion": "TX",
-    "postalCode": "75069",
+    "addressRegion": ADDRESS_STATE,
+    "postalCode": ADDRESS_ZIP,
     "addressCountry": "US"
   },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 33.1972,
-    "longitude": -96.6397
-  },
-  "areaServed": [
-    { "@type": "City", "name": "McKinney", "sameAs": "https://en.wikipedia.org/wiki/McKinney,_Texas" },
-    { "@type": "City", "name": "Allen" },
-    { "@type": "City", "name": "Frisco" },
-    { "@type": "City", "name": "Prosper" },
-    { "@type": "City", "name": "Celina" },
-    { "@type": "City", "name": "Anna" },
-    { "@type": "City", "name": "Plano" },
-    { "@type": "City", "name": "Fairview" },
-    { "@type": "City", "name": "Melissa" }
-  ],
+  "areaServed": LOCATIONS.map((loc: any) => ({ "@type": "City", "name": loc.city })),
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
@@ -240,6 +229,7 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
   </head>
   <body class="bg-[#f8f9fa] text-[#151d25] antialiased">
     <slot />
+    <QuoteModal />
   </body>
 </html>
 

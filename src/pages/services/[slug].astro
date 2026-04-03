@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { BUSINESS_NAME, ADDRESS_CITY, ADDRESS_STATE } from "../../config/site";
+import SidebarCTA from "../../components/SidebarCTA.astro";
+import { BUSINESS_NAME, ADDRESS_CITY, ADDRESS_STATE, PHONE_RAW, SITE_URL } from "../../config/site";
 import { createServerClient } from "../../lib/supabase";
 import type { ServiceRow } from "../../types/database";
 
@@ -23,8 +24,8 @@ const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home",     item: Astro.site?.toString() },
-    { "@type": "ListItem", position: 2, name: "Services", item: `${Astro.site}services` },
+    { "@type": "ListItem", position: 1, name: "Home",     item: `${SITE_URL}/` },
+    { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/services` },
     { "@type": "ListItem", position: 3, name: service.name },
   ],
 };
@@ -45,53 +46,82 @@ const faqSchema = service.faq_items.length > 0 ? {
   description={service.meta_description || service.description}
 >
   <Fragment slot="head">
+    <link rel="canonical" href={canonicalUrl} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
     {faqSchema && (
       <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
     )}
   </Fragment>
 
+  <Header />
+
   <!-- Hero -->
   <section class="section-padding bg-brand-secondary text-white">
     <div class="site-container">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-1.5 text-[13px] mb-5" aria-label="Breadcrumb">
+        <a href="/" class="text-white/60 hover:text-white transition-colors">Home</a>
+        <span class="text-white/30" aria-hidden="true">/</span>
+        <a href="/services" class="text-white/60 hover:text-white transition-colors">Services</a>
+        <span class="text-white/30" aria-hidden="true">/</span>
+        <span class="text-white/90">{service.name}</span>
+      </nav>
       <span class="section-label-light">{ADDRESS_CITY}, {ADDRESS_STATE}</span>
       <h1 class="section-heading-white reveal-up">{service.h1 || service.name}</h1>
       <div class="accent-divider" style="background: var(--brand-accent);" />
       <p class="section-subheading text-white/80 reveal-up">{service.meta_description || service.description}</p>
       <div class="mt-8 flex gap-4 flex-wrap reveal-up">
-        <a href="/contact" class="btn-primary">{service.cta || "Get a Free Quote"}</a>
+        <button
+          type="button"
+          data-quote-modal
+          data-service={service.slug}
+          class="btn-primary"
+        >
+          Get a Free Quote
+        </button>
+        <a href={`tel:${PHONE_RAW}`} class="btn-ghost">Call Now</a>
       </div>
     </div>
   </section>
 
-  <!-- Generated body content -->
-  {service.body_html && (
-    <section class="section-padding bg-snow">
-      <div class="site-container prose prose-lg max-w-none">
-        <Fragment set:html={service.body_html} />
-      </div>
-    </section>
-  )}
+  <!-- Body: two-column grid on lg+ -->
+  <section class="section-padding bg-snow">
+    <div class="site-container">
+      <div class="grid lg:grid-cols-[1fr_300px] gap-12 items-start">
 
-  <!-- FAQs -->
-  {service.faq_items.length > 0 && (
-    <section class="section-padding bg-brand-accent">
-      <div class="site-container-narrow">
-        <span class="section-label">Common Questions</span>
-        <h2 class="section-heading reveal-up">Frequently Asked Questions</h2>
-        <div class="mt-10 space-y-6">
-          {service.faq_items.map((faq) => (
-            <details class="reveal-up border border-border rounded-xl p-6 bg-white">
-              <summary class="font-display font-700 text-ink cursor-pointer">{faq.question}</summary>
-              <p class="mt-4 text-muted">{faq.answer}</p>
-            </details>
-          ))}
+        <!-- Main content -->
+        <div>
+          {service.body_html && (
+            <div class="prose prose-lg max-w-none">
+              <Fragment set:html={service.body_html} />
+            </div>
+          )}
+
+          <!-- FAQs -->
+          {service.faq_items.length > 0 && (
+            <div class="mt-12">
+              <span class="section-label">Common Questions</span>
+              <h2 class="section-heading reveal-up">Frequently Asked Questions</h2>
+              <div class="mt-8 space-y-4">
+                {service.faq_items.map((faq) => (
+                  <details class="reveal-up border border-border rounded-xl p-6 bg-white">
+                    <summary class="font-display font-700 text-ink cursor-pointer">{faq.question}</summary>
+                    <p class="mt-4 text-muted">{faq.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    </section>
-  )}
 
-  <!-- CTA -->
+        <!-- Sticky sidebar — desktop only -->
+        <SidebarCTA service={service.slug} />
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA band -->
   <section class="section-padding-sm bg-brand-secondary">
     <div class="site-container text-center">
       <h2 class="section-heading-white reveal-up">Ready to Get Started?</h2>
@@ -99,14 +129,22 @@ const faqSchema = service.faq_items.length > 0 ? {
         {BUSINESS_NAME} serves {ADDRESS_CITY} and surrounding areas.
       </p>
       <div class="mt-8 flex gap-4 justify-center flex-wrap reveal-up">
-        <a href="/contact" class="btn-primary">Request a Free Quote</a>
+        <button
+          type="button"
+          data-quote-modal
+          data-service={service.slug}
+          class="btn-primary"
+        >
+          Request a Free Quote
+        </button>
       </div>
     </div>
   </section>
+
+  <Footer />
 </Layout>
 
 <script>
-  // GSAP scroll reveals — fires once per element on viewport entry
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   gsap.registerPlugin(ScrollTrigger);
@@ -119,11 +157,7 @@ const faqSchema = service.faq_items.length > 0 ? {
         opacity: 1, y: 0,
         duration: 0.4,
         ease: "power2.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 88%",
-          once: true,
-        },
+        scrollTrigger: { trigger: el, start: "top 88%", once: true },
       },
     );
   });

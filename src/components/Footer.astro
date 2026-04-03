@@ -69,11 +69,11 @@ const mailHref = `mailto:${EMAIL}`;
         <picture>
           <source
             type="image/webp"
-            srcset="/logo-ghl-dark.webp 175w, /logo-ghl-dark-350w.webp 350w"
+            srcset="/logo-ghl.webp 175w, /logo-ghl-350w.webp 350w"
             sizes="175px"
           />
           <img
-            src="/logo-ghl-dark.webp"
+            src="/logo-ghl.webp"
             alt={`${BUSINESS_NAME} — Handyman & Repairs`}
             width="175"
             height="77"
@@ -243,8 +243,9 @@ const mailHref = `mailto:${EMAIL}`;
     </a>
 
     <!-- Quote — center CTA, elevated pill -->
-    <a
-      href="/#estimate"
+    <button
+      type="button"
+      data-quote-modal
       class="mobile-nav-item mobile-nav-cta"
       aria-label="Get a free quote"
     >
@@ -258,7 +259,7 @@ const mailHref = `mailto:${EMAIL}`;
         </svg>
       </div>
       <span>Quote</span>
-    </a>
+    </button>
 
     <!-- Call -->
     <a
@@ -294,6 +295,9 @@ const mailHref = `mailto:${EMAIL}`;
 <style>
   /* ── Mobile nav item — base state ──────────────────────────────────────── */
   .mobile-nav-item {
+    background: none;
+    border: none;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
