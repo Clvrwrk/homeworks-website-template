@@ -1,0 +1,197 @@
+---
+// src/pages/admin/locations/[slug].astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { LocationRow } from "@/types/database";
+
+if (Astro.locals.user?.role !== "agency_admin") return Astro.redirect("/admin");
+
+const { slug } = Astro.params;
+const supabase = createAdminClient();
+const { data, error } = await supabase.from("locations").select("*").eq("slug", slug).single();
+
+if (error || !data) return Astro.redirect("/admin/locations");
+
+const l = data as LocationRow;
+---
+
+<AdminLayout title={`Edit: ${l.city}`} activeSection="locations">
+  <div class="mb-6">
+    <a href="/admin/locations" class="text-[#567798] text-[13px] hover:text-[#151d25]">← Locations</a>
+    <div class="flex items-center gap-3 mt-2">
+      <h1 class="text-[#151d25] text-[26px] font-black tracking-tight">{l.city}, {l.state}</h1>
+      <span class={`text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${l.is_active ? "bg-[#dcfce7] text-[#166534]" : "bg-[#f0f2f4] text-[#567798]"}`}>
+        {l.is_active ? "Active" : "Inactive"}
+      </span>
+    </div>
+  </div>
+
+  <form id="location-form" data-record-id={l.id} class="flex flex-col gap-8">
+
+    <!-- Section 1: Basics -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">1. Basics</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="admin-label" for="city">City *</label>
+          <input id="city" name="city" type="text" required class="admin-input" value={l.city} />
+        </div>
+        <div>
+          <label class="admin-label" for="state">State</label>
+          <input id="state" name="state" type="text" class="admin-input" value={l.state} />
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: SEO Content -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">2. SEO Content</h2>
+      <div class="flex flex-col gap-5">
+        <div>
+          <label class="admin-label" for="seo_title">SEO Title</label>
+          <input id="seo_title" name="seo_title" type="text" class="admin-input" value={l.seo_title} />
+        </div>
+        <div>
+          <label class="admin-label" for="meta_description">Meta Description</label>
+          <textarea id="meta_description" name="meta_description" rows="2" class="admin-input">{l.meta_description}</textarea>
+        </div>
+        <div>
+          <label class="admin-label" for="h1">H1 Heading</label>
+          <input id="h1" name="h1" type="text" class="admin-input" value={l.h1} />
+        </div>
+        <div>
+          <label class="admin-label" for="body_html">Page Body HTML</label>
+          <textarea id="body_html" name="body_html" rows="8" class="admin-input font-mono text-[13px]">{l.body_html}</textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: FAQs (prefilled) -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">3. FAQs</h2>
+      <div id="faq-list" class="flex flex-col gap-4 mb-4">
+        {(l.faq_items ?? []).map((faq) => (
+          <div class="flex flex-col gap-2 p-4 border border-[#cdd8e3] rounded-xl faq-row">
+            <input type="text" name="faq_q[]" class="admin-input" value={faq.question} />
+            <textarea name="faq_a[]" rows="2" class="admin-input">{faq.answer}</textarea>
+            <button type="button" class="remove-faq text-[#ef4444] text-[12px] font-semibold text-right hover:underline">Remove</button>
+          </div>
+        ))}
+      </div>
+      <button type="button" id="add-faq" class="text-[#b05d45] text-[13px] font-semibold hover:underline">+ Add FAQ</button>
+    </section>
+
+    <!-- Section 4: SEO Document -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">4. SEO Document</h2>
+      {l.seo_doc_url && (
+        <div class="mb-3">
+          <a href={l.seo_doc_url} target="_blank" rel="noopener noreferrer" class="text-[#b05d45] hover:underline text-[13px]">View current document ↗</a>
+        </div>
+      )}
+      <input id="seo_doc_file" type="file" accept=".pdf,.doc,.docx,.txt" class="admin-input mb-2" />
+      <input id="seo_doc_url" name="seo_doc_url" type="hidden" value={l.seo_doc_url ?? ""} />
+      <p id="seo_doc_preview" class="text-[12px] text-[#567798]">{l.seo_doc_url ? "✓ Document set" : "No document yet"}</p>
+    </section>
+
+    <!-- Settings -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">Settings</h2>
+      <div class="flex items-center gap-4">
+        <label class="flex items-center gap-3 cursor-pointer">
+          <input id="is_active" name="is_active" type="checkbox" checked={l.is_active} class="w-4 h-4 accent-[#b05d45]" />
+          <span class="text-[14px] font-medium text-[#151d25]">Active (visible on public site)</span>
+        </label>
+        <div class="flex items-center gap-2">
+          <label class="admin-label inline" for="sort_order">Sort Order</label>
+          <input id="sort_order" name="sort_order" type="number" class="admin-input w-24" value={l.sort_order} min="0" />
+        </div>
+      </div>
+    </section>
+
+    <div class="flex justify-between pt-2">
+      <button type="button" id="delete-btn" class="text-[#ef4444] font-bold px-6 py-3 rounded-xl hover:bg-[#fef2f2] transition-colors text-[13px]">Delete Location</button>
+      <button type="button" id="save-btn" class="bg-[#b05d45] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#8d4a37] transition-colors">Save Changes</button>
+    </div>
+  </form>
+</AdminLayout>
+
+<style>
+  .admin-label { display: block; font-size: 0.8125rem; font-weight: 700; color: #151d25; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .admin-input { width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid #cdd8e3; border-radius: 0.625rem; font-size: 0.9375rem; color: #151d25; background: #fff; transition: border-color 0.15s ease; }
+  .admin-input:focus { outline: none; border-color: #b05d45; }
+  textarea.admin-input { resize: vertical; min-height: 80px; }
+</style>
+
+<script>
+  const form = document.getElementById("location-form") as HTMLFormElement;
+  const recordId = form.dataset.recordId!;
+
+  document.querySelectorAll<HTMLButtonElement>(".remove-faq").forEach(btn => {
+    btn.addEventListener("click", () => btn.closest(".faq-row")?.remove());
+  });
+
+  let faqCount = 0;
+  document.getElementById("add-faq")!.addEventListener("click", () => {
+    faqCount++;
+    const row = document.createElement("div");
+    row.className = "flex flex-col gap-2 p-4 border border-[#cdd8e3] rounded-xl faq-row";
+    row.innerHTML = `
+      <input type="text" name="faq_q[]" class="admin-input" placeholder="Question ${faqCount}" />
+      <textarea name="faq_a[]" rows="2" class="admin-input" placeholder="Answer"></textarea>
+      <button type="button" class="remove-faq text-[#ef4444] text-[12px] font-semibold text-right hover:underline">Remove</button>
+    `;
+    row.querySelector(".remove-faq")!.addEventListener("click", () => row.remove());
+    document.getElementById("faq-list")!.appendChild(row);
+  });
+
+  document.getElementById("seo_doc_file")!.addEventListener("change", async function(this: HTMLInputElement) {
+    const file = this.files?.[0];
+    if (!file) return;
+    const previewEl = document.getElementById("seo_doc_preview")!;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("bucket", "seo-documents");
+    fd.append("path", `locations/${Date.now()}`);
+    previewEl.textContent = "Uploading…";
+    try {
+      const res  = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const json = await res.json() as { url?: string; error?: string };
+      if (json.url) { (document.getElementById("seo_doc_url") as HTMLInputElement).value = json.url; previewEl.textContent = `✓ ${file.name}`; previewEl.style.color = "#22c55e"; }
+      else { previewEl.textContent = `✗ ${json.error}`; previewEl.style.color = "#ef4444"; }
+    } catch { previewEl.textContent = "✗ Upload error"; previewEl.style.color = "#ef4444"; }
+  });
+
+  document.getElementById("save-btn")!.addEventListener("click", async () => {
+    const faqs = Array.from(document.querySelectorAll<HTMLElement>(".faq-row")).map(row => ({
+      question: (row.querySelector<HTMLInputElement>("[name='faq_q[]']"))!.value.trim(),
+      answer:   (row.querySelector<HTMLTextAreaElement>("[name='faq_a[]']"))!.value.trim(),
+    })).filter(f => f.question && f.answer);
+
+    const payload = {
+      id:               recordId,
+      city:             (document.getElementById("city")             as HTMLInputElement).value.trim(),
+      state:            (document.getElementById("state")            as HTMLInputElement).value.trim() || "TX",
+      seo_title:        (document.getElementById("seo_title")        as HTMLInputElement).value.trim(),
+      meta_description: (document.getElementById("meta_description") as HTMLTextAreaElement).value.trim(),
+      h1:               (document.getElementById("h1")               as HTMLInputElement).value.trim(),
+      body_html:        (document.getElementById("body_html")        as HTMLTextAreaElement).value.trim(),
+      faq_items:        faqs,
+      seo_doc_url:      (document.getElementById("seo_doc_url")      as HTMLInputElement).value.trim() || null,
+      is_active:        (document.getElementById("is_active")        as HTMLInputElement).checked,
+      sort_order:       parseInt((document.getElementById("sort_order") as HTMLInputElement).value) || 0,
+    };
+
+    const res  = await fetch("/api/admin/locations", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const json = await res.json() as { slug?: string; error?: string };
+    if (res.ok) { window.location.reload(); }
+    else { alert(`Error: ${json.error}`); }
+  });
+
+  document.getElementById("delete-btn")!.addEventListener("click", async () => {
+    if (!confirm("Delete this location? This cannot be undone.")) return;
+    const res = await fetch("/api/admin/locations", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: recordId }) });
+    if (res.ok) { window.location.href = "/admin/locations"; }
+    else { alert("Delete failed"); }
+  });
+</script>

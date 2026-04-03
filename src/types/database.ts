@@ -157,6 +157,76 @@ export interface MediaItemInsert {
   sort_order?: number;
 }
 
+// ── Services ──────────────────────────────────────────────────────────────────
+
+export interface ServiceRow {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  image_url: string;
+  cta: string;
+  seo_title: string;
+  meta_description: string;
+  h1: string;
+  body_html: string;
+  faq_items: Array<{ question: string; answer: string }>;
+  seo_doc_url: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface ServiceInsert {
+  slug: string;
+  name: string;
+  description?: string;
+  image_url?: string;
+  cta?: string;
+  seo_title?: string;
+  meta_description?: string;
+  h1?: string;
+  body_html?: string;
+  faq_items?: Array<{ question: string; answer: string }>;
+  seo_doc_url?: string;
+  is_active?: boolean;
+  sort_order?: number;
+}
+
+// ── Locations ─────────────────────────────────────────────────────────────────
+
+export interface LocationRow {
+  id: string;
+  slug: string;
+  city: string;
+  state: string;
+  seo_title: string;
+  meta_description: string;
+  h1: string;
+  body_html: string;
+  faq_items: Array<{ question: string; answer: string }>;
+  seo_doc_url: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface LocationInsert {
+  slug: string;
+  city: string;
+  state?: string;
+  seo_title?: string;
+  meta_description?: string;
+  h1?: string;
+  body_html?: string;
+  faq_items?: Array<{ question: string; answer: string }>;
+  seo_doc_url?: string;
+  is_active?: boolean;
+  sort_order?: number;
+}
+
 // ── Supabase Database shape (for typed client) ────────────────────────────────
 
 export interface Database {
@@ -184,6 +254,18 @@ export interface Database {
         Row: MediaItemRow;
         Insert: MediaItemInsert;
         Update: Partial<MediaItemInsert>;
+        Relationships: [];
+      };
+      services: {
+        Row: ServiceRow;
+        Insert: ServiceInsert;
+        Update: Partial<ServiceInsert>;
+        Relationships: [];
+      };
+      locations: {
+        Row: LocationRow;
+        Insert: LocationInsert;
+        Update: Partial<LocationInsert>;
         Relationships: [];
       };
     };
