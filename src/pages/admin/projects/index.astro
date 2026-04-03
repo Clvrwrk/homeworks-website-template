@@ -1,0 +1,86 @@
+---
+// src/pages/admin/projects/index.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { ProjectRow } from "@/types/database";
+
+const supabase = createAdminClient();
+
+const { data: all } = await supabase
+  .from("projects")
+  .select("id, slug, title, category, status, updated_at, created_by")
+  .order("updated_at", { ascending: false, nullsFirst: false });
+
+const projects = (all ?? []) as Pick<ProjectRow, "id" | "slug" | "title" | "category" | "status" | "updated_at" | "created_by">[];
+const drafts    = projects.filter(p => p.status === "draft");
+const published = projects.filter(p => p.status === "published");
+
+const tab = (Astro.url.searchParams.get("tab") ?? "published") as "published" | "draft";
+const shown = tab === "draft" ? drafts : published;
+---
+
+<AdminLayout title="Projects" activeSection="projects">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-[#151d25] text-[28px] font-black tracking-tight">Projects</h1>
+      <p class="text-[#567798] text-[14px] mt-1">{published.length} published · {drafts.length} drafts</p>
+    </div>
+    <a href="/admin/projects/new" class="inline-flex items-center gap-2 bg-[#b05d45] text-white font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#8d4a37] transition-colors">
+      + New Project
+    </a>
+  </div>
+
+  <!-- Tab switcher -->
+  <div class="flex gap-1 p-1 bg-[#e8edf2] rounded-xl mb-6 w-fit">
+    {(["published", "draft"] as const).map((t) => (
+      <a
+        href={`?tab=${t}`}
+        class={`px-5 py-2 rounded-lg text-[13px] font-semibold transition-colors ${tab === t ? "bg-white text-[#151d25] shadow-sm" : "text-[#567798] hover:text-[#151d25]"}`}
+      >
+        {t === "published" ? `Published (${published.length})` : `Drafts (${drafts.length})`}
+      </a>
+    ))}
+  </div>
+
+  <!-- Table -->
+  {shown.length === 0 ? (
+    <div class="text-center py-16 text-[#567798]">No {tab} projects yet.</div>
+  ) : (
+    <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+      <table class="w-full text-[13px]">
+        <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+          <tr>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Title</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden sm:table-cell">Category</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden lg:table-cell">Updated</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#f0f2f4]">
+          {shown.map((p) => (
+            <tr class="hover:bg-[#f8fafc] transition-colors">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <span class={`w-2 h-2 rounded-full shrink-0 ${p.status === "published" ? "bg-[#22c55e]" : "bg-amber-400"}`}></span>
+                  <span class="text-[#151d25] font-semibold">{p.title}</span>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-[#567798] hidden sm:table-cell">{p.category}</td>
+              <td class="px-5 py-4 text-[#567798] hidden lg:table-cell">
+                {p.updated_at ? new Date(p.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—"}
+              </td>
+              <td class="px-5 py-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <a href={`/admin/projects/${p.slug}`} class="text-[#b05d45] font-semibold hover:underline">Edit</a>
+                  {p.status === "published" && (
+                    <a href={`/projects/${p.slug}`} target="_blank" rel="noopener noreferrer" class="text-[#567798] hover:text-[#151d25]">↗</a>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>
