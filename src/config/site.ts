@@ -18,6 +18,8 @@ export interface LocationDef {
   slug: string;
   city: string;
   state: string;
+  neighborhoods?: string;
+  primary?: boolean;
 }
 
 // ---- Business Identity --------------------------------------
@@ -27,6 +29,13 @@ export const BUSINESS_LEGAL_NAME  = "{{CLIENT_LEGAL_NAME}}";
 export const BUSINESS_TAGLINE     = "{{ADDRESS_CITY}}'s Most Trusted {{PRIMARY_CATEGORY}}";
 export const BUSINESS_SLOGAN      = "Quality Work. Honest Pricing.";
 export const BUSINESS_EST         = "{{YEAR_FOUNDED}}";
+
+// ── Geo & Hours (used in LocalBusiness schema) ────────────────────────────────
+export const BUSINESS_LAT   = 0.0;        // replace when client known
+export const BUSINESS_LNG   = 0.0;
+export const OPEN_TIME      = "07:00";    // 24-hour, for schema
+export const CLOSE_TIME     = "19:00";
+export const OPEN_DAYS: string[] = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
 // ---- NAP (Name · Address · Phone) ---------------------------
 
