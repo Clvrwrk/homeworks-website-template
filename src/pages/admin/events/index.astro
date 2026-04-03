@@ -1,0 +1,65 @@
+---
+// src/pages/admin/events/index.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { EventRow } from "@/types/database";
+
+const supabase = createAdminClient();
+const { data } = await supabase
+  .from("events")
+  .select("id, slug, title, event_type, event_date, status, location_name")
+  .order("event_date", { ascending: true });
+
+const events = (data ?? []) as Pick<EventRow, "id" | "slug" | "title" | "event_type" | "event_date" | "status" | "location_name">[];
+const now = new Date();
+---
+
+<AdminLayout title="Events" activeSection="events">
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-[#151d25] text-[28px] font-black tracking-tight">Events</h1>
+      <p class="text-[#567798] text-[14px] mt-1">{events.filter(e => e.status === "published").length} published · {events.filter(e => e.status === "draft").length} drafts</p>
+    </div>
+    <a href="/admin/events/new" class="inline-flex items-center gap-2 bg-[#b05d45] text-white font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#8d4a37] transition-colors">+ New Event</a>
+  </div>
+
+  {events.length === 0 ? (
+    <div class="text-center py-16 text-[#567798]">No events yet.</div>
+  ) : (
+    <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+      <table class="w-full text-[13px]">
+        <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+          <tr>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Event</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden sm:table-cell">Date</th>
+            <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden lg:table-cell">Status</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#f0f2f4]">
+          {events.map((e) => {
+            const isPast = new Date(e.event_date) < now;
+            return (
+              <tr class={`hover:bg-[#f8fafc] transition-colors${isPast ? " opacity-60" : ""}`}>
+                <td class="px-5 py-4">
+                  <p class="text-[#151d25] font-semibold">{e.title}</p>
+                  <p class="text-[#567798] text-[12px]">{e.location_name}</p>
+                </td>
+                <td class="px-5 py-4 text-[#567798] hidden sm:table-cell">
+                  {new Date(e.event_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  {isPast && <span class="ml-2 text-[11px] text-[#567798] bg-[#f0f2f4] px-1.5 py-0.5 rounded">Past</span>}
+                </td>
+                <td class="px-5 py-4 hidden lg:table-cell">
+                  <span class={`text-[11px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${e.status === "published" ? "bg-[#dcfce7] text-[#166534]" : "bg-amber-50 text-amber-700"}`}>{e.status}</span>
+                </td>
+                <td class="px-5 py-4 text-right">
+                  <a href={`/admin/events/${e.slug}`} class="text-[#b05d45] font-semibold hover:underline">Edit</a>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+</AdminLayout>

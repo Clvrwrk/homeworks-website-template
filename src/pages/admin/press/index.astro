@@ -1,0 +1,124 @@
+---
+// src/pages/admin/press/index.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { PressMentionRow, MediaItemRow } from "@/types/database";
+
+const supabase = createAdminClient();
+const { data: mentions } = await supabase.from("press_mentions").select("*").order("published_date", { ascending: false });
+const { data: media }    = await supabase.from("media_items").select("*").order("sort_order").order("published_date", { ascending: false });
+---
+
+<AdminLayout title="Press & Media" activeSection="press">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-[#151d25] text-[28px] font-black tracking-tight">Press & Media</h1>
+    <div class="flex gap-3">
+      <a href="/admin/press/mentions/new" class="bg-[#f0f2f4] text-[#151d25] font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#e0e7ef] transition-colors">+ Press Mention</a>
+      <a href="/admin/press/media/new" class="inline-flex items-center gap-2 bg-[#b05d45] text-white font-bold text-[13px] px-5 py-2.5 rounded-xl hover:bg-[#8d4a37] transition-colors">+ Video/Podcast</a>
+    </div>
+  </div>
+
+  <!-- Press Mentions -->
+  <section class="mb-10">
+    <h2 class="text-[#151d25] font-black text-[18px] mb-4">In the News ({(mentions ?? []).length})</h2>
+    {(mentions ?? []).length === 0 ? (
+      <div class="text-center py-10 bg-white rounded-2xl border border-[#cdd8e3] text-[#567798]">
+        No press mentions yet. <a href="/admin/press/mentions/new" class="text-[#b05d45] hover:underline">Add one</a>.
+      </div>
+    ) : (
+      <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+        <table class="w-full text-[13px]">
+          <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+            <tr>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Headline</th>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden sm:table-cell">Publication</th>
+              <th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#f0f2f4]">
+            {(mentions as PressMentionRow[]).map((m) => (
+              <tr class="hover:bg-[#f8fafc]">
+                <td class="px-5 py-4">
+                  <p class="text-[#151d25] font-semibold truncate max-w-[300px]">{m.headline || "(untitled)"}</p>
+                  <a href={m.url} target="_blank" rel="noopener noreferrer" class="text-[#567798] text-[12px] hover:underline truncate block max-w-[300px]">{m.url}</a>
+                </td>
+                <td class="px-5 py-4 text-[#567798] hidden sm:table-cell">{m.publication}</td>
+                <td class="px-5 py-4 text-right">
+                  <button
+                    class="text-[#ef4444] text-[12px] font-semibold hover:underline delete-mention"
+                    data-id={m.id}
+                  >Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </section>
+
+  <!-- Media Items -->
+  <section>
+    <h2 class="text-[#151d25] font-black text-[18px] mb-4">Videos & Podcasts ({(media ?? []).length})</h2>
+    {(media ?? []).length === 0 ? (
+      <div class="text-center py-10 bg-white rounded-2xl border border-[#cdd8e3] text-[#567798]">
+        No media items yet. <a href="/admin/press/media/new" class="text-[#b05d45] hover:underline">Add one</a>.
+      </div>
+    ) : (
+      <div class="bg-white rounded-2xl border border-[#cdd8e3] overflow-hidden">
+        <table class="w-full text-[13px]">
+          <thead class="bg-[#f0f2f4] border-b border-[#cdd8e3]">
+            <tr>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px]">Title</th>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden sm:table-cell">Type</th>
+              <th class="text-left px-5 py-3 text-[#567798] font-bold uppercase tracking-wider text-[11px] hidden lg:table-cell">Order</th>
+              <th class="px-5 py-3"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#f0f2f4]">
+            {(media as MediaItemRow[]).map((m) => (
+              <tr class="hover:bg-[#f8fafc]">
+                <td class="px-5 py-4 text-[#151d25] font-semibold">{m.title}</td>
+                <td class="px-5 py-4 text-[#567798] hidden sm:table-cell capitalize">{m.type}</td>
+                <td class="px-5 py-4 text-[#567798] hidden lg:table-cell">{m.sort_order}</td>
+                <td class="px-5 py-4 text-right">
+                  <button class="text-[#ef4444] text-[12px] font-semibold hover:underline delete-media" data-id={m.id}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </section>
+</AdminLayout>
+
+<script>
+  // Delete press mention
+  document.querySelectorAll<HTMLButtonElement>(".delete-mention").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Delete this press mention?")) return;
+      const res = await fetch("/api/admin/press", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: btn.dataset.id, recordType: "mention" }),
+      });
+      if (res.ok) window.location.reload();
+      else alert("Delete failed");
+    });
+  });
+
+  // Delete media item
+  document.querySelectorAll<HTMLButtonElement>(".delete-media").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      if (!confirm("Delete this media item?")) return;
+      const res = await fetch("/api/admin/press", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: btn.dataset.id, recordType: "media" }),
+      });
+      if (res.ok) window.location.reload();
+      else alert("Delete failed");
+    });
+  });
+</script>
