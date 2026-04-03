@@ -29,6 +29,11 @@ import {
   INSTAGRAM_URL,
   NEXTDOOR_URL,
   LOCATIONS,
+  BUSINESS_LAT,
+  BUSINESS_LNG,
+  OPEN_TIME,
+  CLOSE_TIME,
+  OPEN_DAYS,
 } from "../config/site";
 
 interface Props {
@@ -75,11 +80,16 @@ const localBusinessSchema = {
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-      "opens": "07:00",
-      "closes": "19:00"
+      "dayOfWeek": OPEN_DAYS,
+      "opens": OPEN_TIME,
+      "closes": CLOSE_TIME
     }
   ],
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": BUSINESS_LAT,
+    "longitude": BUSINESS_LNG
+  },
   "priceRange": SCHEMA_PRICE_RANGE,
   "currenciesAccepted": "USD",
   "paymentAccepted": "Cash, Credit Card, Check, Venmo, Zelle",
