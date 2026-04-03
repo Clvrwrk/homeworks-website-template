@@ -8,77 +8,19 @@ import {
   PHONE_RAW,
   PRIMARY_CITY,
   SITE_URL,
+  LOCATIONS,
 } from "@/config/site";
 
 const telHref = `tel:${PHONE_RAW}`;
 
-// Location cards — NO zip codes. Homeowners search by city + problem, never by zip.
-// Neighborhood context gives local relevance without clutter.
-const locations = [
-  {
-    slug: "mckinney-tx",
-    city: "McKinney, TX",
-    neighborhoods: "Stonebridge Ranch · Craig Ranch · Adriatica · Eldorado",
-    desc: "Our home base. Same-day availability for most McKinney neighborhoods.",
-    primary: true,
-  },
-  {
-    slug: "frisco-tx",
-    city: "Frisco, TX",
-    neighborhoods: "Starwood · Plantation Resort · Newman Village",
-    desc: "Fast response times across all Frisco communities.",
-    primary: false,
-  },
-  {
-    slug: "allen-tx",
-    city: "Allen, TX",
-    neighborhoods: "Twin Creeks · Watters Crossing · Montgomery Farm",
-    desc: "Reliable repairs for Allen homeowners — usually same week.",
-    primary: false,
-  },
-  {
-    slug: "plano-tx",
-    city: "Plano, TX",
-    neighborhoods: "Legacy West · Willow Bend · Los Rios",
-    desc: "Serving Plano homeowners with fast, reliable repairs.",
-    primary: false,
-  },
-  {
-    slug: "prosper-tx",
-    city: "Prosper, TX",
-    neighborhoods: "Windsong Ranch · Star Trail · Gentle Creek",
-    desc: "Serving all Prosper communities including new construction.",
-    primary: false,
-  },
-  {
-    slug: "celina-tx",
-    city: "Celina, TX",
-    neighborhoods: "Light Farms · Cross Creek · Cambridge Crossing",
-    desc: "Serving Celina and surrounding communities.",
-    primary: false,
-  },
-  {
-    slug: "fairview-tx",
-    city: "Fairview, TX",
-    neighborhoods: "Fairview Farms · Heritage Ranch",
-    desc: "Just minutes from our McKinney base — fast response guaranteed.",
-    primary: false,
-  },
-  {
-    slug: "anna-tx",
-    city: "Anna, TX",
-    neighborhoods: "Anna Town Square · Sherley Heritage Park",
-    desc: "Serving Anna and Van Alstyne area homeowners.",
-    primary: false,
-  },
-  {
-    slug: "melissa-tx",
-    city: "Melissa, TX",
-    neighborhoods: "Melissa Ridge · Liberty",
-    desc: "Same quality service as McKinney, right in your neighborhood.",
-    primary: false,
-  },
-];
+// Derive location cards from LOCATIONS config — single source of truth
+const locations = LOCATIONS.map((loc) => ({
+  slug:          loc.slug,
+  city:          `${loc.city}, ${loc.state}`,
+  neighborhoods: loc.neighborhoods ?? "",
+  desc:          "",
+  primary:       loc.primary ?? false,
+}));
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",

@@ -9,76 +9,19 @@ import {
   PRIMARY_CITY,
   PRIMARY_STATE,
   SITE_URL,
+  SERVICES,
 } from "@/config/site";
 
 const telHref = `tel:${PHONE_RAW}`;
 
-// Service cards — clean, problem-focused. NO tags, NO zip codes.
-const services = [
-  {
-    slug: "drywall-repair",
-    title: "Drywall Repair",
-    desc: "Holes, cracks, and water damage patched and textured to match your existing wall perfectly.",
-    image: "/services/drywall.webp",
-    cta: "Fix My Drywall",
-  },
-  {
-    slug: "tv-mounting",
-    title: "TV Mounting",
-    desc: "Clean, secure wall mounts with hidden cables — any size TV, any room.",
-    image: "/services/tv-mount.webp",
-    cta: "Mount My TV",
-  },
-  {
-    slug: "plumbing",
-    title: "Plumbing Repairs",
-    desc: "Leaky faucets, running toilets, and fixture installs handled fast and reliably.",
-    image: "/services/plumbing.webp",
-    cta: "Fix My Plumbing",
-  },
-  {
-    slug: "door-installation",
-    title: "Door Installation",
-    desc: "Interior, exterior, and storm doors installed level, plumb, and weather-tight.",
-    image: "/services/door.webp",
-    cta: "Install My Door",
-  },
-  {
-    slug: "interior-painting",
-    title: "Interior Painting",
-    desc: "Prep, prime, and paint for a flawless finish — rooms, trim, and accent walls.",
-    image: "/services/painting.webp",
-    cta: "Paint My Room",
-  },
-  {
-    slug: "electrical-fixtures",
-    title: "Electrical Fixtures",
-    desc: "Light fixtures, ceiling fans, and outlets safely installed to code.",
-    image: "/services/electrical.webp",
-    cta: "Install My Fixture",
-  },
-  {
-    slug: "furniture-assembly",
-    title: "Furniture Assembly",
-    desc: "IKEA, flat-pack, and ready-to-assemble furniture built correctly the first time.",
-    image: "/services/drywall.webp",
-    cta: "Assemble My Furniture",
-  },
-  {
-    slug: "carpentry",
-    title: "Carpentry & Trim",
-    desc: "Crown molding, baseboards, floating shelves, and custom woodwork installed cleanly.",
-    image: "/services/door.webp",
-    cta: "Add Trim Work",
-  },
-  {
-    slug: "pressure-washing",
-    title: "Pressure Washing",
-    desc: "Driveways, patios, siding, and fences cleaned and refreshed in a single visit.",
-    image: "/services/painting.webp",
-    cta: "Clean My Property",
-  },
-];
+// Derive service cards from SERVICES config — single source of truth
+const services = SERVICES.map((s) => ({
+  slug:  s.slug,
+  title: s.name,
+  desc:  s.description,
+  image: s.image,
+  cta:   s.cta,
+}));
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
