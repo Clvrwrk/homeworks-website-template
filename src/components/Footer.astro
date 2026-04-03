@@ -9,18 +9,11 @@ import {
   ADDRESS_STATE,
   ADDRESS_ZIP,
   REVIEW_COUNT,
+  SERVICES,
+  LOCATIONS,
 } from "../config/site";
 
-const services = [
-  { label: "Drywall Repair",      href: "/services/drywall-repair" },
-  { label: "TV Mounting",         href: "/services/tv-mounting" },
-  { label: "Plumbing",            href: "/services/plumbing" },
-  { label: "Door Installation",   href: "/services/door-installation" },
-  { label: "Interior Painting",   href: "/services/interior-painting" },
-  { label: "Electrical Fixtures", href: "/services/electrical-fixtures" },
-  { label: "Carpentry & Trim",    href: "/services/carpentry" },
-  { label: "Furniture Assembly",  href: "/services/furniture-assembly" },
-];
+const services = SERVICES.map((s) => ({ label: s.name, href: `/services/${s.slug}` }));
 
 const quickLinks = [
   { label: "Services",    href: "/services" },
@@ -31,17 +24,7 @@ const quickLinks = [
   { label: "Our Process", href: "/process" },
 ];
 
-const serviceAreas = [
-  { city: "McKinney",  slug: "mckinney-tx" },
-  { city: "Allen",     slug: "allen-tx" },
-  { city: "Frisco",    slug: "frisco-tx" },
-  { city: "Prosper",   slug: "prosper-tx" },
-  { city: "Celina",    slug: "celina-tx" },
-  { city: "Plano",     slug: "plano-tx" },
-  { city: "Fairview",  slug: "fairview-tx" },
-  { city: "Melissa",   slug: "melissa-tx" },
-  { city: "Anna",      slug: "anna-tx" },
-];
+const serviceAreas = LOCATIONS.map((loc) => ({ city: loc.city, slug: loc.slug }));
 
 const trustBadges = [
   { icon: "shield",  label: "Fully Insured & Licensed" },
