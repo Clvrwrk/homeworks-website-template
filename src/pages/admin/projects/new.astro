@@ -1,0 +1,361 @@
+---
+// src/pages/admin/projects/new.astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { BUSINESS_NAME } from "@/config/site";
+
+const user = Astro.locals.user!;
+const canPublish = user.role !== "worker";
+---
+
+<AdminLayout title="New Project" activeSection="projects">
+  <div class="mb-6">
+    <a href="/admin/projects" class="text-[#567798] text-[13px] hover:text-[#151d25]">← Projects</a>
+    <h1 class="text-[#151d25] text-[26px] font-black tracking-tight mt-2">New Project</h1>
+  </div>
+
+  <!-- Readiness bar -->
+  <div class="bg-white rounded-2xl border border-[#cdd8e3] p-5 mb-6">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-[#151d25] text-[13px] font-bold">Publish Readiness</span>
+      <span id="readiness-text" class="text-[#567798] text-[13px]">0 / 16 fields complete</span>
+    </div>
+    <div class="h-2 bg-[#e8edf2] rounded-full overflow-hidden">
+      <div id="readiness-bar" class="h-full bg-[#ef4444] rounded-full transition-all duration-300" style="width: 0%"></div>
+    </div>
+    <p id="readiness-missing" class="text-[#567798] text-[12px] mt-2"></p>
+  </div>
+
+  <form id="project-form" class="flex flex-col gap-8">
+    <!-- Section 1: Basics -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">1. Basics</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="sm:col-span-2">
+          <label class="admin-label" for="title">Title *</label>
+          <input id="title" name="title" type="text" required class="admin-input" placeholder="Stonebridge Ranch Drywall Restoration" />
+        </div>
+        <div>
+          <label class="admin-label" for="category">Category *</label>
+          <select id="category" name="category" required class="admin-input">
+            <option value="">Select category…</option>
+            {["Drywall", "Painting", "Plumbing", "Electrical", "Carpentry", "Outdoor"].map(c => (
+              <option value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="admin-label" for="neighborhood">Neighborhood *</label>
+          <input id="neighborhood" name="neighborhood" type="text" required class="admin-input" placeholder="Stonebridge Ranch" />
+        </div>
+        <div>
+          <label class="admin-label" for="location">Location *</label>
+          <input id="location" name="location" type="text" required class="admin-input" placeholder="McKinney, TX 75069" />
+        </div>
+        <div>
+          <label class="admin-label" for="community">Community *</label>
+          <input id="community" name="community" type="text" required class="admin-input" placeholder="Stonebridge Ranch" />
+        </div>
+        <div>
+          <label class="admin-label" for="duration">Duration *</label>
+          <input id="duration" name="duration" type="text" required class="admin-input" placeholder="1 day" />
+        </div>
+        <div>
+          <label class="admin-label" for="scope">Scope *</label>
+          <input id="scope" name="scope" type="text" required class="admin-input" placeholder="Water-damaged drywall repair, texture match" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="admin-label" for="summary">Summary * <span class="text-[#567798] font-normal">(card blurb)</span></label>
+          <textarea id="summary" name="summary" required rows="3" class="admin-input" placeholder="Brief card description visible in project grid"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Photos -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">2. Photos</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="admin-label" for="before_photo_file">Before Photo *</label>
+          <input id="before_photo_file" name="before_photo_file" type="file" accept="image/*" class="admin-input" />
+          <input id="before_photo_url" name="before_photo_url" type="hidden" value="" />
+          <p id="before_photo_preview" class="text-[12px] text-[#567798] mt-1"></p>
+        </div>
+        <div>
+          <label class="admin-label" for="after_photo_file">After Photo *</label>
+          <input id="after_photo_file" name="after_photo_file" type="file" accept="image/*" class="admin-input" />
+          <input id="after_photo_url" name="after_photo_url" type="hidden" value="" />
+          <p id="after_photo_preview" class="text-[12px] text-[#567798] mt-1"></p>
+        </div>
+        <div>
+          <label class="admin-label" for="before_label">Before Label *</label>
+          <input id="before_label" name="before_label" type="text" required class="admin-input" placeholder="Water damage, sagging drywall" />
+        </div>
+        <div>
+          <label class="admin-label" for="after_label">After Label *</label>
+          <input id="after_label" name="after_label" type="text" required class="admin-input" placeholder="Seamless repair, ready to paint" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Narrative -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">3. Narrative</h2>
+      <div class="flex flex-col gap-5">
+        <div>
+          <label class="admin-label" for="overview">Overview * <span class="text-[#567798] font-normal">(what happened and what we did)</span></label>
+          <textarea id="overview" name="overview" required rows="5" class="admin-input" placeholder="Describe the project in detail…"></textarea>
+        </div>
+        <div>
+          <label class="admin-label" for="challenge">Challenge * <span class="text-[#567798] font-normal">(what made this tricky)</span></label>
+          <textarea id="challenge" name="challenge" required rows="3" class="admin-input" placeholder="The non-standard texture required…"></textarea>
+        </div>
+        <div>
+          <label class="admin-label" for="result">Result * <span class="text-[#567798] font-normal">(the outcome)</span></label>
+          <textarea id="result" name="result" required rows="3" class="admin-input" placeholder="The repaired area is completely invisible…"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Scope Items -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">4. Scope Items *</h2>
+      <div id="scope-items-list" class="flex flex-col gap-3 mb-4"></div>
+      <button type="button" id="add-scope-item" class="text-[#b05d45] text-[13px] font-semibold hover:underline">
+        + Add scope item
+      </button>
+    </section>
+
+    <!-- Section 5: SEO Preview -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">5. SEO Preview</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="admin-label" for="slug-preview">Slug <span class="text-[#567798] font-normal">(auto-generated, editable)</span></label>
+          <input id="slug-preview" name="slug_override" type="text" class="admin-input font-mono text-[13px]" placeholder="stonebridge-ranch-drywall" />
+        </div>
+        <div>
+          <label class="admin-label">Meta Description Preview</label>
+          <p id="meta-preview" class="text-[#567798] text-[13px] mt-1 leading-relaxed italic min-h-[3em]"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action buttons -->
+    <div class="flex items-center justify-between pt-2">
+      <button type="button" id="save-draft-btn" class="bg-[#f0f2f4] text-[#151d25] font-bold px-6 py-3 rounded-xl hover:bg-[#e0e7ef] transition-colors">
+        Save Draft
+      </button>
+      {canPublish ? (
+        <button type="button" id="publish-btn" class="bg-[#22c55e] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#16a34a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          Publish
+        </button>
+      ) : (
+        <div class="text-[#567798] text-[13px] italic">Workers cannot publish — submit for review instead.</div>
+      )}
+    </div>
+  </form>
+</AdminLayout>
+
+<style>
+  .admin-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #151d25;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .admin-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1.5px solid #cdd8e3;
+    border-radius: 0.625rem;
+    font-size: 0.9375rem;
+    color: #151d25;
+    background: #fff;
+    transition: border-color 0.15s ease;
+  }
+  .admin-input:focus {
+    outline: none;
+    border-color: #b05d45;
+  }
+  textarea.admin-input { resize: vertical; min-height: 80px; }
+</style>
+
+<script>
+  import { toSlug } from "@/lib/slugify";
+
+  // ── Required field IDs and their readiness labels ──────────────────────
+  const REQUIRED_FIELDS = [
+    { id: "title",            label: "Title" },
+    { id: "category",         label: "Category" },
+    { id: "neighborhood",     label: "Neighborhood" },
+    { id: "location",         label: "Location" },
+    { id: "community",        label: "Community" },
+    { id: "duration",         label: "Duration" },
+    { id: "scope",            label: "Scope" },
+    { id: "summary",          label: "Summary" },
+    { id: "before_label",     label: "Before Label" },
+    { id: "after_label",      label: "After Label" },
+    { id: "before_photo_url", label: "Before Photo" },
+    { id: "after_photo_url",  label: "After Photo" },
+    { id: "overview",         label: "Overview" },
+    { id: "challenge",        label: "Challenge" },
+    { id: "result",           label: "Result" },
+  ];
+  const TOTAL = REQUIRED_FIELDS.length + 1; // +1 for scope_items
+
+  const bar     = document.getElementById("readiness-bar")!;
+  const text    = document.getElementById("readiness-text")!;
+  const missing = document.getElementById("readiness-missing")!;
+  const publishBtn = document.getElementById("publish-btn") as HTMLButtonElement | null;
+
+  function updateReadiness() {
+    const missingLabels: string[] = [];
+    let filled = 0;
+
+    for (const { id, label } of REQUIRED_FIELDS) {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      if (el?.value?.trim()) { filled++; } else { missingLabels.push(label); }
+    }
+
+    // Scope items check
+    const scopeInputs = document.querySelectorAll<HTMLInputElement>(".scope-item-input");
+    const hasScope = Array.from(scopeInputs).some(i => i.value.trim());
+    if (hasScope) { filled++; } else { missingLabels.push("Scope Items (≥1 required)"); }
+
+    const pct = Math.round((filled / TOTAL) * 100);
+    bar.style.width  = `${pct}%`;
+    bar.style.background = pct < 50 ? "#ef4444" : pct < 90 ? "#f59e0b" : "#22c55e";
+    text.textContent = `${filled} / ${TOTAL} fields complete`;
+    missing.textContent = missingLabels.length > 0
+      ? `Missing: ${missingLabels.join(", ")}`
+      : "";
+
+    if (publishBtn) publishBtn.disabled = missingLabels.length > 0;
+  }
+
+  // Listen to all form inputs
+  document.getElementById("project-form")!.addEventListener("input", updateReadiness);
+
+  // ── Scope items dynamic list ─────────────────────────────────────────────
+  const scopeList = document.getElementById("scope-items-list")!;
+  let scopeCount  = 0;
+
+  function addScopeItem(value = "") {
+    scopeCount++;
+    const row = document.createElement("div");
+    row.className = "flex gap-2 items-center";
+    row.innerHTML = `
+      <input type="text" name="scope_items[]" class="admin-input scope-item-input flex-1" placeholder="Scope item ${scopeCount}" value="${value.replace(/"/g, '&quot;')}" />
+      <button type="button" class="remove-scope text-[#ef4444] font-bold text-[18px] px-2 hover:text-[#dc2626] transition-colors" aria-label="Remove item">×</button>
+    `;
+    row.querySelector(".remove-scope")!.addEventListener("click", () => {
+      row.remove();
+      updateReadiness();
+    });
+    row.querySelector("input")!.addEventListener("input", updateReadiness);
+    scopeList.appendChild(row);
+    updateReadiness();
+  }
+
+  document.getElementById("add-scope-item")!.addEventListener("click", () => addScopeItem());
+  addScopeItem(); // Start with one row
+
+  // ── Slug auto-generation from title ────────────────────────────────────
+  const titleInput = document.getElementById("title") as HTMLInputElement;
+  const slugInput  = document.getElementById("slug-preview") as HTMLInputElement;
+  let slugManuallyEdited = false;
+
+  titleInput.addEventListener("input", () => {
+    if (!slugManuallyEdited) {
+      slugInput.value = toSlug(titleInput.value);
+    }
+    const summaryEl = document.getElementById("summary") as HTMLTextAreaElement;
+    document.getElementById("meta-preview")!.textContent = summaryEl.value.slice(0, 155) || "";
+  });
+
+  slugInput.addEventListener("input", () => { slugManuallyEdited = true; });
+  document.getElementById("summary")!.addEventListener("input", (e) => {
+    document.getElementById("meta-preview")!.textContent = (e.target as HTMLTextAreaElement).value.slice(0, 155);
+  });
+
+  // ── Photo upload ───────────────────────────────────────────────────────
+  async function uploadPhoto(fileInput: HTMLInputElement, urlInput: HTMLInputElement, previewEl: HTMLElement, fieldId: string) {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    const projectSlug = slugInput.value || `temp-${Date.now()}`;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("bucket", "project-photos");
+    fd.append("path", `${projectSlug}/${fieldId}`);
+
+    previewEl.textContent = "Uploading…";
+    try {
+      const res  = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const json = await res.json() as { url?: string; error?: string };
+      if (json.url) {
+        urlInput.value = json.url;
+        previewEl.textContent = `✓ Uploaded: ${file.name}`;
+        previewEl.className = "text-[12px] text-[#22c55e] mt-1";
+        updateReadiness();
+      } else {
+        previewEl.textContent = `✗ Upload failed: ${json.error}`;
+        previewEl.className = "text-[12px] text-[#ef4444] mt-1";
+      }
+    } catch (err) {
+      previewEl.textContent = `✗ Upload error`;
+      previewEl.className = "text-[12px] text-[#ef4444] mt-1";
+    }
+  }
+
+  document.getElementById("before_photo_file")!.addEventListener("change", function(this: HTMLInputElement) {
+    uploadPhoto(this, document.getElementById("before_photo_url") as HTMLInputElement, document.getElementById("before_photo_preview")!, "before");
+  });
+
+  document.getElementById("after_photo_file")!.addEventListener("change", function(this: HTMLInputElement) {
+    uploadPhoto(this, document.getElementById("after_photo_url") as HTMLInputElement, document.getElementById("after_photo_preview")!, "after");
+  });
+
+  // ── Save / Publish ─────────────────────────────────────────────────────
+  async function submitForm(status: "draft" | "published") {
+    const form = document.getElementById("project-form") as HTMLFormElement;
+    const scopeInputs = Array.from(form.querySelectorAll<HTMLInputElement>(".scope-item-input"));
+
+    const payload = {
+      title:            (form.querySelector<HTMLInputElement>("#title"))!.value.trim(),
+      category:         (form.querySelector<HTMLSelectElement>("#category"))!.value,
+      neighborhood:     (form.querySelector<HTMLInputElement>("#neighborhood"))!.value.trim(),
+      location:         (form.querySelector<HTMLInputElement>("#location"))!.value.trim(),
+      community:        (form.querySelector<HTMLInputElement>("#community"))!.value.trim(),
+      duration:         (form.querySelector<HTMLInputElement>("#duration"))!.value.trim(),
+      scope:            (form.querySelector<HTMLInputElement>("#scope"))!.value.trim(),
+      summary:          (form.querySelector<HTMLTextAreaElement>("#summary"))!.value.trim(),
+      before_label:     (form.querySelector<HTMLInputElement>("#before_label"))!.value.trim(),
+      after_label:      (form.querySelector<HTMLInputElement>("#after_label"))!.value.trim(),
+      before_photo_url: (form.querySelector<HTMLInputElement>("#before_photo_url"))!.value.trim(),
+      after_photo_url:  (form.querySelector<HTMLInputElement>("#after_photo_url"))!.value.trim(),
+      overview:         (form.querySelector<HTMLTextAreaElement>("#overview"))!.value.trim(),
+      challenge:        (form.querySelector<HTMLTextAreaElement>("#challenge"))!.value.trim(),
+      result:           (form.querySelector<HTMLTextAreaElement>("#result"))!.value.trim(),
+      scope_items:      scopeInputs.map(i => i.value.trim()).filter(Boolean),
+      status,
+    };
+
+    const res  = await fetch("/api/admin/projects", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const json = await res.json() as { slug?: string; error?: string; missing?: string[] };
+
+    if (res.ok && json.slug) {
+      window.location.href = `/admin/projects/${json.slug}`;
+    } else {
+      alert(`Error: ${json.error ?? "Unknown error"}\n${json.missing?.join("\n") ?? ""}`);
+    }
+  }
+
+  document.getElementById("save-draft-btn")!.addEventListener("click", () => submitForm("draft"));
+  publishBtn?.addEventListener("click", () => submitForm("published"));
+
+  updateReadiness();
+</script>

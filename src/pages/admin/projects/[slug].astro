@@ -1,0 +1,328 @@
+---
+// src/pages/admin/projects/[slug].astro
+import AdminLayout from "@/layouts/AdminLayout.astro";
+import { createAdminClient } from "@/lib/supabase";
+import type { ProjectRow } from "@/types/database";
+import { getProjectReadiness } from "@/lib/admin";
+
+const { slug } = Astro.params;
+const supabase = createAdminClient();
+const { data, error } = await supabase.from("projects").select("*").eq("slug", slug).single();
+
+if (error || !data) return Astro.redirect("/admin/projects");
+
+const p = data as ProjectRow;
+const user = Astro.locals.user!;
+const canPublish = user.role !== "worker";
+const readiness = getProjectReadiness(p as any);
+const pct = readiness.percent;
+const barColor = pct < 50 ? "#ef4444" : pct < 90 ? "#f59e0b" : "#22c55e";
+---
+
+<AdminLayout title={`Edit: ${p.title}`} activeSection="projects">
+  <div class="mb-6">
+    <a href="/admin/projects" class="text-[#567798] text-[13px] hover:text-[#151d25]">← Projects</a>
+    <div class="flex items-center gap-3 mt-2">
+      <h1 class="text-[#151d25] text-[26px] font-black tracking-tight">{p.title}</h1>
+      <span class={`text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${p.status === "published" ? "bg-[#dcfce7] text-[#166534]" : "bg-amber-50 text-amber-700"}`}>
+        {p.status}
+      </span>
+    </div>
+  </div>
+
+  <!-- Readiness bar (server-rendered initial state) -->
+  <div class="bg-white rounded-2xl border border-[#cdd8e3] p-5 mb-6">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-[#151d25] text-[13px] font-bold">Publish Readiness</span>
+      <span id="readiness-text" class="text-[#567798] text-[13px]">{readiness.filled} / {readiness.total} fields complete</span>
+    </div>
+    <div class="h-2 bg-[#e8edf2] rounded-full overflow-hidden">
+      <div id="readiness-bar" class="h-full rounded-full transition-all duration-300" style={`width: ${pct}%; background: ${barColor};`}></div>
+    </div>
+    {readiness.missing.length > 0 && (
+      <p id="readiness-missing" class="text-[#567798] text-[12px] mt-2">
+        Missing: {readiness.missing.join(", ")}
+      </p>
+    )}
+    {readiness.missing.length === 0 && (
+      <p id="readiness-missing" class="text-[12px] mt-2"></p>
+    )}
+  </div>
+
+  <!-- Same form as new.astro, but with data-record-id and prefilled values -->
+  <form id="project-form" data-record-id={p.id} data-record-slug={p.slug} class="flex flex-col gap-8">
+
+    <!-- Section 1: Basics (same HTML structure, prefilled values) -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">1. Basics</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="sm:col-span-2">
+          <label class="admin-label" for="title">Title *</label>
+          <input id="title" name="title" type="text" required class="admin-input" value={p.title} />
+        </div>
+        <div>
+          <label class="admin-label" for="category">Category *</label>
+          <select id="category" name="category" required class="admin-input">
+            {["Drywall", "Painting", "Plumbing", "Electrical", "Carpentry", "Outdoor"].map(c => (
+              <option value={c} selected={p.category === c}>{c}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label class="admin-label" for="neighborhood">Neighborhood *</label>
+          <input id="neighborhood" name="neighborhood" type="text" required class="admin-input" value={p.neighborhood ?? ""} />
+        </div>
+        <div>
+          <label class="admin-label" for="location">Location *</label>
+          <input id="location" name="location" type="text" required class="admin-input" value={p.location ?? ""} />
+        </div>
+        <div>
+          <label class="admin-label" for="community">Community *</label>
+          <input id="community" name="community" type="text" required class="admin-input" value={p.community ?? ""} />
+        </div>
+        <div>
+          <label class="admin-label" for="duration">Duration *</label>
+          <input id="duration" name="duration" type="text" required class="admin-input" value={p.duration ?? ""} />
+        </div>
+        <div>
+          <label class="admin-label" for="scope">Scope *</label>
+          <input id="scope" name="scope" type="text" required class="admin-input" value={p.scope ?? ""} />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="admin-label" for="summary">Summary *</label>
+          <textarea id="summary" name="summary" required rows="3" class="admin-input">{p.summary ?? ""}</textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Photos (same structure; shows existing URL thumbnails) -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">2. Photos</h2>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="admin-label" for="before_photo_file">Before Photo *</label>
+          {p.before_photo_url && <img src={p.before_photo_url} alt="Current before photo" class="w-full h-32 object-cover rounded-lg mb-2" />}
+          <input id="before_photo_file" name="before_photo_file" type="file" accept="image/*" class="admin-input" />
+          <input id="before_photo_url" name="before_photo_url" type="hidden" value={p.before_photo_url ?? ""} />
+          <p id="before_photo_preview" class="text-[12px] text-[#567798] mt-1">{p.before_photo_url ? "✓ Photo set" : "No photo yet"}</p>
+        </div>
+        <div>
+          <label class="admin-label" for="after_photo_file">After Photo *</label>
+          {p.after_photo_url && <img src={p.after_photo_url} alt="Current after photo" class="w-full h-32 object-cover rounded-lg mb-2" />}
+          <input id="after_photo_file" name="after_photo_file" type="file" accept="image/*" class="admin-input" />
+          <input id="after_photo_url" name="after_photo_url" type="hidden" value={p.after_photo_url ?? ""} />
+          <p id="after_photo_preview" class="text-[12px] text-[#567798] mt-1">{p.after_photo_url ? "✓ Photo set" : "No photo yet"}</p>
+        </div>
+        <div>
+          <label class="admin-label" for="before_label">Before Label *</label>
+          <input id="before_label" name="before_label" type="text" required class="admin-input" value={p.before_label ?? ""} />
+        </div>
+        <div>
+          <label class="admin-label" for="after_label">After Label *</label>
+          <input id="after_label" name="after_label" type="text" required class="admin-input" value={p.after_label ?? ""} />
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Narrative -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">3. Narrative</h2>
+      <div class="flex flex-col gap-5">
+        <div>
+          <label class="admin-label" for="overview">Overview *</label>
+          <textarea id="overview" name="overview" required rows="5" class="admin-input">{p.overview ?? ""}</textarea>
+        </div>
+        <div>
+          <label class="admin-label" for="challenge">Challenge *</label>
+          <textarea id="challenge" name="challenge" required rows="3" class="admin-input">{p.challenge ?? ""}</textarea>
+        </div>
+        <div>
+          <label class="admin-label" for="result">Result *</label>
+          <textarea id="result" name="result" required rows="3" class="admin-input">{p.result ?? ""}</textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Scope Items (prefilled) -->
+    <section class="bg-white rounded-2xl border border-[#cdd8e3] p-7">
+      <h2 class="text-[#151d25] font-black text-[17px] mb-6 pb-4 border-b border-[#f0f2f4]">4. Scope Items *</h2>
+      <div id="scope-items-list" class="flex flex-col gap-3 mb-4">
+        {(p.scope_items ?? []).map((item) => (
+          <div class="flex gap-2 items-center scope-item-row">
+            <input type="text" name="scope_items[]" class="admin-input scope-item-input flex-1" value={item} />
+            <button type="button" class="remove-scope text-[#ef4444] font-bold text-[18px] px-2">×</button>
+          </div>
+        ))}
+      </div>
+      <button type="button" id="add-scope-item" class="text-[#b05d45] text-[13px] font-semibold hover:underline">+ Add scope item</button>
+    </section>
+
+    <!-- Action buttons -->
+    <div class="flex items-center justify-between pt-2">
+      <div class="flex gap-3">
+        <button type="button" id="save-draft-btn" class="bg-[#f0f2f4] text-[#151d25] font-bold px-6 py-3 rounded-xl hover:bg-[#e0e7ef] transition-colors">Save Draft</button>
+        {p.status === "published" && (
+          <button type="button" id="unpublish-btn" class="bg-[#f0f2f4] text-[#567798] font-bold px-5 py-3 rounded-xl hover:bg-[#e0e7ef] transition-colors text-[13px]">
+            Unpublish
+          </button>
+        )}
+      </div>
+      {canPublish && (
+        <button type="button" id="publish-btn" class="bg-[#22c55e] text-white font-bold px-6 py-3 rounded-xl hover:bg-[#16a34a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled={!readiness.canPublish}>
+          {p.status === "published" ? "Save & Republish" : "Publish"}
+        </button>
+      )}
+    </div>
+  </form>
+</AdminLayout>
+
+<style>
+  .admin-label { display: block; font-size: 0.8125rem; font-weight: 700; color: #151d25; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .admin-input { width: 100%; padding: 0.625rem 0.875rem; border: 1.5px solid #cdd8e3; border-radius: 0.625rem; font-size: 0.9375rem; color: #151d25; background: #fff; transition: border-color 0.15s ease; }
+  .admin-input:focus { outline: none; border-color: #b05d45; }
+  textarea.admin-input { resize: vertical; min-height: 80px; }
+</style>
+
+<script>
+  // Re-use same readiness + scope + upload + submit JS pattern as new.astro
+  // Submit function sends PUT with record id instead of POST
+
+  const form = document.getElementById("project-form") as HTMLFormElement;
+  const recordId   = form.dataset.recordId!;
+  const recordSlug = form.dataset.recordSlug!;
+
+  const REQUIRED_FIELDS = [
+    { id: "title",            label: "Title" },
+    { id: "category",         label: "Category" },
+    { id: "neighborhood",     label: "Neighborhood" },
+    { id: "location",         label: "Location" },
+    { id: "community",        label: "Community" },
+    { id: "duration",         label: "Duration" },
+    { id: "scope",            label: "Scope" },
+    { id: "summary",          label: "Summary" },
+    { id: "before_label",     label: "Before Label" },
+    { id: "after_label",      label: "After Label" },
+    { id: "before_photo_url", label: "Before Photo" },
+    { id: "after_photo_url",  label: "After Photo" },
+    { id: "overview",         label: "Overview" },
+    { id: "challenge",        label: "Challenge" },
+    { id: "result",           label: "Result" },
+  ];
+  const TOTAL = REQUIRED_FIELDS.length + 1;
+
+  const bar     = document.getElementById("readiness-bar")!;
+  const readinessText = document.getElementById("readiness-text")!;
+  const missingEl = document.getElementById("readiness-missing")!;
+  const publishBtn = document.getElementById("publish-btn") as HTMLButtonElement | null;
+
+  function updateReadiness() {
+    const missingLabels: string[] = [];
+    let filled = 0;
+    for (const { id, label } of REQUIRED_FIELDS) {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      if (el?.value?.trim()) { filled++; } else { missingLabels.push(label); }
+    }
+    const scopeInputs = document.querySelectorAll<HTMLInputElement>(".scope-item-input");
+    const hasScope = Array.from(scopeInputs).some(i => i.value.trim());
+    if (hasScope) { filled++; } else { missingLabels.push("Scope Items (≥1 required)"); }
+
+    const pct = Math.round((filled / TOTAL) * 100);
+    bar.style.width  = `${pct}%`;
+    bar.style.background = pct < 50 ? "#ef4444" : pct < 90 ? "#f59e0b" : "#22c55e";
+    readinessText.textContent = `${filled} / ${TOTAL} fields complete`;
+    missingEl.textContent = missingLabels.length > 0 ? `Missing: ${missingLabels.join(", ")}` : "";
+    if (publishBtn) publishBtn.disabled = missingLabels.length > 0;
+  }
+
+  form.addEventListener("input", updateReadiness);
+
+  // Photo upload
+  async function uploadPhoto(fileInput: HTMLInputElement, urlInput: HTMLInputElement, previewEl: HTMLElement, fieldId: string) {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("bucket", "project-photos");
+    fd.append("path", `${recordSlug}/${fieldId}`);
+    previewEl.textContent = "Uploading…";
+    try {
+      const res  = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const json = await res.json() as { url?: string; error?: string };
+      if (json.url) {
+        urlInput.value = json.url;
+        previewEl.textContent = `✓ ${file.name}`;
+        previewEl.className = "text-[12px] text-[#22c55e] mt-1";
+        updateReadiness();
+      } else {
+        previewEl.textContent = `✗ ${json.error}`;
+        previewEl.className = "text-[12px] text-[#ef4444] mt-1";
+      }
+    } catch { previewEl.textContent = "✗ Upload error"; previewEl.className = "text-[12px] text-[#ef4444] mt-1"; }
+  }
+
+  document.getElementById("before_photo_file")!.addEventListener("change", function(this: HTMLInputElement) {
+    uploadPhoto(this, document.getElementById("before_photo_url") as HTMLInputElement, document.getElementById("before_photo_preview")!, "before");
+  });
+  document.getElementById("after_photo_file")!.addEventListener("change", function(this: HTMLInputElement) {
+    uploadPhoto(this, document.getElementById("after_photo_url") as HTMLInputElement, document.getElementById("after_photo_preview")!, "after");
+  });
+
+  async function submitForm(status: "draft" | "published" | "unpublished") {
+    const scopeInputs = Array.from(form.querySelectorAll<HTMLInputElement>(".scope-item-input"));
+    const payload = {
+      id:               recordId,
+      title:            (form.querySelector<HTMLInputElement>("#title"))!.value.trim(),
+      category:         (form.querySelector<HTMLSelectElement>("#category"))!.value,
+      neighborhood:     (form.querySelector<HTMLInputElement>("#neighborhood"))!.value.trim(),
+      location:         (form.querySelector<HTMLInputElement>("#location"))!.value.trim(),
+      community:        (form.querySelector<HTMLInputElement>("#community"))!.value.trim(),
+      duration:         (form.querySelector<HTMLInputElement>("#duration"))!.value.trim(),
+      scope:            (form.querySelector<HTMLInputElement>("#scope"))!.value.trim(),
+      summary:          (form.querySelector<HTMLTextAreaElement>("#summary"))!.value.trim(),
+      before_label:     (form.querySelector<HTMLInputElement>("#before_label"))!.value.trim(),
+      after_label:      (form.querySelector<HTMLInputElement>("#after_label"))!.value.trim(),
+      before_photo_url: (form.querySelector<HTMLInputElement>("#before_photo_url"))!.value.trim(),
+      after_photo_url:  (form.querySelector<HTMLInputElement>("#after_photo_url"))!.value.trim(),
+      overview:         (form.querySelector<HTMLTextAreaElement>("#overview"))!.value.trim(),
+      challenge:        (form.querySelector<HTMLTextAreaElement>("#challenge"))!.value.trim(),
+      result:           (form.querySelector<HTMLTextAreaElement>("#result"))!.value.trim(),
+      scope_items:      scopeInputs.map(i => i.value.trim()).filter(Boolean),
+      status:           status === "unpublished" ? "draft" : status,
+    };
+
+    const res  = await fetch("/api/admin/projects", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const json = await res.json() as { slug?: string; error?: string; missing?: string[] };
+
+    if (res.ok) {
+      window.location.reload();
+    } else {
+      alert(`Error: ${json.error}\n${json.missing?.join("\n") ?? ""}`);
+    }
+  }
+
+  document.getElementById("save-draft-btn")!.addEventListener("click", () => submitForm("draft"));
+  publishBtn?.addEventListener("click", () => submitForm("published"));
+  document.getElementById("unpublish-btn")?.addEventListener("click", () => {
+    if (confirm("This will remove the project from the live site immediately.")) submitForm("unpublished");
+  });
+
+  // Scope item remove buttons wired up for prefilled rows
+  document.querySelectorAll<HTMLButtonElement>(".remove-scope").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.closest(".scope-item-row")?.remove();
+      updateReadiness();
+    });
+  });
+
+  document.getElementById("add-scope-item")!.addEventListener("click", () => {
+    const row = document.createElement("div");
+    row.className = "flex gap-2 items-center scope-item-row";
+    row.innerHTML = `<input type="text" name="scope_items[]" class="admin-input scope-item-input flex-1" placeholder="Scope item" /><button type="button" class="remove-scope text-[#ef4444] font-bold text-[18px] px-2">×</button>`;
+    row.querySelector(".remove-scope")!.addEventListener("click", () => { row.remove(); updateReadiness(); });
+    row.querySelector("input")!.addEventListener("input", updateReadiness);
+    document.getElementById("scope-items-list")!.appendChild(row);
+    updateReadiness();
+  });
+
+  updateReadiness();
+</script>
