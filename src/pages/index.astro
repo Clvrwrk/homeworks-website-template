@@ -19,18 +19,19 @@ import {
   SEO_DEFAULT_TITLE,
   SEO_DEFAULT_DESC,
   ADDRESS_CITY,
+  SERVICES,
+  LOCATIONS,
 } from "@/config/site";
+import { REVIEWS } from "@/data/reviews";
 
 const telHref = `tel:${PHONE_RAW}`;
 
-const services = [
-  { title: "Drywall Repair", desc: "Holes, cracks, water damage — patched, textured, and ready to paint.", image: "/services/drywall.webp", href: "/services/drywall-repair" },
-  { title: "TV Mounting", desc: "Any size TV, any wall type — secure mount with hidden cables.", image: "/services/tv-mount.webp", href: "/services/tv-mounting" },
-  { title: "Plumbing", desc: "Leaky faucets, running toilets, fixture installs — fast and reliable.", image: "/services/plumbing.webp", href: "/services/plumbing" },
-  { title: "Door Installation", desc: "Interior, exterior, and storm doors — plumb, level, weather-tight.", image: "/services/door.webp", href: "/services/door-installation" },
-  { title: "Interior Painting", desc: "Prep, prime, and paint for a flawless, long-lasting finish.", image: "/services/painting.webp", href: "/services/interior-painting" },
-  { title: "Electrical Fixtures", desc: "Light fixtures, ceiling fans, outlets — safely installed to code.", image: "/services/electrical.webp", href: "/services/electrical-fixtures" },
-];
+const services = SERVICES.slice(0, 6).map((s) => ({
+  title: s.name,
+  desc:  s.description,
+  image: s.image,
+  href:  `/services/${s.slug}`,
+}));
 
 const steps = [
   { num: "01", title: "Tell Us What Needs Fixing", desc: "Call or submit the form with your repair list, photos, and priority concerns. We respond within 60 minutes during business hours.", icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" y1="13" x2="8" y2="13" stroke="#e2a03f" stroke-width="2" stroke-linecap="round"/><line x1="16" y1="17" x2="8" y2="17" stroke="#e2a03f" stroke-width="2" stroke-linecap="round"/></svg>` },
@@ -39,18 +40,14 @@ const steps = [
   { num: "04", title: "Get the Work Done", desc: "Skilled technicians complete the agreed work efficiently and clean up completely. Every job ends with a final walkthrough.", icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="#e2a03f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
 ];
 
-const reviews = [
-  { name: "Sarah M.", location: "McKinney, TX", rating: 5, initials: "SM", text: "Absolutely fantastic service! They patched three drywall holes and you can't tell anything was ever there. Showed up on time and left my home spotless." },
-  { name: "James R.", location: "McKinney, TX", rating: 5, initials: "JR", text: "Had a long list of items that had been piling up. They knocked out everything in one visit — TV mount, a leaky faucet, and replaced two doors. Incredible value." },
-  { name: "Linda K.", location: "McKinney, TX", rating: 5, initials: "LK", text: "So relieved to finally find a handyman service I can trust. Background-checked, insured, and genuinely professional. Will be using them for everything going forward." },
-];
+const reviews = REVIEWS;
 
 const faqs = [
   { q: "Do you handle small jobs or only larger punch lists?", a: `Yes, both. Many homeowners call ${BUSINESS_NAME} for one repair, then use the same visit to tackle a longer to-do list.` },
   { q: "Can I request an estimate before scheduling work?", a: "Yes. An estimate request starts with photos or a short description, then the team confirms the best next step and scope review." },
   { q: "Do you provide materials for fixture installation and repairs?", a: "That depends on the task. During project consultations, the team will confirm what should be supplied by the homeowner and what can be handled as part of the visit." },
   { q: "Are your technicians insured and background checked?", a: `Yes. ${BUSINESS_NAME} uses an insured team and background-checked technicians, which reduces risk for homeowners inviting service professionals into their homes.` },
-  { q: `Do you work in neighborhoods outside central ${PRIMARY_CITY}?`, a: `Yes, service commonly supports nearby North Collin County communities. Availability for Frisco, Allen, and Prosper depends on route scheduling and job scope.` },
+  { q: `Do you work in neighborhoods outside central ${PRIMARY_CITY}?`, a: `Yes, service commonly extends to nearby communities. Availability for ${LOCATIONS.filter(l => !l.primary).slice(0, 3).map(l => l.city).join(", ")} and others depends on route scheduling and job scope.` },
 ];
 
 const faqSchema = {
