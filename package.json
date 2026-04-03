@@ -20,6 +20,7 @@
     "@iconify-json/lucide": "^1.2.0",
     "@supabase/supabase-js": "^2.49.4",
     "@tailwindcss/vite": "^4.2.2",
+    "@workos-inc/node": "^8.11.0",
     "astro": "^5.18.1",
     "astro-icon": "^1.1.5",
     "dotenv": "^16.4.7",
