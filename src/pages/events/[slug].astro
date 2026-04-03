@@ -1,0 +1,213 @@
+---
+// src/pages/events/[slug].astro
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { createServerClient } from "@/lib/supabase";
+import type { EventRow } from "@/types/database";
+import { BUSINESS_NAME, SITE_URL } from "@/config/site";
+
+const { slug } = Astro.params as { slug: string };
+const supabase = createServerClient();
+const { data, error } = await supabase
+  .from("events")
+  .select("*")
+  .eq("slug", slug)
+  .eq("status", "published")
+  .single();
+
+if (error || !data) return Astro.redirect("/404");
+
+const event = data as EventRow;
+
+function formatEventDateFull(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+// Maps embed: prefer google_place_id for precision
+const mapsQuery = event.google_place_id
+  ? `place_id:${event.google_place_id}`
+  : event.address;
+
+const googleMapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(event.address)}`;
+
+const eventSchema = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: event.title,
+  startDate: event.event_date,
+  endDate: event.end_date ?? event.event_date,
+  location: {
+    "@type": "Place",
+    name: event.location_name,
+    address: event.address,
+  },
+  description: event.description,
+  image: event.image_url || `${SITE_URL}/og-default.jpg`,
+  organizer: {
+    "@type": "Organization",
+    name: BUSINESS_NAME,
+    url: SITE_URL,
+  },
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home",   item: `${SITE_URL}/` },
+    { "@type": "ListItem", position: 2, name: "Events", item: `${SITE_URL}/events` },
+    { "@type": "ListItem", position: 3, name: event.title, item: `${SITE_URL}/events/${event.slug}` },
+  ],
+};
+---
+
+<Layout
+  title={`${event.title} | ${BUSINESS_NAME}`}
+  description={event.description.slice(0, 155)}
+  ogImage={event.image_url || undefined}
+  schema={[eventSchema, breadcrumbSchema]}
+>
+  <Header />
+
+  <!-- ── Event Photo Hero ───────────────────────────────────────────────── -->
+  <div class="relative w-full max-h-[480px] overflow-hidden">
+    <img
+      src={event.image_url || "/og-default.jpg"}
+      alt={event.title}
+      class="w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+      width="1456"
+      height="480"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-[#151d25]/60 to-transparent"></div>
+  </div>
+
+  <!-- ── Card Stack ─────────────────────────────────────────────────────── -->
+  <div class="bg-[#f0f2f4] section-padding">
+    <div class="site-container max-w-[760px] mx-auto flex flex-col gap-8">
+
+      <!-- Breadcrumb -->
+      <nav class="flex items-center gap-2 text-[13px] text-[#567798]">
+        <a href="/" class="hover:text-[#151d25] transition-colors">Home</a>
+        <span>/</span>
+        <a href="/events" class="hover:text-[#151d25] transition-colors">Events</a>
+        <span>/</span>
+        <span class="text-[#151d25] font-medium">{event.title}</span>
+      </nav>
+
+      <!-- ── Event Info Card ──────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl border border-[#cdd8e3] p-8 shadow-sm reveal-item">
+        <span class="inline-flex items-center bg-[#b05d45]/10 text-[#b05d45] text-[12px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full mb-4">
+          {event.event_type}
+        </span>
+        <h1 class="text-[#151d25] font-black tracking-tight leading-tight mb-5"
+          style="font-size: clamp(1.6rem, 3vw, 2.4rem);">
+          {event.title}
+        </h1>
+
+        <!-- Date, time, location -->
+        <div class="flex flex-col gap-3 mb-6 text-[15px] text-[#567798]">
+          <div class="flex items-start gap-3">
+            <svg class="w-4 h-4 mt-0.5 shrink-0 text-[#b05d45]" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/><line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/></svg>
+            <span>
+              {formatEventDateFull(event.event_date)} at {formatTime(event.event_date)}
+              {event.end_date && ` – ${formatTime(event.end_date)}`}
+            </span>
+          </div>
+          <div class="flex items-start gap-3">
+            <svg class="w-4 h-4 mt-0.5 shrink-0 text-[#b05d45]" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
+            <span>{event.location_name}<br class="hidden sm:block"/><span class="text-[#2c3e50]/60 text-[13px]">{event.address}</span></span>
+          </div>
+        </div>
+
+        <p class="text-[#567798] text-[16px] leading-relaxed mb-8">{event.description}</p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap gap-3">
+          <a
+            href={googleMapsDirectionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary"
+          >Get Directions</a>
+          {event.website_url && (
+            <a
+              href={event.website_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-secondary"
+            >Event Website</a>
+          )}
+        </div>
+      </div>
+
+      <!-- ── Google Maps Embed ────────────────────────────────────────── -->
+      <div class="rounded-2xl overflow-hidden shadow-sm border border-[#cdd8e3] reveal-item" style="aspect-ratio: 16/7;">
+        <iframe
+          title={`Map: ${event.location_name}`}
+          width="100%"
+          height="100%"
+          style="border:0"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_KEY ?? ""}&q=${encodeURIComponent(mapsQuery)}`}
+        ></iframe>
+      </div>
+
+      <!-- ── In the Neighborhood ──────────────────────────────────────── -->
+      {(() => {
+        const links = event.local_links as { label: string; url: string }[];
+        return links && links.length > 0 ? (
+          <div class="bg-white rounded-2xl border border-[#cdd8e3] p-8 shadow-sm reveal-item">
+            <h2 class="text-[#151d25] text-[20px] font-black tracking-tight mb-2">In the Neighborhood</h2>
+            <p class="text-[#567798] text-[14px] mb-6">Explore local spots near this event.</p>
+            <ul class="flex flex-col gap-3">
+              {links.map(({ label, url }) => (
+                <li>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center gap-3 text-[#b05d45] font-medium hover:underline text-[15px]"
+                  >
+                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="15 3 21 3 21 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    {label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null;
+      })()}
+
+    </div>
+  </div>
+
+  <Footer />
+</Layout>
+
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add("is-visible"); observer.unobserve(e.target); }
+      });
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  document.querySelectorAll(".reveal-item").forEach((el) => observer.observe(el));
+</script>
