@@ -2,6 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import { createServerClient } from "@/lib/supabase";
+import type { ProjectRow } from "@/types/database";
 import {
   BUSINESS_NAME,
   PHONE_DISPLAY,
@@ -16,83 +18,25 @@ const telHref = `tel:${PHONE_RAW}`;
 
 const serviceFilters = ["All Projects", "Drywall", "Painting", "Plumbing", "Electrical", "Carpentry", "Outdoor"];
 
-/* ── Project data ──────────────────────────────────────────────────────────
-   IMPORTANT: `neighborhood` must exactly match the area filter strings.
-   This is what the area filter matches against — NOT the city/ZIP string.
-   Bug fix: previous code matched city/ZIP ("McKinney, TX 75069") against
-   neighborhood names ("Stonebridge Ranch") — they never matched.
-   ────────────────────────────────────────────────────────────────────────── */
-const projects = [
-  {
-    slug: "stonebridge-ranch-drywall",
-    title: "Stonebridge Ranch Drywall Restoration",
-    category: "Drywall",
-    neighborhood: "Stonebridge Ranch",
-    location: "McKinney, TX 75069",
-    summary: "Water-damaged drywall in master bedroom — cut out, replaced, and textured to match.",
-    beforeLabel: "Water damage, sagging drywall",
-    afterLabel: "Seamless repair, ready to paint",
-    image: "/services/drywall.webp",
-  },
-  {
-    slug: "craig-ranch-living-room",
-    title: "Craig Ranch Living Room Refresh",
-    category: "Painting",
-    neighborhood: "Craig Ranch",
-    location: "McKinney, TX 75070",
-    summary: "Full living room repaint with new accent wall, fresh trim, and updated fixtures.",
-    beforeLabel: "Dated paint, scuffed walls",
-    afterLabel: "Clean, modern finish throughout",
-    image: "/services/painting.webp",
-  },
-  {
-    slug: "eldorado-bathroom-fixtures",
-    title: "Eldorado Master Bath Fixture Upgrade",
-    category: "Plumbing",
-    neighborhood: "Historic Downtown",
-    location: "McKinney, TX 75072",
-    summary: "All-new faucets, mirrors, light fixtures, and towel bars installed across master bath.",
-    beforeLabel: "Builder-grade fixtures",
-    afterLabel: "Upgraded, cohesive look",
-    image: "/services/plumbing.webp",
-  },
-  {
-    slug: "allen-tv-mounting",
-    title: "Allen Home Theater Setup",
-    category: "Electrical",
-    neighborhood: "Westridge",
-    location: "Allen, TX 75013",
-    summary: "85\" TV mounted on stone fireplace wall with full in-wall cable concealment.",
-    beforeLabel: "No TV mount, loose cables",
-    afterLabel: "Clean wall-mount, zero visible cables",
-    image: "/services/tv-mount.webp",
-  },
-  {
-    slug: "frisco-crown-molding",
-    title: "Frisco Crown Molding Installation",
-    category: "Carpentry",
-    neighborhood: "Stonebridge Ranch",
-    location: "Frisco, TX 75034",
-    summary: "Crown molding installed throughout main floor — kitchen, dining, living, and hallways.",
-    beforeLabel: "No crown, flat walls",
-    afterLabel: "Custom trim throughout",
-    image: "/services/door.webp",
-  },
-  {
-    slug: "prosper-deck-restoration",
-    title: "Prosper Backyard Deck Restoration",
-    category: "Outdoor",
-    neighborhood: "Craig Ranch",
-    location: "Prosper, TX 75078",
-    summary: "Pressure washed, repaired rotted boards, sanded, and stained a 400 sq ft cedar deck.",
-    beforeLabel: "Weathered, grey, damaged boards",
-    afterLabel: "Restored, stained, and protected",
-    image: "/services/painting.webp",
-  },
-];
+// ── Fetch published projects from Supabase ─────────────────────────────────
+const supabase = createServerClient();
+const { data, error } = await supabase
+  .from("projects")
+  .select("slug, title, category, neighborhood, location, summary, before_label, after_label, after_photo_url")
+  .eq("status", "published")
+  .order("published_at", { ascending: false });
 
-/* Derive area list from actual data — no more manual mismatch bugs */
-const areaFilters = Array.from(new Set(projects.map(p => p.neighborhood))).sort();
+if (error) {
+  console.error("[projects/index] Supabase query failed:", error.message);
+}
+
+const projects = (data ?? []) as Pick<
+  ProjectRow,
+  "slug" | "title" | "category" | "neighborhood" | "location" | "summary" | "before_label" | "after_label" | "after_photo_url"
+>[];
+
+/* Derive area list from actual data */
+const areaFilters = Array.from(new Set(projects.map(p => p.neighborhood ?? ""))).filter(Boolean).sort();
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -236,17 +180,17 @@ const collectionPageSchema = {
 
       <!-- Project cards grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
-        {projects.map(({ slug, title, category, neighborhood, location, summary, beforeLabel, afterLabel, image }) => (
+        {projects.map(({ slug, title, category, neighborhood, location, summary, before_label, after_label, after_photo_url }) => (
           <a
             href={`/projects/${slug}`}
             class="card-base group reveal-item"
             data-category={category}
-            data-neighborhood={neighborhood}
+            data-neighborhood={neighborhood ?? ""}
           >
             <!-- Photo -->
             <div class="card-photo relative">
               <img
-                src={image}
+                src={after_photo_url ?? "/og-default.jpg"}
                 alt={`${title} — ${BUSINESS_NAME}`}
                 loading="lazy" decoding="async"
                 width="600"
@@ -276,11 +220,11 @@ const collectionPageSchema = {
               <div class="flex flex-col gap-2 mb-5">
                 <div class="flex items-center gap-2 text-[13px]">
                   <span class="w-2 h-2 rounded-full bg-[#ef4444] shrink-0"></span>
-                  <span class="text-[#567798]"><strong class="text-[#151d25]">Before:</strong> {beforeLabel}</span>
+                  <span class="text-[#567798]"><strong class="text-[#151d25]">Before:</strong> {before_label}</span>
                 </div>
                 <div class="flex items-center gap-2 text-[13px]">
                   <span class="w-2 h-2 rounded-full bg-[#22c55e] shrink-0"></span>
-                  <span class="text-[#567798]"><strong class="text-[#151d25]">After:</strong> {afterLabel}</span>
+                  <span class="text-[#567798]"><strong class="text-[#151d25]">After:</strong> {after_label}</span>
                 </div>
               </div>
               <span class="inline-flex items-center gap-2 text-[#b05d45] text-[13px] font-bold uppercase tracking-widest group-hover:gap-3 transition-all">

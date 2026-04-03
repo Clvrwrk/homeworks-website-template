@@ -2,6 +2,8 @@
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
+import { createServerClient } from "@/lib/supabase";
+import type { ProjectRow } from "@/types/database";
 import {
   BUSINESS_NAME,
   PHONE_DISPLAY,
@@ -11,101 +13,33 @@ import {
 
 const telHref = `tel:${PHONE_RAW}`;
 
-const categoryImages: Record<string, string> = {
-  Drywall:    "/services/drywall.webp",
-  Painting:   "/services/painting.webp",
-  Plumbing:   "/services/plumbing.webp",
-  Electrical: "/services/electrical.webp",
-  Carpentry:  "/services/door.webp",
-  Outdoor:    "/services/painting.webp",
-};
-
-const allCaseStudies = [
-  {
-    slug: "stonebridge-ranch-drywall",
-    title: "Stonebridge Ranch Drywall Restoration",
-    category: "Drywall",
-    location: "McKinney, TX",
-    community: "Stonebridge Ranch",
-    duration: "1 day",
-    scope: "Water-damaged drywall repair, texture match, prime",
-    overview: "The homeowner noticed a soft, discolored section on the master bedroom ceiling following a slow roof leak. The damaged area had grown over several months before being addressed. We assessed the damage, identified and confirmed the leak source was fixed, then removed the compromised drywall, treated for mold, installed new drywall, applied joint compound in multiple coats, matched the original orange-peel texture, and primed — all in a single day.",
-    challenge: "The original texture was a custom blend between orange-peel and knockdown — not a standard pattern. Matching it required testing three samples before landing on the right technique.",
-    result: "The repaired area is completely invisible. The homeowner was unable to identify where the repair was made during the final walkthrough.",
-    scopeItems: ["Removed 14 sq ft of water-damaged drywall", "Mold treatment and prevention spray", "New 5/8\" drywall installed", "Three-coat joint compound application", "Orange-peel texture match", "Primer coat applied, ready for paint"],
-  },
-  {
-    slug: "craig-ranch-living-room",
-    title: "Craig Ranch Living Room Refresh",
-    category: "Painting",
-    location: "McKinney, TX",
-    community: "Craig Ranch",
-    duration: "2 days",
-    scope: "Full room paint, accent wall, trim and baseboard repaint",
-    overview: "This Craig Ranch family was ready to move on from the builder beige that came with their home. We prepped all surfaces — filled nail holes, caulked gaps at trim and ceiling, lightly sanded — then applied fresh primer before a full two-coat paint across walls and ceiling, plus a deep navy accent wall behind the sofa.",
-    challenge: "The existing baseboard had numerous paint drips from prior work and needed sanding down before repainting. The accent wall color required three coats for full opacity.",
-    result: "The room was transformed from builder standard to a polished, intentional space. The family said it felt like moving into a new home.",
-    scopeItems: ["Surface prep: filling, caulking, sanding", "Primer coat on all walls and ceiling", "Two-coat wall paint (Sherwin-Williams Accessible Beige)", "Three-coat deep navy accent wall", "Trim and baseboard repainting", "Touch-ups and final inspection"],
-  },
-  {
-    slug: "eldorado-bathroom-fixtures",
-    title: "Eldorado Master Bath Fixture Upgrade",
-    category: "Plumbing",
-    location: "McKinney, TX",
-    community: "Eldorado",
-    duration: "1 day",
-    scope: "Faucet replacement, mirror installation, light fixtures, hardware",
-    overview: "The homeowner had already selected all new fixtures — they just needed a skilled hand to install everything in one clean visit. We replaced both vanity faucets, installed a new frameless mirror, swapped out the light bar for a new matte black fixture, and installed coordinating towel bars, robe hooks, and toilet paper holders throughout.",
-    challenge: "The existing light bar wiring was set at a non-standard height, requiring a new junction box to properly center the new fixture. The mirror weight also required stud location and appropriate wall anchors.",
-    result: "A complete bathroom upgrade completed in a single day. The matte black hardware throughout the room creates a cohesive, intentional look.",
-    scopeItems: ["Dual vanity faucet replacement", "Frameless mirror installation (60x36)", "Matte black vanity light bar install", "New junction box for light centering", "6-piece hardware set install (towel bar, hooks, TP holder)", "Cleanup and final inspection"],
-  },
-  {
-    slug: "allen-tv-mounting",
-    title: "Allen Home Theater Setup",
-    category: "Electrical",
-    location: "Allen, TX",
-    community: "Twin Creeks",
-    duration: "Half day",
-    scope: "85\" TV mount on stone fireplace, in-wall cable concealment",
-    overview: "Mounting a large TV on a stone fireplace requires masonry anchors rated for the load, proper placement above the firebox, and careful planning for cable routing. We used a full-motion mount with masonry anchors, routed power and HDMI through the wall to an existing outlet below, and installed an in-wall cable management kit.",
-    challenge: "The stone surface had uneven texture requiring custom shim plates to keep the mount perfectly level. The cable routing also needed to avoid a cross-brace inside the wall.",
-    result: "An 85\" TV perfectly positioned on a stone fireplace with zero visible cables — the installation looks custom-built.",
-    scopeItems: ["Masonry anchor installation in stone", "Full-motion mount (rated to 200 lbs)", "In-wall HDMI and power routing", "Custom shim plates for level installation", "AV component shelf installation", "Final calibration and test"],
-  },
-  {
-    slug: "frisco-crown-molding",
-    title: "Frisco Crown Molding Installation",
-    category: "Carpentry",
-    location: "Frisco, TX",
-    community: "Newman Village",
-    duration: "3 days",
-    scope: "Crown molding throughout main floor — kitchen, dining, living, hallways",
-    overview: "This Frisco homeowner wanted to elevate their builder-grade home with crown molding throughout the main living areas. We selected a 3.5\" colonial profile to complement the 9-foot ceilings, cut all miters and copes precisely, installed with construction adhesive and finish nails, filled and caulked all joints, and left everything sanded and primer-ready.",
-    challenge: "The hallways had multiple 45-degree turns that required compound miter cuts. One ceiling had a slight bow requiring careful scribing to keep the molding flush.",
-    result: "The main floor feels custom and complete. Several guests assumed the molding was original to the home.",
-    scopeItems: ["180 linear feet of 3.5\" colonial crown", "Coped joints at all inside corners", "Mitered joints at all outside corners", "Construction adhesive + 15-gauge finish nails", "All joints filled, caulked, and sanded", "Ready for paint"],
-  },
-  {
-    slug: "prosper-deck-restoration",
-    title: "Prosper Backyard Deck Restoration",
-    category: "Outdoor",
-    location: "Prosper, TX",
-    community: "Windsong Ranch",
-    duration: "2 days",
-    scope: "Pressure wash, board replacement, sand, stain entire 400 sq ft deck",
-    overview: "After 8 years of North Texas sun and rain, this cedar deck had gone grey, with several boards showing signs of rot and splitting. We pressure washed at appropriate pressure for wood, replaced 12 damaged boards, sanded the entire surface, and applied a semi-transparent cedar-tone deck stain.",
-    challenge: "The deck had been stained previously with a solid color stain that needed to be fully stripped before the new semi-transparent stain could penetrate. This required an additional chemical stripping step.",
-    result: "The deck looks better than it did when new. The homeowners said they'll actually use it again now — they had been avoiding it.",
-    scopeItems: ["Full deck pressure wash (appropriate PSI for cedar)", "Chemical stain strip for old solid stain", "12 cedar board replacements", "Full deck sanding (60 then 120 grit)", "Two-coat semi-transparent cedar deck stain", "Hardware tightening and inspection"],
-  },
-];
-
+// ── Fetch project from Supabase ────────────────────────────────────────────
 const { slug } = Astro.params;
-const cs = allCaseStudies.find((c) => c.slug === slug);
-if (!cs) return Astro.redirect("/404");
+if (!slug) return Astro.redirect("/404");
 
-const heroImage = categoryImages[cs.category] ?? "/truck-image.webp";
+const supabase = createServerClient();
+const { data, error } = await supabase
+  .from("projects")
+  .select("*")
+  .eq("slug", slug)
+  .eq("status", "published")
+  .single();
+
+if (error || !data) return Astro.redirect("/404");
+
+const cs = data as ProjectRow;
+
+const heroImage = cs.after_photo_url || (() => {
+  const map: Record<string, string> = {
+    Drywall: "/services/drywall.webp",
+    Painting: "/services/painting.webp",
+    Plumbing: "/services/plumbing.webp",
+    Electrical: "/services/tv-mount.webp",
+    Carpentry: "/services/door.webp",
+    Outdoor: "/services/painting.webp",
+  };
+  return map[cs.category] ?? "/truck-image.webp";
+})();
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
@@ -121,7 +55,7 @@ const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": cs.title,
-  "description": cs.overview,
+  "description": cs.overview ?? cs.summary ?? "",
   "image": `${SITE_URL}${heroImage}`,
   "author": {
     "@type": "Organization",
@@ -141,7 +75,7 @@ const articleSchema = {
 
 <Layout
   title={`${cs.title} | ${BUSINESS_NAME}`}
-  description={`Case study: ${cs.overview.slice(0, 140)}...`}
+  description={`Case study: ${(cs.overview ?? cs.summary ?? "").slice(0, 140)}...`}
   ogImage={heroImage}
   schema={[breadcrumbSchema, articleSchema]}
 >
@@ -263,7 +197,7 @@ const articleSchema = {
             <!-- WCAG: #151d25 on #f0f2f4 = 16:1 ✅ -->
             <h3 class="text-[#151d25] text-[18px] font-black tracking-tight mb-6">Scope of Work</h3>
             <ul class="flex flex-col gap-4 mb-8">
-              {cs.scopeItems.map((item) => (
+              {(cs.scope_items ?? []).map((item) => (
                 <li class="flex items-start gap-3 text-[14px] text-[#2c3e50]">
                   <!-- WCAG: #b05d45 icon on #f0f2f4 = 3.8:1 — decorative icon, acceptable ✅ -->
                   <div class="mt-0.5 w-5 h-5 rounded-full bg-[#b05d45]/15 flex items-center justify-center shrink-0">

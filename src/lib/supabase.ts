@@ -14,18 +14,7 @@
  */
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-
-// ─── Database type placeholder ────────────────────────────────────────────────
-//
-// Replace `Database` with the generated type from Supabase CLI:
-//   npx supabase gen types typescript --project-id <ref> > src/types/database.ts
-//
-// Then swap the import below:
-//   import type { Database } from "@/types/database";
-//
-// Until then, `unknown` keeps everything type-safe without breaking the build.
-//
-type Database = unknown;
+import type { Database } from "@/types/database";
 
 // ─── Environment variable resolution ─────────────────────────────────────────
 //
@@ -182,7 +171,8 @@ export function getBrowserClient(): SupabaseClient<Database> {
  *
  * @example
  * ```ts
- * type ServiceRow = TableRow<"services">;
+ * type ProjectRow = TableRow<"projects">;
  * ```
  */
-export type TableRow<_T extends string> = Record<string, unknown>;
+export type TableRow<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
