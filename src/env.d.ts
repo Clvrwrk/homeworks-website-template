@@ -2,7 +2,15 @@
 /// <reference path="../.astro/types.d.ts" />
 /// <reference types="astro/client" />
 
-import type { AdminUser } from "@/lib/workos";
+type AdminRole = "agency_admin" | "client_admin" | "worker";
+
+interface AdminUser {
+  id: string;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  role: AdminRole;
+}
 
 declare namespace App {
   interface Locals {

@@ -21,7 +21,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const body = await request.json() as Record<string, unknown> & { recordType: "mention" | "media" };
   const { recordType, ...fields } = body;
 
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
 
   if (recordType === "mention") {
     // Validate summary word count

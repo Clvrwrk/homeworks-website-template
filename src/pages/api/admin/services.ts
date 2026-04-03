@@ -21,7 +21,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const body = await request.json() as Record<string, unknown>;
   if (!body.name) return new Response(JSON.stringify({ error: "Name is required" }), { status: 400 });
 
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
   const slug = await uniqueSlug(body.name as string, async (s) => {
     const { data } = await supabase.from("services").select("id").eq("slug", s).single();
     return !!data;
@@ -38,7 +39,8 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
 
   const body = await request.json() as Record<string, unknown> & { id: string };
   const { id, ...fields } = body;
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
   const { data, error } = await supabase.from("services").update(fields).eq("id", id).select().single();
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   return new Response(JSON.stringify({ slug: (data as any).slug }), { status: 200 });

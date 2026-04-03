@@ -27,7 +27,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (!r.canPublish) return new Response(JSON.stringify({ error: "Missing required fields", missing: r.missing }), { status: 422 });
   }
 
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
   const slug = await uniqueSlug(body.title as string, async (s) => {
     const { data } = await supabase.from("events").select("id").eq("slug", s).single();
     return !!data;
@@ -53,7 +54,8 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
   }
 
   const { id, ...fields } = body;
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
   const { data, error } = await supabase.from("events").update(fields).eq("id", id).select().single();
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   if (body.status === "published" && data) ghlNotifyPublish("event", data).catch(console.error);

@@ -7,6 +7,7 @@ import type { LocationRow } from "@/types/database";
 if (Astro.locals.user?.role !== "agency_admin") return Astro.redirect("/admin");
 
 const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/admin/locations");
 const supabase = createAdminClient();
 const { data, error } = await supabase.from("locations").select("*").eq("slug", slug).single();
 

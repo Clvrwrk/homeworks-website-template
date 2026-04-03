@@ -231,6 +231,8 @@ export interface LocationInsert {
 
 export interface Database {
   public: {
+    Views: Record<string, { Row: Record<string, unknown>; Relationships: [] }>;
+    Functions: Record<string, { Args: Record<string, unknown>; Returns: unknown }>;
     Tables: {
       projects: {
         Row: ProjectRow;

@@ -5,6 +5,7 @@ import { createServerClient } from "../../lib/supabase";
 import type { LocationRow } from "../../types/database";
 
 const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
 const supabase = createServerClient();
 const { data, error } = await supabase
   .from("locations")
@@ -22,7 +23,6 @@ const canonicalUrl = `${Astro.site?.toString().replace(/\/$/, "")}/locations/${l
 <Layout
   title={location.seo_title || `${location.city}, ${location.state}`}
   description={location.meta_description}
-  canonical={canonicalUrl}
 >
   <!-- Hero -->
   <section class="section-padding bg-brand-secondary text-white">

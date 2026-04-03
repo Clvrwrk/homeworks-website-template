@@ -23,7 +23,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
 
   const body = await request.json() as ProjectInsert & { status?: string };
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
 
   // Generate unique slug from title
   const slug = await uniqueSlug(body.title, async (s) => {
@@ -68,7 +69,8 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
   if (!user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
 
   const body = await request.json() as Partial<ProjectInsert> & { id: string; status?: string };
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
 
   // Workers cannot publish
   if (body.status === "published" && user.role === "worker") {

@@ -6,6 +6,7 @@ import type { ProjectRow } from "@/types/database";
 import { getProjectReadiness } from "@/lib/admin";
 
 const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/admin/projects");
 const supabase = createAdminClient();
 const { data, error } = await supabase.from("projects").select("*").eq("slug", slug).single();
 

@@ -17,7 +17,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   if (!user) return new Response(JSON.stringify({ error: "Agency Admin access required" }), { status: 403 });
   const body = await request.json() as Record<string, unknown>;
   if (!body.city) return new Response(JSON.stringify({ error: "City is required" }), { status: 400 });
-  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createAdminClient() as any;
   const slug = await uniqueSlug(body.city as string, async (s) => {
     const { data } = await supabase.from("locations").select("id").eq("slug", s).single();
     return !!data;
@@ -31,7 +32,8 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
   const user = await requireAgencyAdmin(cookies);
   if (!user) return new Response(JSON.stringify({ error: "Agency Admin access required" }), { status: 403 });
   const { id, ...fields } = await request.json() as Record<string, unknown> & { id: string };
-  const { data, error } = await createAdminClient().from("locations").update(fields).eq("id", id).select().single();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (createAdminClient() as any).from("locations").update(fields).eq("id", id).select().single();
   if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   return new Response(JSON.stringify({ slug: (data as any).slug }), { status: 200 });
 };

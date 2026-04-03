@@ -2,7 +2,7 @@
 // WorkOS AuthKit — session management for admin interface.
 // All functions are server-only. Never import this in client-side code.
 
-import WorkOS, { type User } from "@workos-inc/node";
+import { WorkOS, type User } from "@workos-inc/node";
 
 // Role strings stored in WorkOS Organization membership
 export type AdminRole = "agency_admin" | "client_admin" | "worker";
@@ -89,10 +89,11 @@ export async function validateSession(sealedSession: string): Promise<AdminUser 
     const workos     = getWorkOS();
     const cookiePass = import.meta.env.WORKOS_COOKIE_PASSWORD as string;
 
-    const { user, organizationId } = await workos.userManagement.authenticateWithSessionCookie({
+    const result = await workos.userManagement.authenticateWithSessionCookie({
       sessionData: sealedSession,
       cookiePassword: cookiePass,
     });
+    const { user, organizationId } = result as any;
 
     // Fetch organization membership to get role
     let role: AdminRole = "worker";

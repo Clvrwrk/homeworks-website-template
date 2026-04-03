@@ -6,6 +6,7 @@ import type { EventRow } from "@/types/database";
 import { getEventReadiness } from "@/lib/admin";
 
 const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/admin/events");
 const supabase = createAdminClient();
 const { data, error } = await supabase.from("events").select("*").eq("slug", slug).single();
 
