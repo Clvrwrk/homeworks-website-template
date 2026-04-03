@@ -1,0 +1,6 @@
+---
+// src/pages/auth/login.astro
+// Immediately redirects to WorkOS AuthKit login URL.
+import { getAuthorizationUrl } from "@/lib/workos";
+return Astro.redirect(getAuthorizationUrl());
+---
