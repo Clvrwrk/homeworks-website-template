@@ -8,7 +8,7 @@ import icon from "astro-icon";
 export default defineConfig({
   // ── Site URL — populated by /build-website skill from client onboarding ──
   // TEMPLATE VAR: {{SITE_URL}} is replaced with actual client domain at deploy time
-  site: "https://{{SITE_URL}}",
+  site: "https://smoke-test-1124.hwa-client.website",
 
   output: "server",
 

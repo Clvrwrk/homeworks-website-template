@@ -122,6 +122,11 @@ const allSchemas = [
 
 // ── GA4 Measurement ID — set via env var ──────────────────────────────────
 const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
+
+// ── HWA free-site preview: noindex + first-human-view beacon (runbook v4 step 7)
+const hwaPreview = (process.env.HWA_ENV ?? "") === "preview";
+const hwaViewUrl = process.env.HWA_VIEW_WEBHOOK_URL ?? "/api/hwa-view";
+const hwaSlug    = process.env.HWA_SLUG ?? "";
 ---
 
 <!doctype html>
@@ -131,7 +136,7 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {(noindex || hwaPreview) && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
 
     <!-- ── Open Graph ──────────────────────────────────────────────────── -->
@@ -235,6 +240,37 @@ const ga4Id = import.meta.env.PUBLIC_GA4_ID ?? process.env.PUBLIC_GA4_ID ?? "";
           });
         </script>
       </>
+    )}
+    {hwaPreview && (
+      <script is:inline define:vars={{ hwaViewUrl, hwaSlug }}>
+        (function () {
+          try {
+            var u = new URL(location.href), t = u.searchParams.get("v");
+            if (!t || navigator.webdriver) return;
+            u.searchParams.delete("v");
+            history.replaceState(null, "", u.pathname + u.search + u.hash);
+            var k = "hwa_viewed_" + hwaSlug;
+            if (localStorage.getItem(k)) return;
+            var sent = false, timer = null;
+            function fire(sig) {
+              if (sent) return; sent = true;
+              localStorage.setItem(k, "1");
+              var body = JSON.stringify({ token: t, slug: hwaSlug, path: location.pathname, ts: Date.now(), signal: sig });
+              var ok = navigator.sendBeacon && navigator.sendBeacon(hwaViewUrl, new Blob([body], { type: "application/json" }));
+              if (!ok) fetch(hwaViewUrl, { method: "POST", body: body, keepalive: true, headers: { "Content-Type": "application/json" } });
+            }
+            function arm() {
+              clearTimeout(timer);
+              if (document.visibilityState === "visible") timer = setTimeout(function () { fire("visible2s"); }, 2000);
+            }
+            ["scroll", "pointerdown", "keydown"].forEach(function (e) {
+              addEventListener(e, function () { fire(e); }, { once: true, passive: true });
+            });
+            document.addEventListener("visibilitychange", arm);
+            arm();
+          } catch (e) {}
+        })();
+      </script>
     )}
   </head>
   <body class="bg-[#f8f9fa] text-[#151d25] antialiased">

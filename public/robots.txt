@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://mckinneyfixitpros.com/sitemap-index.xml
